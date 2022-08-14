@@ -135,7 +135,7 @@ export default {
     // 懒加载
     const callBack = (e) => {
       const { scrollTop, clientHeight, scrollHeight } = e.target.scrollingElement
-      if (scrollTop + clientHeight + 10 >= scrollHeight) {
+      if (scrollTop + clientHeight + 20 >= scrollHeight) {
         this.offset += this.GAP + 1
         let addition = []
         if (this.activeTab !== 'all') {
