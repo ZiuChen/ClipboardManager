@@ -2,8 +2,6 @@
   <div class="clip-file-list">
     <div class="clip-file" v-for="file of data.slice(0, 8)" @click.stop="openFile(file.path)">
       <img class="clip-file-icon" :src="getIcon(file.path)" alt="icon" />
-      <!-- <span class="clip-file-icon" v-if="file.isFile">📄</span>
-      <span class="clip-folder-icon" v-else>📁</span> -->
       {{ file.name }}
     </div>
   </div>
@@ -30,6 +28,12 @@ export default {
 </script>
 
 <style scoped>
+.clip-file {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  cursor: pointer;
+}
 .clip-file:hover {
   font-weight: 600;
 }

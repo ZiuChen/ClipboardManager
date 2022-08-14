@@ -56,7 +56,6 @@ class DB {
   }
   updateDataBaseLocal(dataBase) {
     // 更新文件数据
-    console.log('updateDataBaseLocal')
     fs.writeFileSync(this.path, JSON.stringify(dataBase || this.dataBase), (err) => {
       if (err) {
         utools.showNotification('写入剪切板出错' + err)
@@ -86,7 +85,6 @@ class DB {
   }
   updateItemViaId(id) {
     for (const item of this.dataBase.data) {
-      console.log(item.id, id)
       if (item.id === id) {
         item.updateTime = new Date().getTime()
         this.sortDataBaseViaTime()

@@ -6,7 +6,7 @@
         <div v-if="fullData.type === 'text'">
           <div v-text="fullData.data"></div>
         </div>
-        <div v-if="fullData.type === 'file'">
+        <div v-else>
           <file-list :data="fullData.data"></file-list>
         </div>
       </div>
@@ -76,7 +76,7 @@ export default {
       offset: 0,
       showList: [],
       list: [],
-      fullData: { type: '', data: '' },
+      fullData: { type: 'text', data: '' },
       fullDataShow: false,
       tabs: [
         {
@@ -105,12 +105,24 @@ export default {
 
     // 初始化导航
     this.toggleNav(this.activeTab)
+
+    // 定期检查更新
+    let prev = {}
+    setInterval(() => {
+      const now = window.db.dataBase.data[0]
+      if (prev?.id === now?.id) {
+      } else {
+        // 有更新
+        this.list = window.db.dataBase.data
+        this.toggleNav(this.activeTab)
+        prev = now
+      }
+    }, 500)
+
     // 懒加载
-    document.addEventListener('scroll', (e) => {
-      console.log('scroll')
+    const callBack = (e) => {
       const { scrollTop, clientHeight, scrollHeight } = e.target.scrollingElement
-      if (scrollTop + clientHeight + 25 >= scrollHeight) {
-        console.log('bottom')
+      if (scrollTop + clientHeight + 10 >= scrollHeight) {
         this.offset += this.GAP + 1
         let addition = []
         if (this.activeTab !== 'all') {
@@ -123,11 +135,16 @@ export default {
           this.showList.push(...addition)
         }
       }
-    })
+    }
+    document.addEventListener('scroll', callBack)
   },
   methods: {
     toggleNav(type) {
+      // 切换导航 同时更新展示的数据
       this.activeTab = type
+      this.updateShowList()
+    },
+    updateShowList(type = this.activeTab) {
       if (type === 'all') {
         this.showList = this.list.slice(0, this.GAP)
       } else {
@@ -159,20 +176,24 @@ export default {
       // only text || file
       const { type, data } = item
       if (type === 'text') {
-        this.fullData.type === 'text'
+        this.fullData.type = 'text'
         this.fullData.data = data
       } else if (type === 'file') {
-        this.fullData.type === 'file'
+        this.fullData.type = 'file'
         this.fullData.data = JSON.parse(data)
       }
+
       this.fullDataShow = !this.fullDataShow
     },
     executeCopy(item) {
       window.copy(item)
     },
     restoreDataBase() {
-      console.log('restore clicked')
-      // window.db.emptyDataBase()
+      const flag = window.confirm('确定要清空剪贴板记录吗?')
+      if (flag) {
+        window.db.emptyDataBase()
+        this.updateShowList()
+      }
     }
   }
 }
