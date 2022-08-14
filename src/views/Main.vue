@@ -13,16 +13,23 @@
     </transition>
     <div class="clip-overlay" v-show="fullDataShow" @click="toggleFullData('')"></div>
     <div class="clip-switch">
-      <template v-for="tab of tabs">
-        <div :class="{ active: activeTab === tab.type }" @click="toggleNav(tab.type)">
-          {{ tab.name }}
-        </div>
-      </template>
+      <div class="clip-switch-items">
+        <template v-for="tab of tabs">
+          <div
+            :class="{ 'clip-switch-item': true, active: activeTab === tab.type }"
+            @click="toggleNav(tab.type)"
+          >
+            {{ tab.name }}
+          </div>
+        </template>
+      </div>
+
+      <div class="clip-search">
+        <input v-model="filterText" autofocus type="text" placeholder="输入关键词检索" />
+      </div>
     </div>
     <div class="clip-break"></div>
-    <div class="clip-empty-status" v-if="showList.length === 0">
-      当前记录为空，快去复制点东西来吧
-    </div>
+    <div class="clip-empty-status" v-if="showList.length === 0">📪 无记录</div>
     <div
       class="clip-item"
       v-for="(item, index) in showList"
@@ -78,6 +85,7 @@ export default {
       list: [],
       fullData: { type: 'text', data: '' },
       fullDataShow: false,
+      filterText: '',
       tabs: [
         {
           name: '📚 全部',
@@ -97,6 +105,11 @@ export default {
         }
       ],
       activeTab: 'all'
+    }
+  },
+  watch: {
+    filterText: function (val) {
+      this.updateShowList()
     }
   },
   mounted: function () {
@@ -137,6 +150,25 @@ export default {
       }
     }
     document.addEventListener('scroll', callBack)
+    document.addEventListener('keydown', (e) => {
+      const { key, ctrlKey } = e
+      const isTab = key === 'Tab'
+      const isSearch =
+        key === '/' ||
+        (ctrlKey && (key === 'F' || key === 'f')) ||
+        (ctrlKey && (key === 'L' || key === 'l'))
+      const isExit = key === 'Escape'
+      if (isTab) {
+        const l = ['all', 'text', 'image', 'file']
+        const i = l.indexOf(this.activeTab)
+        const t = i === l.length - 1 ? l[0] : l[i + 1]
+        this.toggleNav(t)
+      } else if (isSearch) {
+        document.querySelector('input').focus()
+      } else if (isExit) {
+        this.filterText = ''
+      }
+    })
   },
   methods: {
     toggleNav(type) {
@@ -146,9 +178,28 @@ export default {
     },
     updateShowList(type = this.activeTab) {
       if (type === 'all') {
-        this.showList = this.list.slice(0, this.GAP)
-      } else {
+        if (this.filterText) {
+          // 有过滤词 则过滤掉图片
+          this.showList = this.list
+            .filter((item) => item.type !== 'image')
+            .filter((item) => item.data.indexOf(this.filterText) !== -1)
+            .slice(0, this.GAP)
+        } else {
+          // 无过滤词 直接更新
+          this.showList = this.list
+            .filter((item) => item.data.indexOf(this.filterText) !== -1)
+            .slice(0, this.GAP)
+        }
+      } else if (type === 'image') {
+        // 排除掉对图片 DataURL的筛选
         this.showList = this.list.filter((item) => item.type === type).slice(0, this.GAP)
+      } else {
+        // `file`类型 在stringify的data里搜
+        // `text`类型 在data里搜
+        this.showList = this.list
+          .filter((item) => item.type === type)
+          .filter((item) => item.data.indexOf(this.filterText) !== -1)
+          .slice(0, this.GAP)
       }
       document.scrollingElement.scrollTop = 0
     },
@@ -232,19 +283,26 @@ export default {
   position: fixed;
   top: 0px;
   display: flex;
-  justify-content: left;
+  justify-content: space-between;
   align-items: center;
+  flex-direction: row;
   width: 100%;
   background-color: #eeeeee;
 }
-.clip-switch * {
+.clip-switch-items {
+  display: flex;
+  justify-content: left;
+  align-items: center;
+  flex-direction: row;
+}
+.clip-switch .clip-switch-item {
   padding: 10px 15px 10px 15px;
   margin: 10px 5px 10px 10px;
   cursor: pointer;
   border-radius: 5px;
   font-size: 14px;
 }
-.clip-switch *:hover {
+.clip-switch .clip-switch-item:hover {
   background-color: rgb(222, 222, 222);
   transition: all 0.15s ease-in-out;
 }
@@ -252,6 +310,27 @@ export default {
   color: var(--primary--color);
   background-color: white;
   transition: all 0.15s ease-in-out;
+}
+.clip-search {
+  width: 40%;
+  margin-right: 30px;
+}
+.clip-search input {
+  width: 100%;
+  /* normalize */
+  background: none;
+  outline: none;
+  border: none;
+  /* custom */
+  color: var(--text-color);
+  background-color: white;
+  height: fit-content;
+  font-size: 15px;
+  padding: 10px;
+  border-radius: 5px;
+}
+.clip-search input::placeholder {
+  color: var(--text-color-lighter);
 }
 .clip-break {
   height: 55px;

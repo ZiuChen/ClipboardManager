@@ -1,17 +1,16 @@
 {
-  "name": "clipboard",
   "version": "1.0.0",
-  "pluginName": "剪切板",
-  "description": "剪切板历史,snippet,代码片段",
-  "author": "inu1255",
-  "homepage": "https://github.com/inu1255/utools-clipboard",
+  "pluginName": "剪贴板",
+  "description": "强大的剪贴板管理工具",
+  "author": "ZiuChen",
+  "homepage": "https://github.com/ZiuChen",
   "main": "index.html",
   "preload": "preload.js",
   "development": {
     "main": "http://localhost:8081/"
   },
   "logo": "logo.png",
-  "platform": ["win32", "darwin", "linux"],
+  "platform": ["win32"],
   "features": [
     {
       "code": "clipboard",

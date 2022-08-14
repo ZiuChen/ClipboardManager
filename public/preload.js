@@ -1,7 +1,7 @@
 // /*
-// 	name: powerful_clipboard_manager
+// 	name: clipboard_manager
 // 	author: Github @ZiuChen
-// 	lastUpdate: v0.0.1 2022/08/14
+// 	lastUpdate: v1.0.0 2022/08/14
 // 	desc: 监听剪贴板 读写本地文件
 // */
 
