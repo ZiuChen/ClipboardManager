@@ -1,0 +1,37 @@
+.import() {
+  @import (multiple) './cpns/clip-full-data.less';
+  @import (multiple) './cpns/clip-item-list.less';
+  @import (multiple) './cpns/clip-search.less';
+  @import (multiple) './cpns/clip-switch.less';
+  @import (multiple) './cpns/file-list.less';
+}
+
+@media (prefers-color-scheme: dark) {
+  #app {
+    @primary-color: #8a2be2;
+    @primary-color-lighter: #d3b8ec;
+    @text-color: #e8e6e3;
+    @text-color-lighter: rgb(207, 207, 207);
+    @text-bg-color: #7f7c83;
+    @text-bg-color-lighter: #4e4e4e;
+    @nav-bg-color: #222426;
+    @nav-hover-bg-color: #2b2e30;
+    @bg-color: #181a1b;
+    .import();
+  }
+}
+
+@media (prefers-color-scheme: light) {
+  #app {
+    @primary-color: #8a2be2;
+    @primary-color-lighter: #d3b8ec;
+    @text-color: #333;
+    @text-color-lighter: rgb(138, 138, 138);
+    @text-bg-color: #e3d9ec;
+    @text-bg-color-lighter: #eeeaf3;
+    @nav-bg-color: #eeeeee;
+    @nav-hover-bg-color: #dedede;
+    @bg-color: #fff;
+    .import();
+  }
+}

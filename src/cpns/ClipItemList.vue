@@ -56,5 +56,5 @@ const onDataChange = (item) => {
 </script>
 
 <style lang="less" scoped>
-@import '../style/cpns/clip-item-list.less';
+@import '../style';
 </style>

@@ -38,5 +38,5 @@ defineExpose({
 </script>
 
 <style lang="less" scoped>
-@import '../style/cpns/clip-switch.less';
+@import '../style';
 </style>

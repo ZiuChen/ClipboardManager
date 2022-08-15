@@ -19,5 +19,5 @@ const getIcon = (path) => window.getIcon(path)
 </script>
 
 <style lang="less" scoped>
-@import '../style/cpns/file-list.less';
+@import '../style';
 </style>

@@ -152,7 +152,7 @@ onMounted(() => {
 </script>
 
 <style lang="less" scoped>
-@import '../style/variable.less';
+@import '../style';
 .clip-restore {
   display: flex;
   justify-content: center;
@@ -168,7 +168,7 @@ onMounted(() => {
   background-color: rgb(232, 232, 232);
   user-select: none;
   &:hover {
-    background-color: @primary-color;
+    // background-color: @primary-color;
     transition: all 0.15s;
   }
 }

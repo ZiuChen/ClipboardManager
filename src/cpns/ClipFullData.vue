@@ -31,5 +31,5 @@ const onOverlayClick = () => emit('onOverlayClick')
 </script>
 
 <style lang="less" scoped>
-@import '../style/cpns/clip-full-data.less';
+@import '../style';
 </style>

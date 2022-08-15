@@ -18,5 +18,5 @@ watch(filterText, (val) => emit('update:modelValue', val))
 </script>
 
 <style lang="less" scoped>
-@import '../style/cpns/clip-search.less';
+@import '../style';
 </style>
