@@ -1,5 +1,5 @@
 {
-  "version": "1.0.0",
+  "version": "1.0.1",
   "pluginName": "剪贴板",
   "description": "强大的剪贴板管理工具",
   "author": "ZiuChen",
@@ -10,7 +10,7 @@
     "main": "http://localhost:8081/"
   },
   "logo": "logo.png",
-  "platform": ["win32"],
+  "platform": ["win32", "darwin", "linux"],
   "features": [
     {
       "code": "clipboard",

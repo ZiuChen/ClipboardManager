@@ -24,10 +24,5 @@
     "deepmerge": "^4.2.2",
     "uglifyjs-webpack-plugin": "^2.2.0",
     "vue-template-compiler": "^2.6.11"
-  },
-  "browserslist": [
-    "> 1%",
-    "last 2 versions",
-    "not dead"
-  ]
+  }
 }
