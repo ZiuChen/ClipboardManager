@@ -10,9 +10,7 @@
     "core-js": "^3.6.4",
     "crypto": "^1.0.1",
     "licia": "^1.23.0",
-    "material-design-icons": "^3.0.1",
     "vue": "^2.6.11",
-    "vue-material": "^1.0.0-beta-12",
     "vue-router": "^3.1.6",
     "vuex": "^3.1.3",
     "webpack": "4.37.0"
@@ -24,8 +22,6 @@
     "@vue/cli-service": "~4.3.0",
     "copy-webpack-plugin": "^6.0.2",
     "deepmerge": "^4.2.2",
-    "sass": "^1.26.9",
-    "sass-loader": "^8.0.2",
     "uglifyjs-webpack-plugin": "^2.2.0",
     "vue-template-compiler": "^2.6.11"
   },

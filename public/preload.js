@@ -117,7 +117,7 @@ function pbpaste() {
       size: `${image.getSize().width}x${image.getSize().height}`,
       data: image.toDataURL()
     }
-  let text = clipboard.readText()
+  const text = clipboard.readText()
   if (text.trim()) return { type: 'text', data: text }
 }
 
