@@ -4,11 +4,31 @@
   top: 0;
   height: 100%;
   width: 60%;
+  color: @text-color;
   background: @bg-color;
   padding: 0px 20px 0px 20px;
   overflow-y: scroll;
   word-break: break-all;
   white-space: pre-wrap;
+  &::-webkit-scrollbar {
+    width: 5px;
+    height: 10px;
+  }
+  &::-webkit-scrollbar-track {
+    border-radius: 2px;
+    background-color: @bg-color;
+    &-piece {
+      border-radius: 2px;
+      background-color: @bg-color;
+    }
+  }
+  &::-webkit-scrollbar-thumb {
+    background: @bg-color;
+    border-radius: 2px;
+  }
+  &::-webkit-scrollbar-thumb:hover {
+    background: @nav-bg-color;
+  }
 }
 .clip-overlay {
   z-index: 999999999;
