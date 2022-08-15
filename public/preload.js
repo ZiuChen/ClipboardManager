@@ -155,6 +155,14 @@ const copy = (item) => {
   utools.hideMainWindow()
 }
 
+const paste = () => {
+  if (utools.isMacOs()) {
+    utools.simulateKeyboardTap('v', 'command')
+  } else {
+    utools.simulateKeyboardTap('v', 'ctrl')
+  }
+}
+
 const path = `${home}\\${dbName}`
 const db = new DB(path)
 db.init()
@@ -174,5 +182,6 @@ watchClipboard(db, (item) => {
 
 window.db = db
 window.copy = copy
+window.paste = paste
 window.openFile = utools.shellOpenPath
 window.getIcon = utools.getFileIcon

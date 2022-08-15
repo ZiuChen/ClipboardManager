@@ -4,7 +4,8 @@
       class="clip-item"
       v-for="(item, index) in showList"
       :key="item.createTime"
-      @click="executeCopy(item)"
+      @click.left="handleItemClick($event, item)"
+      @click.right="handleItemClick($event, item)"
     >
       <div class="clip-info">
         <div class="clip-time">
@@ -48,9 +49,18 @@ const props = defineProps({
   }
 })
 const emit = defineEmits(['onDataChange'])
-const executeCopy = (item) => window.copy(item)
+const handleItemClick = (ev, item) => {
+  const { button } = ev
+  if (button === 0) {
+    // 左键 复制后粘贴
+    window.copy(item)
+    window.paste()
+  } else if (button === 2) {
+    // 右键 仅复制
+    window.copy(item)
+  }
+}
 const onDataChange = (item) => {
-  console.log(item)
   emit('onDataChange', item)
 }
 </script>

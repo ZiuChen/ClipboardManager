@@ -1,6 +1,6 @@
 <template>
   <div class="clip-search">
-    <input v-model="filterText" autofocus type="text" placeholder="输入关键词检索" />
+    <input v-model="filterText" autofocus type="text" placeholder="🔍" />
   </div>
 </template>
 
