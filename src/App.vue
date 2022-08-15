@@ -1,5 +1,9 @@
 <template>
-  <div id="app">
-    <router-view/>
+  <div class="app">
+    <Main></Main>
   </div>
 </template>
+
+<script setup>
+import Main from './views/Main.vue'
+</script>
