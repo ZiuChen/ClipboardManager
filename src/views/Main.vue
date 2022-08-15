@@ -24,7 +24,7 @@ import ClipFullData from '../cpns/ClipFullData.vue'
 import ClipSearch from '../cpns/ClipSearch.vue'
 import ClipSwitch from '../cpns/ClipSwitch.vue'
 
-const GAP = 10 // 懒加载 每次添加的条数
+const GAP = 15 // 懒加载 每次添加的条数
 const offset = ref(0) // 懒加载 偏移量
 const filterText = ref('') // 搜索框绑定值
 const list = ref([]) // 全部数据
@@ -108,7 +108,10 @@ onMounted(() => {
   }, 500)
 
   // 监听搜索框
-  watch(filterText, (val) => updateShowList(activeTab.value))
+  watch(filterText, (val) => {
+    console.log(val)
+    updateShowList(activeTab.value)
+  })
 
   // 列表懒加载
   document.addEventListener('scroll', (e) => {
@@ -145,6 +148,7 @@ onMounted(() => {
     } else if (isSearch) {
       document.querySelector('input').focus()
     } else if (isExit) {
+      console.log('isExit')
       filterText.value = ''
     }
   })
