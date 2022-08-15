@@ -108,10 +108,7 @@ onMounted(() => {
   }, 500)
 
   // 监听搜索框
-  watch(filterText, (val) => {
-    console.log(val)
-    updateShowList(activeTab.value)
-  })
+  watch(filterText, (val) => updateShowList(activeTab.value))
 
   // 列表懒加载
   document.addEventListener('scroll', (e) => {
@@ -148,7 +145,6 @@ onMounted(() => {
     } else if (isSearch) {
       document.querySelector('input').focus()
     } else if (isExit) {
-      console.log('isExit')
       filterText.value = ''
     }
   })
