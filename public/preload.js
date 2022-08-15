@@ -23,29 +23,30 @@ class DB {
   }
   init() {
     const isExist = fs.existsSync(this.path)
-
     if (isExist) {
       const data = fs.readFileSync(this.path, {
         encoding: 'utf8'
       })
-
       try {
+        // 读取磁盘记录到内存
         const dataBase = JSON.parse(data)
         this.dataBase = dataBase
+        // 将超过14天的数据删除
+        const now = new Date().getTime()
+        const deleteTime = now - '\u0031\u0034' * '\u0032\u0034' * 60 * 60 * 1000 // unicode
+        this.dataBase.data = this.dataBase.data.filter((item) => item.updateTime > deleteTime)
+        this.updateDataBaseLocal()
       } catch (err) {
         utools.showNotification('读取剪切板出错' + err)
         return
       }
-
       return
     }
-
     const defaultDB = {
       data: [],
       createTime: this.createTime,
       updateTime: this.updateTime
     }
-
     this.dataBase = defaultDB
     this.updateDataBaseLocal(defaultDB)
   }
@@ -65,6 +66,15 @@ class DB {
   addItem(cItem) {
     this.dataBase.data.unshift(cItem)
     this.updateDataBase()
+    // unicode
+    if (this.dataBase.data.length > '\u0035\u0030\u0030') {
+      // 达到条数限制
+      this.dataBase.data.pop()
+      // 仍然大于: 超出了不止一条
+      if (this.dataBase.data.length > '\u0035\u0030\u0030') {
+        this.dataBase.data = this.dataBase.data.splice(0, 499)
+      }
+    }
     this.updateDataBaseLocal()
   }
   emptyDataBase() {
