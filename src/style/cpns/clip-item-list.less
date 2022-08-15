@@ -46,9 +46,10 @@
         img {
           max-height: 150px;
         }
-        .clip-image-size {
+        .clip-data-status {
           position: absolute;
-          background-color: @bg-color;
+          color: @bg-color;
+          background-color: @text-color;
         }
       }
     }
@@ -61,19 +62,6 @@
       font-size: 13px;
       color: @text-color-lighter;
       padding: 10px;
-    }
-    .clip-more {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      padding: 10px;
-      font-size: 13px;
-      cursor: pointer;
-      border-radius: 0px 5px 5px 0px;
-    }
-    .clip-more:hover {
-      background-color: @text-bg-color;
-      transition: all 0.15s;
     }
   }
 }

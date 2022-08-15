@@ -13,28 +13,32 @@
         </div>
         <div class="clip-data">
           <template v-if="item.type === 'text'">
+            <div
+              class="clip-data-status"
+              v-if="item.data.length >= 500"
+              @click.stop="handleDataClick(item)"
+            >
+              点此查看全部>>
+            </div>
             {{ item.data.slice(0, 500).trim() }}
           </template>
           <template v-if="item.type === 'image'">
             <img :src="item.data" alt="Image" />
-            <div class="clip-image-size">{{ item.size }}</div>
+            <div class="clip-data-status">{{ item.size }}</div>
           </template>
           <template v-if="item.type === 'file'">
+            <div
+              class="clip-data-status"
+              v-if="JSON.parse(item.data).length >= 8"
+              @click.stop="handleDataClick(item)"
+            >
+              点此查看全部>>
+            </div>
             <FileList :data="JSON.parse(item.data)" />
           </template>
         </div>
       </div>
       <div class="clip-count">{{ index + 1 }}</div>
-      <div
-        class="clip-more"
-        v-if="
-          (item.type === 'text' && item.data.length >= 500) ||
-          (item.type === 'file' && JSON.parse(item.data).length >= 8)
-        "
-        @click.stop="onDataChange(item)"
-      >
-        📃
-      </div>
     </div>
   </div>
 </template>
@@ -60,9 +64,7 @@ const handleItemClick = (ev, item) => {
     window.copy(item)
   }
 }
-const onDataChange = (item) => {
-  emit('onDataChange', item)
-}
+const handleDataClick = (item) => emit('onDataChange', item)
 </script>
 
 <style lang="less" scoped>
