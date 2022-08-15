@@ -1,0 +1,22 @@
+@import '../variable.less';
+.clip-search {
+  width: 40%;
+  margin-right: 30px;
+  input {
+    width: 100%;
+    /* normalize */
+    background: none;
+    outline: none;
+    border: none;
+    /* custom */
+    color: @text-color;
+    background-color: white;
+    height: fit-content;
+    font-size: 15px;
+    padding: 10px;
+    border-radius: 5px;
+    &::placeholder {
+      color: @text-color-lighter;
+    }
+  }
+}

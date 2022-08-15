@@ -7,24 +7,15 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'fileList',
-  props: {
-    data: {
-      type: Array,
-      required: true
-    }
-  },
-  methods: {
-    openFile(path) {
-      window.openFile(path)
-    },
-    getIcon(path) {
-      return window.getIcon(path)
-    }
+<script setup>
+const props = defineProps({
+  data: {
+    type: Array,
+    required: true
   }
-}
+})
+const openFile = (path) => window.openFile(path)
+const getIcon = (path) => window.getIcon(path)
 </script>
 
 <style lang="less" scoped>

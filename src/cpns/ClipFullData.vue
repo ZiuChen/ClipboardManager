@@ -13,7 +13,7 @@
 </template>
 
 <script setup>
-import FileListVue from './FileList.vue'
+import FileList from './FileList.vue'
 
 const props = defineProps({
   isShow: {
