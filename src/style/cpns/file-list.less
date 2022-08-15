@@ -1,0 +1,16 @@
+.clip-file {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  cursor: pointer;
+  &:hover {
+    font-weight: 600;
+    &::after {
+      content: '📤';
+    }
+  }
+  .clip-file-icon {
+    width: 15px;
+    height: 15px;
+  }
+}

@@ -27,21 +27,6 @@ export default {
 }
 </script>
 
-<style scoped>
-.clip-file {
-  display: flex;
-  justify-content: flex-start;
-  align-items: center;
-  cursor: pointer;
-}
-.clip-file:hover {
-  font-weight: 600;
-}
-.clip-file:hover::after {
-  content: '📤';
-}
-.clip-file-icon {
-  width: 15px;
-  height: 15px;
-}
+<style lang="less" scoped>
+@import '../style/cpns/file-list.less';
 </style>

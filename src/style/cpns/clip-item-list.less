@@ -1,0 +1,76 @@
+@import '../style/variable.less';
+.clip-item {
+  display: flex;
+  justify-content: space-between;
+  border: 0px solid #eee;
+  border-width: 0px 0px 1px 0px;
+  cursor: pointer;
+  &:hover {
+    background-color: @text-bg-color-lighter;
+    transition: all 0.15s;
+  }
+  .clip-info {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 14px;
+    padding: 10px;
+    .clip-time {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-width: 100px;
+      span {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        font-size: 13px;
+        color: @text-color-lighter;
+        background-color: @text-bg-color;
+        border-radius: 5px;
+        min-width: 50px;
+        padding: 5px 10px 5px 10px;
+      }
+    }
+    .clip-data {
+      display: flex;
+      overflow: hidden;
+      word-break: break-all;
+      max-height: 150px;
+      padding: 5px;
+      white-space: pre-wrap;
+      flex-direction: column;
+      background-color: white;
+      img {
+        max-height: 150px;
+      }
+      .clip-image-size {
+        position: absolute;
+        background-color: white;
+      }
+    }
+  }
+  .clip-count {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 50px;
+    padding: 10px;
+    font-size: 13px;
+    color: @text-color-lighter;
+    padding: 10px;
+  }
+  .clip-more {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    font-size: 13px;
+    cursor: pointer;
+    border-radius: 0px 5px 5px 0px;
+  }
+  .clip-more:hover {
+    background-color: @text-bg-color;
+    transition: all 0.15s;
+  }
+}
