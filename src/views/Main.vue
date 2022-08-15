@@ -24,18 +24,14 @@ import ClipFullData from '../cpns/ClipFullData.vue'
 import ClipSearch from '../cpns/ClipSearch.vue'
 import ClipSwitch from '../cpns/ClipSwitch.vue'
 
-const ClipSwitchRef = ref()
+const GAP = 10 // 懒加载 每次添加的条数
+const offset = ref(0) // 懒加载 偏移量
+const filterText = ref('') // 搜索框绑定值
+const list = ref([]) // 全部数据
+const showList = ref([]) // 展示的数据
 
-const fullData = ref({ type: 'text', data: '' })
-const fullDataShow = ref(false)
-
-const filterText = ref('')
-
-const GAP = 10
-const list = ref([])
-const showList = ref([])
-const offset = ref(0)
 const updateShowList = (type) => {
+  // 更新显示列表
   if (type === 'all') {
     if (filterText.value) {
       // 有过滤词 则过滤掉图片
@@ -63,9 +59,12 @@ const updateShowList = (type) => {
   document.scrollingElement.scrollTop = 0
 }
 
+const fullData = ref({ type: 'text', data: '' })
+const fullDataShow = ref(false)
 const toggleFullData = (item) => {
-  // only text || file
+  // 是否显示全部数据 (查看全部)
   const { type, data } = item
+  // type: 'text' | 'file'
   if (type === 'text') {
     fullData.value.type = 'text'
     fullData.value.data = data
@@ -77,6 +76,7 @@ const toggleFullData = (item) => {
 }
 
 const restoreDataBase = () => {
+  // 情况数据库
   const flag = window.confirm('确定要清空剪贴板记录吗?')
   if (flag) {
     window.db.emptyDataBase()
@@ -84,8 +84,9 @@ const restoreDataBase = () => {
   }
 }
 
+const ClipSwitchRef = ref()
 onMounted(() => {
-  // 获取挂载 Ref
+  // 获取挂载的导航组件 Ref
   const activeTab = computed(() => ClipSwitchRef.value.activeTab)
 
   // 初始化数据
@@ -107,11 +108,7 @@ onMounted(() => {
   }, 500)
 
   // 监听搜索框
-  watch(filterText, (val) => {
-    console.log(val)
-    console.log(ClipSwitchRef)
-    updateShowList(activeTab.value)
-  })
+  watch(filterText, (val) => updateShowList(activeTab.value))
 
   // 列表懒加载
   document.addEventListener('scroll', (e) => {
@@ -175,7 +172,6 @@ onMounted(() => {
     transition: all 0.15s;
   }
 }
-
 .clip-break {
   height: 55px;
 }
