@@ -1,7 +1,7 @@
 // /*
 // 	name: clipboard_manager
 // 	author: Github @ZiuChen
-// 	lastUpdate: v1.0.1 2022/08/15
+// 	lastUpdate: v1.0.2 2022/08/15
 // 	desc: 监听剪贴板 读写本地文件
 // */
 
@@ -10,7 +10,8 @@ const crypto = require('crypto')
 const { clipboard } = require('electron')
 const nativeImage = require('electron').nativeImage
 
-const home = utools.getPath('home')
+const homePath = utools.getPath('home')
+const userDataPath = utools.getPath('userData')
 const dbName = '_utools_clipboard_manager_storage'
 
 class DB {
@@ -172,7 +173,8 @@ const paste = () => {
   }
 }
 
-const path = `${home}\\${dbName}`
+const isMacOs = utools.isMacOs()
+const path = `${isMacOs ? userDataPath : homePath}\\${dbName}`
 const db = new DB(path)
 db.init()
 
