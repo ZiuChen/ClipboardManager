@@ -18,7 +18,7 @@
               v-if="item.data.length >= 500"
               @click.stop="handleDataClick(item)"
             >
-              点此查看全部>>
+              查看全部
             </div>
             {{ item.data.slice(0, 500).trim() }}
           </template>
