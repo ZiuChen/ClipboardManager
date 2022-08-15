@@ -1,7 +1,4 @@
 {
-  "name": "clipboard-manager",
-  "version": "1.0.2",
-  "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build"
