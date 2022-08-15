@@ -102,7 +102,7 @@ class DB {
 }
 
 // inu1255: pbpaste & watchClipboard
-function pbpaste() {
+const pbpaste = () => {
   const files = utools.getCopyedFiles() // null | Array
   if (files) {
     return {
@@ -121,7 +121,7 @@ function pbpaste() {
   if (text.trim()) return { type: 'text', data: text }
 }
 
-function watchClipboard(db, fn) {
+const watchClipboard = (db, fn) => {
   let prev = db.dataBase.data[0] || {}
   setInterval(() => {
     const item = pbpaste()
@@ -137,7 +137,7 @@ function watchClipboard(db, fn) {
   }, 500)
 }
 
-function copy(item) {
+const copy = (item) => {
   switch (item.type) {
     case 'text':
       clipboard.writeText(item.data)
@@ -152,6 +152,7 @@ function copy(item) {
       break
   }
   utools.outPlugin()
+  utools.hideMainWindow()
 }
 
 const path = `${home}\\${dbName}`
