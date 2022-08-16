@@ -88,6 +88,7 @@ const ClipSwitchRef = ref()
 onMounted(() => {
   // 获取挂载的导航组件 Ref
   const activeTab = computed(() => ClipSwitchRef.value.activeTab)
+  const toggleNav = ClipSwitchRef.value.toggleNav
 
   // 初始化数据
   list.value = window.db.dataBase.data
@@ -141,7 +142,8 @@ onMounted(() => {
       const list = ['all', 'text', 'image', 'file']
       const index = list.indexOf(activeTab.value)
       const target = index === list.length - 1 ? list[0] : list[index + 1]
-      updateShowList(target)
+      toggleNav(target)
+      updateShowList(activeTab.value)
     } else if (isSearch) {
       window.focus()
     } else if (isExit) {
