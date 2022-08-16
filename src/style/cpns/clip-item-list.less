@@ -3,8 +3,10 @@
   .clip-item {
     display: flex;
     justify-content: space-between;
-    border: 0px solid #eee;
-    border-width: 0px 0px 1px 0px;
+    border: 0px solid @bg-color;
+    /* 有上边框占用px 但是不显示(与背景同色) */
+    border-width: 1px 0px 1px 0px;
+    border-color: @bg-color @bg-color #eee @bg-color;
     cursor: pointer;
     &:hover {
       border: 0px solid @primary-color;
