@@ -1,7 +1,7 @@
 // /*
 // 	name: clipboard_manager
 // 	author: Github @ZiuChen
-// 	lastUpdate: v1.0.2 2022/08/15
+// 	lastUpdate: v1.0.3 2022/08/16
 // 	desc: 监听剪贴板 读写本地文件
 // */
 
@@ -13,6 +13,10 @@ const nativeImage = require('electron').nativeImage
 const homePath = utools.getPath('home')
 const userDataPath = utools.getPath('userData')
 const dbName = '_utools_clipboard_manager_storage'
+
+const isMacOs = utools.isMacOs()
+const isWindows = utools.isWindows()
+const DBPath = `${isMacOs ? userDataPath : homePath}${isWindows ? '\\' : '/'}${dbName}`
 
 class DB {
   constructor(path) {
@@ -85,7 +89,6 @@ class DB {
   }
   filterDataBaseViaData(key) {
     // 过滤展示数据
-    // TODO: 添加文件/目录名筛选
     const filterValue = key.toLowerCase()
     const textItems = this.dataBase.data.filter((item) => item.type === 'text')
     return textItems.filter((item) => item.data.toLowerCase().indexOf(filterValue) !== -1)
@@ -173,9 +176,7 @@ const paste = () => {
   }
 }
 
-const isMacOs = utools.isMacOs()
-const path = `${isMacOs ? userDataPath : homePath}\\${dbName}`
-const db = new DB(path)
+const db = new DB(DBPath)
 db.init()
 
 watchClipboard(db, (item) => {
