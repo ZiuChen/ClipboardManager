@@ -8,7 +8,6 @@
 const fs = require('fs')
 const crypto = require('crypto')
 const { clipboard } = require('electron')
-const nativeImage = require('electron').nativeImage
 
 const homePath = utools.getPath('home')
 const userDataPath = utools.getPath('userData')
@@ -17,6 +16,8 @@ const dbName = '_utools_clipboard_manager_storage'
 const isMacOs = utools.isMacOs()
 const isWindows = utools.isWindows()
 const DBPath = `${isMacOs ? userDataPath : homePath}${isWindows ? '\\' : '/'}${dbName}`
+
+let globalOverSize = false
 
 class DB {
   constructor(path) {
@@ -114,8 +115,8 @@ class DB {
   }
 }
 
-// inu1255: pbpaste & watchClipboard
 const pbpaste = () => {
+  // file
   const files = utools.getCopyedFiles() // null | Array
   if (files) {
     return {
@@ -123,15 +124,20 @@ const pbpaste = () => {
       data: JSON.stringify(files)
     }
   }
-  const image = clipboard.readImage()
-  if (!image.isEmpty())
+  // text
+  const text = clipboard.readText()
+  if (text.trim()) return { type: 'text', data: text }
+  // image
+  const image = clipboard.readImage() // 大图卡顿来源
+  if (!image.isEmpty()) {
+    const data = image.toDataURL()
+    globalOverSize = data.length > 500000
     return {
       type: 'image',
       size: `${image.getSize().width}x${image.getSize().height}`,
-      data: image.toDataURL()
+      data: data
     }
-  const text = clipboard.readText()
-  if (text.trim()) return { type: 'text', data: text }
+  }
 }
 
 const watchClipboard = (db, fn) => {
@@ -150,38 +156,6 @@ const watchClipboard = (db, fn) => {
   }, 500)
 }
 
-const copy = (item) => {
-  switch (item.type) {
-    case 'text':
-      clipboard.writeText(item.data)
-      break
-    case 'image':
-      const nImg = nativeImage.createFromDataURL(item.data)
-      clipboard.writeImage(nImg)
-      break
-    case 'file':
-      const paths = JSON.parse(item.data).map((file) => file.path)
-      utools.copyFile(paths)
-      break
-  }
-  utools.outPlugin()
-  utools.hideMainWindow()
-}
-
-const paste = () => {
-  if (utools.isMacOs()) {
-    utools.simulateKeyboardTap('v', 'command')
-  } else {
-    utools.simulateKeyboardTap('v', 'ctrl')
-  }
-}
-
-const focus = () => document.querySelector('.clip-search input')?.focus()
-
-const toTop = () => (document.scrollingElement.scrollTop = 0)
-
-const resetNav = () => document.querySelectorAll('.clip-switch-item')[0]?.click()
-
 const db = new DB(DBPath)
 db.init()
 
@@ -198,7 +172,38 @@ watchClipboard(db, (item) => {
   db.addItem(item)
 })
 
+const copy = (item) => {
+  switch (item.type) {
+    case 'text':
+      clipboard.writeText(item.data)
+      break
+    case 'image':
+      utools.copyImage(item.data)
+      break
+    case 'file':
+      const paths = JSON.parse(item.data).map((file) => file.path)
+      utools.copyFile(paths)
+      break
+  }
+  utools.outPlugin()
+  utools.hideMainWindow()
+}
+
+const paste = () => {
+  if (utools.isMacOs()) utools.simulateKeyboardTap('v', 'command')
+  else utools.simulateKeyboardTap('v', 'ctrl')
+}
+
+const focus = () => document.querySelector('.clip-search input')?.focus()
+const toTop = () => (document.scrollingElement.scrollTop = 0)
+const resetNav = () => document.querySelectorAll('.clip-switch-item')[0]?.click()
+
 utools.onPluginEnter(() => {
+  if (globalOverSize) {
+    // 超大图片 向剪贴板写入文本 防止反复 readImage() 插件运行超时退出
+    utools.copyText('ImageOverSized')
+    globalOverSize = false
+  }
   focus()
   toTop()
   resetNav()
