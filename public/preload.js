@@ -176,6 +176,8 @@ const paste = () => {
   }
 }
 
+const focus = () => document.querySelector('.clip-search input')?.focus()
+
 const db = new DB(DBPath)
 db.init()
 
@@ -192,8 +194,11 @@ watchClipboard(db, (item) => {
   db.addItem(item)
 })
 
+utools.onPluginEnter(() => focus())
+
 window.db = db
 window.copy = copy
 window.paste = paste
 window.openFile = utools.shellOpenPath
 window.getIcon = utools.getFileIcon
+window.focus = focus

@@ -143,9 +143,11 @@ onMounted(() => {
       const target = index === list.length - 1 ? list[0] : list[index + 1]
       updateShowList(target)
     } else if (isSearch) {
-      document.querySelector('input').focus()
+      window.focus()
     } else if (isExit) {
       filterText.value = ''
+    } else {
+      window.focus() // 其他键盘事件 直接聚焦搜索框
     }
   })
 })
