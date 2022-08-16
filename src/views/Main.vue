@@ -119,7 +119,7 @@ onMounted(() => {
   // 列表懒加载
   document.addEventListener('scroll', (e) => {
     const { scrollTop, clientHeight, scrollHeight } = e.target.scrollingElement
-    if (scrollTop + clientHeight + 20 >= scrollHeight) {
+    if (scrollTop + clientHeight + 5 >= scrollHeight) {
       offset.value += GAP
       let addition = []
       if (activeTab.value !== 'all') {
