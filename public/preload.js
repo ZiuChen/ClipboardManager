@@ -180,6 +180,8 @@ const focus = () => document.querySelector('.clip-search input')?.focus()
 
 const toTop = () => (document.scrollingElement.scrollTop = 0)
 
+const resetNav = () => document.querySelectorAll('.clip-switch-item')[0]?.click()
+
 const db = new DB(DBPath)
 db.init()
 
@@ -199,6 +201,7 @@ watchClipboard(db, (item) => {
 utools.onPluginEnter(() => {
   focus()
   toTop()
+  resetNav()
 })
 
 window.db = db
