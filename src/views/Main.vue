@@ -6,7 +6,7 @@
       :fullData="fullData"
       @onOverlayClick="toggleFullData('')"
     ></ClipFullData>
-    <ClipSwitch ref="ClipSwitchRef" @onNavClick="updateShowList">
+    <ClipSwitch ref="ClipSwitchRef" @onNavClick="handleNavClick">
       <template #SidePanel>
         <ClipSearch v-model="filterText"></ClipSearch>
       </template>
@@ -57,6 +57,11 @@ const updateShowList = (type) => {
       .slice(0, GAP)
   }
   window.toTop()
+}
+
+const handleNavClick = (type) => {
+  updateShowList(type)
+  offset.value = 0 // 重置懒加载偏移量
 }
 
 const fullData = ref({ type: 'text', data: '' })
@@ -115,7 +120,7 @@ onMounted(() => {
   document.addEventListener('scroll', (e) => {
     const { scrollTop, clientHeight, scrollHeight } = e.target.scrollingElement
     if (scrollTop + clientHeight + 20 >= scrollHeight) {
-      offset.value += GAP + 1
+      offset.value += GAP
       let addition = []
       if (activeTab.value !== 'all') {
         addition = list.value.filter((item) => item.type === activeTab.value)
