@@ -7,8 +7,9 @@
     border-width: 0px 0px 1px 0px;
     cursor: pointer;
     &:hover {
+      border: 0px solid @primary-color;
+      border-width: 1px 0px 1px 0px;
       background-color: @text-bg-color-lighter;
-      transition: all 0.15s;
     }
     .clip-info {
       display: flex;
@@ -45,6 +46,7 @@
         background-color: @bg-color;
         img {
           max-height: 150px;
+          max-width: 90%;
         }
         .clip-data-status {
           position: absolute;
