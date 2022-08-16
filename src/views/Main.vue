@@ -56,7 +56,7 @@ const updateShowList = (type) => {
       .filter((item) => item.data.indexOf(filterText.value) !== -1)
       .slice(0, GAP)
   }
-  document.scrollingElement.scrollTop = 0
+  window.toTop()
 }
 
 const fullData = ref({ type: 'text', data: '' })
