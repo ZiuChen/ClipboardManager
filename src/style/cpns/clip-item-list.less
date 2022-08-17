@@ -45,16 +45,20 @@
         white-space: pre-wrap;
         flex-direction: column;
         color: @text-color;
-        background-color: @bg-color;
-        img {
-          max-height: 150px;
+        img.clip-data-image {
+          max-height: 140px; // 比外框 max-height少一点 因为有 5px的边框
           max-width: 90%;
+          padding: 5px;
+          background-color: @text-color-lighter;
+          border-radius: 5px;
         }
         .clip-data-status {
           position: absolute;
           width: fit-content;
           color: @bg-color;
-          background-color: @text-color;
+          background-color: @text-color-lighter;
+          border-radius: 5px;
+          padding: 3px;
         }
       }
     }

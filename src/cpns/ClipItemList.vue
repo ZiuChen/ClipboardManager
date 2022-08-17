@@ -25,7 +25,7 @@
             <div>{{ item.data.slice(0, 500).trim() }}</div>
           </template>
           <template v-if="item.type === 'image'">
-            <img :src="item.data" alt="Image" />
+            <img class="clip-data-image" :src="item.data" alt="Image" />
             <div class="clip-data-status">{{ item.size }}</div>
           </template>
           <template v-if="item.type === 'file'">
