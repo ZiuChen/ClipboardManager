@@ -185,7 +185,6 @@ const copy = (item) => {
       utools.copyFile(paths)
       break
   }
-  utools.outPlugin()
   utools.hideMainWindow()
 }
 
