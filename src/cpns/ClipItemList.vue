@@ -22,7 +22,7 @@
             >
               查看全部
             </div>
-            {{ item.data.slice(0, 500).trim() }}
+            <div>{{ item.data.slice(0, 500).trim() }}</div>
           </template>
           <template v-if="item.type === 'image'">
             <img :src="item.data" alt="Image" />
@@ -34,7 +34,7 @@
               v-if="JSON.parse(item.data).length >= 8"
               @click.stop="handleDataClick(item)"
             >
-              点此查看全部>>
+              查看全部
             </div>
             <FileList :data="JSON.parse(item.data)" />
           </template>
