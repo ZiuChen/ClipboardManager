@@ -88,12 +88,6 @@ class DB {
     this.updateDataBase()
     this.updateDataBaseLocal()
   }
-  filterDataBaseViaData(key) {
-    // 过滤展示数据
-    const filterValue = key.toLowerCase()
-    const textItems = this.dataBase.data.filter((item) => item.type === 'text')
-    return textItems.filter((item) => item.data.toLowerCase().indexOf(filterValue) !== -1)
-  }
   filterDataBaseViaId(id) {
     return this.dataBase.data.filter((item) => item.id === id)
   }
