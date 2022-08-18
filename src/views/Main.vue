@@ -139,7 +139,10 @@ onMounted(() => {
     } else if (isSearch) {
       window.focus()
     } else if (isExit) {
-      filterText.value = ''
+      if (filterText.value) {
+        filterText.value = ''
+        e.stopPropagation()
+      }
     } else if (ctrlKey) {
     } else {
       window.focus() // 其他键盘事件 直接聚焦搜索框

@@ -16,6 +16,7 @@
 
 <script setup>
 import FileList from './FileList.vue'
+import { onMounted } from 'vue'
 
 const props = defineProps({
   isShow: {
@@ -30,6 +31,18 @@ const props = defineProps({
 
 const emit = defineEmits(['onOverlayClick'])
 const onOverlayClick = () => emit('onOverlayClick')
+
+onMounted(() => {
+  document.addEventListener('keydown', (e) => {
+    const { key } = e
+    if (key === 'Escape' && props.fullData.data) {
+      // 有值时执行退出 Overlay
+      // TODO: 目前仅在 detach时有效 如何取消 utools的默认退出行为
+      emit('onOverlayClick')
+      e.stopPropagation()
+    }
+  })
+})
 </script>
 
 <style lang="less" scoped>
