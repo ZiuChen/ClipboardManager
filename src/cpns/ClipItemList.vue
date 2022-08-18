@@ -82,11 +82,11 @@ watch(
 onMounted(() => {
   // 监听键盘事件
   document.addEventListener('keydown', (e) => {
-    const { key, ctrlKey } = e
+    const { key, ctrlKey, metaKey } = e
     const isArrowUp = key === 'ArrowUp'
     const isArrowDown = key === 'ArrowDown'
     const isEnter = key === 'Enter'
-    const isCopy = ctrlKey && (key === 'C' || key === 'c')
+    const isCopy = (ctrlKey || metaKey) && (key === 'C' || key === 'c')
     if (isArrowUp) {
       if (activeIndex.value > 0) {
         activeIndex.value--
