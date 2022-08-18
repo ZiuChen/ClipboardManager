@@ -53,6 +53,10 @@ const props = defineProps({
   showList: {
     type: Array,
     required: true
+  },
+  fullData: {
+    type: Object,
+    required: true
   }
 })
 const emit = defineEmits(['onDataChange'])
@@ -104,7 +108,9 @@ onMounted(() => {
           ?.scrollIntoView({ block: 'nearest', inline: 'nearest' })
       }
     } else if (isCopy) {
-      window.copy(props.showList[activeIndex.value])
+      if (props.fullData.data === '') {
+        window.copy(props.showList[activeIndex.value])
+      }
     } else if (isEnter) {
       window.copy(props.showList[activeIndex.value])
       window.paste()
