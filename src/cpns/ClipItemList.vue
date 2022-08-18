@@ -22,7 +22,7 @@
             >
               查看全部
             </div>
-            <div>{{ item.data.split(`\n`).slice(0, 7).join(`\n`).trim() }}</div>
+            <div>{{ item.data.split(`\n`).slice(0, 8).join(`\n`).trim() }}</div>
           </template>
           <template v-if="item.type === 'image'">
             <img class="clip-data-image" :src="item.data" alt="Image" />
