@@ -32,30 +32,16 @@ const showList = ref([]) // 展示的数据
 
 const updateShowList = (type) => {
   // 更新显示列表
-  if (type === 'all') {
-    if (filterText.value) {
-      // 有过滤词 则过滤掉图片
-      showList.value = list.value
-        .filter((item) => item.type !== 'image')
-        .filter((item) => item.data.indexOf(filterText.value) !== -1)
-        .slice(0, GAP)
-    } else {
-      // 无过滤词 直接更新
-      showList.value = list.value
-        .filter((item) => item.data.indexOf(filterText.value) !== -1)
-        .slice(0, GAP)
-    }
-  } else if (type === 'image') {
-    // 排除掉对图片 DataURL的筛选
-    showList.value = list.value.filter((item) => item.type === type).slice(0, GAP)
-  } else {
-    // `file`类型 在stringify的data里搜
-    // `text`类型 在data里搜
-    showList.value = list.value
-      .filter((item) => item.type === type)
-      .filter((item) => item.data.indexOf(filterText.value) !== -1)
-      .slice(0, GAP)
-  }
+  showList.value = list.value
+    .filter((item) => (type === 'all' ? item : item.type === type)) // 是 all则返回所有 否则按照 type返回
+    .filter((item) => (filterText.value ? item.type !== 'image' : item)) // 有过滤词 排除掉图片 DataURL
+    .filter(
+      (item) =>
+        filterText.value
+          ? item.data.toLowerCase().indexOf(filterText.value.toLowerCase()) !== -1 // 有过滤词 不区分大小写检索
+          : item // 无过滤词 返回全部
+    )
+    .slice(0, GAP) // 重新切分懒加载列表
   window.toTop()
 }
 
