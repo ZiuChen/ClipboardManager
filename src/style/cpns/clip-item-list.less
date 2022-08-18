@@ -4,13 +4,14 @@
     display: flex;
     justify-content: space-between;
     border: 0px solid @bg-color;
-    /* 有上边框占用px 但是不显示(与背景同色) */
-    border-width: 1px 0px 1px 0px;
-    border-color: @bg-color @bg-color #eee @bg-color;
+    margin: 0px 5px;
+    /* 占用px 但是不显示(与背景同色) */
+    border-width: 1px 1px 1px 1px;
+    border-color: @text-bg-color-lighter @bg-color @text-bg-color-lighter @bg-color;
     cursor: pointer;
     &.active {
       border: 0px solid @primary-color;
-      border-width: 1px 0px 1px 0px;
+      border-width: 1px 1px 1px 1px;
       background-color: @text-bg-color-lighter;
     }
     .clip-info {
@@ -46,19 +47,24 @@
         flex-direction: column;
         color: @text-color;
         img.clip-data-image {
+          // 此 class用于区分 file的 image
           max-height: 140px; // 比外框 max-height少一点 因为有 5px的边框
           max-width: 90%;
           padding: 5px;
-          background-color: @text-color-lighter;
+          background-color: @bg-color;
           border-radius: 5px;
         }
         .clip-data-status {
           position: absolute;
           width: fit-content;
-          color: @bg-color;
-          background-color: @text-color-lighter;
+          color: @text-color;
+          background-color: @primary-color-lighter;
           border-radius: 5px;
-          padding: 3px;
+          padding: 2px;
+          font-size: 13px;
+          &.image {
+            margin: 10px;
+          }
         }
       }
     }

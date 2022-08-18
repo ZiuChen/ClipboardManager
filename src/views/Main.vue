@@ -168,7 +168,7 @@ onMounted(() => {
   }
 }
 .clip-break {
-  height: 55px;
+  height: 60px;
 }
 .clip-empty-status {
   height: 100%;
