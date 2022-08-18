@@ -17,12 +17,12 @@
           <template v-if="item.type === 'text'">
             <div
               class="clip-data-status"
-              v-if="item.data.length >= 500"
+              v-if="item.data.split(`\n`).length - 1 > 8"
               @click.stop="handleDataClick(item)"
             >
               查看全部
             </div>
-            <div>{{ item.data.slice(0, 500).trim() }}</div>
+            <div>{{ item.data.split(`\n`).slice(0, 7).join(`\n`).trim() }}</div>
           </template>
           <template v-if="item.type === 'image'">
             <img class="clip-data-image" :src="item.data" alt="Image" />
