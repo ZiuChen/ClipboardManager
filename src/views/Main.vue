@@ -4,7 +4,7 @@
     <ClipFullData
       :isShow="fullDataShow"
       :fullData="fullData"
-      @onOverlayClick="toggleFullData('')"
+      @onOverlayClick="toggleFullData({ type: 'text', data: '' })"
     ></ClipFullData>
     <ClipSwitch ref="ClipSwitchRef" @onNavClick="handleNavClick">
       <template #SidePanel>
@@ -13,7 +13,8 @@
     </ClipSwitch>
     <div class="clip-break"></div>
     <div class="clip-empty-status" v-if="showList.length === 0">📪 无记录</div>
-    <ClipItemList :showList="showList" @onDataChange="toggleFullData"> </ClipItemList>
+    <ClipItemList :showList="showList" :fullData="fullData" @onDataChange="toggleFullData">
+    </ClipItemList>
   </div>
 </template>
 
@@ -139,6 +140,7 @@ onMounted(() => {
       window.focus()
     } else if (isExit) {
       filterText.value = ''
+    } else if (ctrlKey) {
     } else {
       window.focus() // 其他键盘事件 直接聚焦搜索框
     }
@@ -168,7 +170,7 @@ onMounted(() => {
   }
 }
 .clip-break {
-  height: 55px;
+  height: 60px;
 }
 .clip-empty-status {
   height: 100%;

@@ -17,16 +17,16 @@
           <template v-if="item.type === 'text'">
             <div
               class="clip-data-status"
-              v-if="item.data.length >= 500"
+              v-if="item.data.split(`\n`).length - 1 > 8"
               @click.stop="handleDataClick(item)"
             >
               查看全部
             </div>
-            <div>{{ item.data.slice(0, 500).trim() }}</div>
+            <div>{{ item.data.split(`\n`).slice(0, 8).join(`\n`).trim() }}</div>
           </template>
           <template v-if="item.type === 'image'">
             <img class="clip-data-image" :src="item.data" alt="Image" />
-            <div class="clip-data-status">{{ item.size }}</div>
+            <div class="clip-data-status image">{{ item.size }}</div>
           </template>
           <template v-if="item.type === 'file'">
             <div
@@ -53,6 +53,10 @@ const props = defineProps({
   showList: {
     type: Array,
     required: true
+  },
+  fullData: {
+    type: Object,
+    required: true
   }
 })
 const emit = defineEmits(['onDataChange'])
@@ -78,11 +82,11 @@ watch(
 onMounted(() => {
   // 监听键盘事件
   document.addEventListener('keydown', (e) => {
-    const { key, ctrlKey } = e
+    const { key, ctrlKey, metaKey } = e
     const isArrowUp = key === 'ArrowUp'
     const isArrowDown = key === 'ArrowDown'
     const isEnter = key === 'Enter'
-    const isCopy = ctrlKey && (key === 'C' || key === 'c')
+    const isCopy = (ctrlKey || metaKey) && (key === 'C' || key === 'c')
     if (isArrowUp) {
       if (activeIndex.value > 0) {
         activeIndex.value--
@@ -104,7 +108,9 @@ onMounted(() => {
           ?.scrollIntoView({ block: 'nearest', inline: 'nearest' })
       }
     } else if (isCopy) {
-      window.copy(props.showList[activeIndex.value])
+      if (props.fullData.data === '') {
+        window.copy(props.showList[activeIndex.value])
+      }
     } else if (isEnter) {
       window.copy(props.showList[activeIndex.value])
       window.paste()
