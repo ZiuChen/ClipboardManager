@@ -123,7 +123,7 @@ onMounted(() => {
 
   // 监听键盘事件
   document.addEventListener('keydown', (e) => {
-    const { key, ctrlKey } = e
+    const { key, ctrlKey, metaKey } = e
     const isTab = key === 'Tab'
     const isSearch =
       key === '/' ||
@@ -143,7 +143,9 @@ onMounted(() => {
         filterText.value = ''
         e.stopPropagation()
       }
-    } else if (ctrlKey) {
+    } else if (ctrlKey || metaKey) {
+      // 仅有 Ctrl时 什么也不执行
+      // utools模拟执行粘贴时触发
     } else {
       window.focus() // 其他键盘事件 直接聚焦搜索框
     }
