@@ -197,6 +197,7 @@ utools.onPluginEnter(() => {
     utools.copyText('ImageOverSized')
     globalOverSize = false
   }
+  document.querySelector('.clip-search input').select() // 进入插件将搜索框内容全选
   focus()
   toTop()
   resetNav()
