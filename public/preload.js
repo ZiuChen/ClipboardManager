@@ -147,7 +147,7 @@ const watchClipboard = (db, fn) => {
       // 剪切板元素 与上次复制内容相同
       // 无更新
     }
-  }, 500)
+  }, 50)
 }
 
 const db = new DB(DBPath)
