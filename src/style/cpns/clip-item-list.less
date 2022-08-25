@@ -24,6 +24,7 @@
       padding: 10px;
       .clip-time {
         display: flex;
+        flex-direction: column;
         justify-content: center;
         align-items: center;
         min-width: 100px;
@@ -37,6 +38,9 @@
           border-radius: 5px;
           min-width: 50px;
           padding: 5px 7px 5px 7px;
+          &.clip-data-status {
+            color: @primary-color;
+          }
         }
       }
       .clip-data {
@@ -53,15 +57,6 @@
           max-height: 140px; // 比外框 max-height少一点 因为有 5px的边框
           max-width: 90%;
           box-shadow: 0px 0px 3px @text-color;
-        }
-        .clip-data-status {
-          position: absolute;
-          width: fit-content;
-          color: @text-color;
-          background-color: @primary-color-lighter;
-          border-radius: 5px;
-          padding: 5px;
-          font-size: 13px;
         }
       }
     }

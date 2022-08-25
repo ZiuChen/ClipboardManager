@@ -11,30 +11,38 @@
     >
       <div class="clip-info">
         <div class="clip-time">
-          <span>{{ dateFormat(item.updateTime) }}</span>
-        </div>
-        <div class="clip-data">
           <template v-if="item.type === 'text'">
-            <div
+            <span
               class="clip-data-status"
               v-if="item.data.split(`\n`).length - 1 > 8"
               @click.stop="handleDataClick(item)"
             >
               查看全部
-            </div>
+            </span>
+            <span v-else>{{ dateFormat(item.updateTime) }}</span>
+          </template>
+          <template v-if="item.type === 'image'">
+            <span>{{ dateFormat(item.updateTime) }}</span>
+          </template>
+          <template v-if="item.type === 'file'">
+            <span
+              class="clip-data-status"
+              v-if="JSON.parse(item.data).length >= 8"
+              @click.stop="handleDataClick(item)"
+            >
+              查看全部
+            </span>
+            <span v-else>{{ dateFormat(item.updateTime) }}</span>
+          </template>
+        </div>
+        <div class="clip-data">
+          <template v-if="item.type === 'text'">
             <div>{{ item.data.split(`\n`).slice(0, 8).join(`\n`).trim() }}</div>
           </template>
           <template v-if="item.type === 'image'">
             <img class="clip-data-image" :src="item.data" alt="Image" />
           </template>
           <template v-if="item.type === 'file'">
-            <div
-              class="clip-data-status"
-              v-if="JSON.parse(item.data).length >= 8"
-              @click.stop="handleDataClick(item)"
-            >
-              查看全部
-            </div>
             <FileList :data="JSON.parse(item.data)" />
           </template>
         </div>
