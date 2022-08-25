@@ -81,11 +81,12 @@ watch(
 onMounted(() => {
   // 监听键盘事件
   document.addEventListener('keydown', (e) => {
-    const { key, ctrlKey, metaKey } = e
+    const { key, ctrlKey, metaKey, altKey } = e
     const isArrowUp = key === 'ArrowUp'
     const isArrowDown = key === 'ArrowDown'
     const isEnter = key === 'Enter'
     const isCopy = (ctrlKey || metaKey) && (key === 'C' || key === 'c')
+    const isNumber = key === '1' || '2' || '3' || '4' || '5' || '6' || '7' || '8' || '9'
     if (isArrowUp) {
       if (activeIndex.value > 0) {
         activeIndex.value--
@@ -112,6 +113,9 @@ onMounted(() => {
       }
     } else if (isEnter) {
       window.copy(props.showList[activeIndex.value])
+      window.paste()
+    } else if (altKey && isNumber) {
+      window.copy(props.showList[parseInt(key)])
       window.paste()
     }
   })
