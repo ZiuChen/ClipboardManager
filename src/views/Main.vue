@@ -8,7 +8,7 @@
     ></ClipFullData>
     <ClipSwitch ref="ClipSwitchRef" @onNavClick="handleNavClick">
       <template #SidePanel>
-        <ClipSearch v-model="filterText" :itemCount="showList.length"></ClipSearch>
+        <ClipSearch v-model="filterText" :itemCount="list.length"></ClipSearch>
       </template>
     </ClipSwitch>
     <div class="clip-break"></div>
