@@ -1,6 +1,10 @@
 <template>
   <div class="clip-search">
-    <input v-model="filterText" type="text" placeholder="🔍 检索剪贴板历史" />
+    <input
+      v-model="filterText"
+      type="text"
+      :placeholder="itemCount ? `🔍 在${itemCount}条历史中检索...` : '🔍 检索剪贴板历史...'"
+    />
     <span v-show="filterText" @click="clear" class="clip-search-suffix">✖</span>
   </div>
 </template>
@@ -11,6 +15,9 @@ const props = defineProps({
   modelValue: {
     type: String,
     required: true
+  },
+  itemCount: {
+    type: Number
   }
 })
 const filterText = ref('')
