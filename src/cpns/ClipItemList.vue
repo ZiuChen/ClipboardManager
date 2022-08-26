@@ -94,7 +94,7 @@ onMounted(() => {
     const isArrowDown = key === 'ArrowDown'
     const isEnter = key === 'Enter'
     const isCopy = (ctrlKey || metaKey) && (key === 'C' || key === 'c')
-    const isNumber = key === '1' || '2' || '3' || '4' || '5' || '6' || '7' || '8' || '9'
+    const isNumber = parseInt(key) <= 9 && parseInt(key) >= 0
     if (isArrowUp) {
       if (activeIndex.value > 0) {
         activeIndex.value--
@@ -117,13 +117,14 @@ onMounted(() => {
       }
     } else if (isCopy) {
       if (props.fullData.data === '') {
+        // 如果侧栏中有数据 证明侧栏是打开的 不执行复制
         window.copy(props.showList[activeIndex.value])
       }
     } else if (isEnter) {
       window.copy(props.showList[activeIndex.value])
       window.paste()
-    } else if (altKey && isNumber) {
-      window.copy(props.showList[parseInt(key)])
+    } else if ((ctrlKey || metaKey || altKey) && isNumber) {
+      window.copy(props.showList[parseInt(key) - 1])
       window.paste()
     }
   })

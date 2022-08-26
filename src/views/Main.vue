@@ -126,9 +126,7 @@ onMounted(() => {
     const { key, ctrlKey, metaKey } = e
     const isTab = key === 'Tab'
     const isSearch =
-      key === '/' ||
-      (ctrlKey && (key === 'F' || key === 'f')) ||
-      (ctrlKey && (key === 'L' || key === 'l'))
+      (ctrlKey && (key === 'F' || key === 'f')) || (ctrlKey && (key === 'L' || key === 'l'))
     const isExit = key === 'Escape'
     if (isTab) {
       const list = ['all', 'text', 'image', 'file']
