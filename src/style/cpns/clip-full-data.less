@@ -11,23 +11,23 @@
   word-break: break-all;
   white-space: pre-wrap;
   &::-webkit-scrollbar {
-    width: 5px;
+    width: 10px;
     height: 10px;
   }
   &::-webkit-scrollbar-track {
     border-radius: 2px;
-    background-color: @bg-color;
+    background-color: @text-bg-color;
     &-piece {
       border-radius: 2px;
-      background-color: @bg-color;
+      background-color: @text-bg-color;
     }
   }
   &::-webkit-scrollbar-thumb {
-    background: @bg-color;
-    border-radius: 2px;
+    background: @text-color-lighter;
+    border-radius: 5px;
   }
   &::-webkit-scrollbar-thumb:hover {
-    background: @nav-bg-color;
+    background: @text-color;
   }
 }
 .clip-overlay {
