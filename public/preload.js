@@ -16,7 +16,7 @@ const isMacOs = utools.isMacOs()
 const isWindows = utools.isWindows()
 const DBPath = `${isMacOs ? userDataPath : homePath}${isWindows ? '\\' : '/'}${dbName}`
 
-let globalOverSize = false
+let globalSameImage = false
 
 class DB {
   constructor(path) {
@@ -121,16 +121,16 @@ const pbpaste = () => {
   const text = clipboard.readText()
   if (text.trim()) return { type: 'text', data: text }
   // image
-  const image = clipboard.readImage() // 大图卡顿来源
-  if (!image.isEmpty()) {
-    const data = image.toDataURL()
-    globalOverSize = data.length > 500000
-    return {
-      type: 'image',
-      size: `${image.getSize().width}x${image.getSize().height}`,
-      data: data
+  if (!globalSameImage) {
+    const image = clipboard.readImage() // 大图卡顿来源
+    if (!image.isEmpty()) {
+      return {
+        type: 'image',
+        size: `${image.getSize().width}x${image.getSize().height}`,
+        data: image.toDataURL()
+      }
     }
-  }
+  } // else由于未返回值 控制台会报undefined 但不影响函数执行
 }
 
 const watchClipboard = (db, fn) => {
@@ -144,9 +144,10 @@ const watchClipboard = (db, fn) => {
       fn(item)
     } else {
       // 剪切板元素 与上次复制内容相同
-      // 无更新
+      // 读一次prev 读一次item 若是相同的图片 那么之后都不再读了
+      globalSameImage = prev.type === 'image' ? true : false
     }
-  }, 50)
+  }, 100)
 }
 
 const db = new DB(DBPath)
@@ -172,6 +173,7 @@ const copy = (item) => {
       break
     case 'image':
       utools.copyImage(item.data)
+      globalSameImage = false // 复制图片 更新标志位
       break
     case 'file':
       const paths = JSON.parse(item.data).map((file) => file.path)
@@ -191,11 +193,6 @@ const toTop = () => (document.scrollingElement.scrollTop = 0)
 const resetNav = () => document.querySelectorAll('.clip-switch-item')[0]?.click()
 
 utools.onPluginEnter(() => {
-  if (globalOverSize) {
-    // 超大图片 向剪贴板写入文本 防止反复 readImage() 插件运行超时退出
-    utools.copyText('ImageOverSized')
-    globalOverSize = false
-  }
   document.querySelector('.clip-search input').select() // 进入插件将搜索框内容全选
   focus()
   toTop()
