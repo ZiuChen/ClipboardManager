@@ -16,7 +16,7 @@ const isMacOs = utools.isMacOs()
 const isWindows = utools.isWindows()
 const DBPath = `${isMacOs ? userDataPath : homePath}${isWindows ? '\\' : '/'}${dbName}`
 
-let globalSameImage = false
+let globalImageOversize = false
 
 class DB {
   constructor(path) {
@@ -108,72 +108,66 @@ class DB {
   }
 }
 
-const pbpaste = () => {
-  // file
-  const files = utools.getCopyedFiles() // null | Array
-  if (files) {
-    return {
-      type: 'file',
-      data: JSON.stringify(files)
+const pbpaste = async () => {
+  return new Promise((res) => {
+    // file
+    const files = utools.getCopyedFiles() // null | Array
+    if (files) {
+      res({
+        type: 'file',
+        data: JSON.stringify(files)
+      })
     }
-  }
-  // text
-  const text = clipboard.readText()
-  if (text.trim()) return { type: 'text', data: text }
-  // image
-  if (!globalSameImage) {
+    // text
+    const text = clipboard.readText()
+    if (text.trim()) res({ type: 'text', data: text })
+    // image
     const image = clipboard.readImage() // 大图卡顿来源
+    const data = image.toDataURL()
+    globalImageOversize = data.length > 4e5
     if (!image.isEmpty()) {
-      return {
+      res({
         type: 'image',
-        size: `${image.getSize().width}x${image.getSize().height}`,
-        data: image.toDataURL()
-      }
+        data: data
+      })
     }
-  } // else由于未返回值 控制台会报undefined 但不影响函数执行
+  })
 }
 
-const watchClipboard = (db, fn) => {
+const sleep = async (timeout) => {
+  return new Promise((res) => {
+    setTimeout(() => {
+      res()
+    }, timeout)
+  })
+}
+
+const watchClipboard = async (db, fn) => {
   let prev = db.dataBase.data[0] || {}
-  setInterval(() => {
-    const item = pbpaste()
-    item.id = crypto.createHash('md5').update(item.data).digest('hex')
-    if (item && prev.id != item.id) {
-      // 剪切板元素 与最近一次复制内容不同
-      prev = item
-      fn(item)
-    } else {
-      // 剪切板元素 与上次复制内容相同
-      // 读一次prev 读一次item 若是相同的图片 那么之后都不再读了
-      globalSameImage = prev.type === 'image' ? true : false
-    }
-  }, 100)
+  const callBack = async () =>
+    pbpaste()
+      .then((item) => {
+        item.id = crypto.createHash('md5').update(item.data).digest('hex')
+        if (item && prev.id != item.id) {
+          // 剪切板元素 与最近一次复制内容不同
+          prev = item
+          fn(item)
+        } else {
+          // 剪切板元素 与上次复制内容相同
+        }
+      })
+      .then(() => sleep(250))
+      .then(() => callBack())
+  callBack()
 }
-
-const db = new DB(DBPath)
-db.init()
-
-watchClipboard(db, (item) => {
-  // 此函数不断执行
-  if (!item) return
-  if (db.updateItemViaId(item.id)) {
-    // 在库中 由 updateItemViaId 更新 updateTime
-    return
-  }
-  // 不在库中 由 addItem 添加
-  item.createTime = new Date().getTime()
-  item.updateTime = new Date().getTime()
-  db.addItem(item)
-})
 
 const copy = (item) => {
   switch (item.type) {
     case 'text':
-      clipboard.writeText(item.data)
+      utools.copyText(item.data)
       break
     case 'image':
       utools.copyImage(item.data)
-      globalSameImage = false // 复制图片 更新标志位
       break
     case 'file':
       const paths = JSON.parse(item.data).map((file) => file.path)
@@ -192,7 +186,26 @@ const focus = () => document.querySelector('.clip-search input')?.focus()
 const toTop = () => (document.scrollingElement.scrollTop = 0)
 const resetNav = () => document.querySelectorAll('.clip-switch-item')[0]?.click()
 
+const db = new DB(DBPath)
+db.init()
+watchClipboard(db, (item) => {
+  // 此函数不断执行
+  if (!item) return
+  if (db.updateItemViaId(item.id)) {
+    // 在库中 由 updateItemViaId 更新 updateTime
+    return
+  }
+  // 不在库中 由 addItem 添加
+  item.createTime = new Date().getTime()
+  item.updateTime = new Date().getTime()
+  db.addItem(item)
+})
+
 utools.onPluginEnter(() => {
+  if (globalImageOversize) {
+    utools.copyText('ImageOverSized')
+    globalImageOversize = false
+  }
   document.querySelector('.clip-search input').select() // 进入插件将搜索框内容全选
   focus()
   toTop()
