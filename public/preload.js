@@ -134,31 +134,20 @@ const pbpaste = async () => {
   })
 }
 
-const sleep = async (timeout) => {
-  return new Promise((res) => {
-    setTimeout(() => {
-      res()
-    }, timeout)
-  })
-}
-
 const watchClipboard = async (db, fn) => {
   let prev = db.dataBase.data[0] || {}
-  const callBack = async () =>
-    pbpaste()
-      .then((item) => {
-        item.id = crypto.createHash('md5').update(item.data).digest('hex')
-        if (item && prev.id != item.id) {
-          // 剪切板元素 与最近一次复制内容不同
-          prev = item
-          fn(item)
-        } else {
-          // 剪切板元素 与上次复制内容相同
-        }
-      })
-      .then(() => sleep(250))
-      .then(() => callBack())
-  callBack()
+  setInterval(() => {
+    pbpaste().then((item) => {
+      item.id = crypto.createHash('md5').update(item.data).digest('hex')
+      if (item && prev.id != item.id) {
+        // 剪切板元素 与最近一次复制内容不同
+        prev = item
+        fn(item)
+      } else {
+        // 剪切板元素 与上次复制内容相同
+      }
+    })
+  }, 250)
 }
 
 const copy = (item) => {
