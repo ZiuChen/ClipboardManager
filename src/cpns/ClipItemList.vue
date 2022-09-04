@@ -50,7 +50,11 @@
       <div class="clip-operate" v-show="activeIndex === index">
         <template v-for="{ id, title } of operation">
           <div
-            v-if="id !== 'collect' || (id === 'collect' && item.collect !== true)"
+            v-if="
+              (id !== 'collect' && id !== 'view') ||
+              (id === 'collect' && item.collect !== true) ||
+              (id === 'view' && item.type !== 'image')
+            "
             :class="id"
             :title="title"
             @click.stop="handleOperateClick({ id, item })"
@@ -97,6 +101,7 @@ const activeIndex = ref(0)
 const handleMouseOver = (index) => (activeIndex.value = index)
 const operation = [
   { id: 'copy', title: '复制' },
+  { id: 'view', title: '查看全部' },
   { id: 'collect', title: '收藏' },
   { id: 'remove', title: '删除' }
 ]
@@ -104,6 +109,9 @@ const handleOperateClick = ({ id, item }) => {
   switch (id) {
     case 'copy':
       window.copy(item)
+      break
+    case 'view':
+      emit('onDataChange', item)
       break
     case 'collect':
       item.collect = true // important
