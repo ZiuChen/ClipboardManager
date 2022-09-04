@@ -39,7 +39,9 @@ const showList = ref([]) // 展示的数据
 const updateShowList = (type) => {
   // 更新显示列表
   showList.value = list.value
-    .filter((item) => (type === 'all' ? item : item.type === type)) // 是 all则返回所有 否则按照 type返回
+    .filter((item) =>
+      type === 'collect' ? item.collect === true : type === 'all' ? item : item.type === type
+    ) // 是 collect则返回所有收藏 否则按照 type返回
     .filter((item) => (filterText.value ? item.type !== 'image' : item)) // 有过滤词 排除掉图片 DataURL
     .filter(
       (item) =>
@@ -48,6 +50,7 @@ const updateShowList = (type) => {
           : item // 无过滤词 返回全部
     )
     .slice(0, GAP) // 重新切分懒加载列表
+  console.log(showList.value)
   window.toTop()
 }
 

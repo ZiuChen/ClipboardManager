@@ -49,7 +49,12 @@
       </div>
       <div class="clip-operate" v-show="activeIndex === index">
         <template v-for="{ id, title } of operation">
-          <div :class="id" :title="title" @click.stop="handleOperateClick({ id, item })">
+          <div
+            v-if="id !== 'collect' || (id === 'collect' && item.collect !== true)"
+            :class="id"
+            :title="title"
+            @click.stop="handleOperateClick({ id, item })"
+          >
             {{ title.slice(0, 1) }}
           </div>
         </template>
@@ -101,6 +106,8 @@ const handleOperateClick = ({ id, item }) => {
       window.copy(item)
       break
     case 'collect':
+      item.collect = true // important
+      window.db.updateDataBaseLocal(db)
       break
     case 'remove':
       window.remove(item)
