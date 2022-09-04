@@ -1,4 +1,4 @@
-.clip-full {
+.clip-full-wrapper {
   z-index: 9999999999;
   position: fixed;
   top: 0;
@@ -11,9 +11,32 @@
   overflow-y: scroll;
   word-break: break-all;
   white-space: pre-wrap;
-  div {
+  .clip-full-operate-list {
+    position: fixed;
+    top: 15px;
+    right: 30%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: @text-color;
+    &-item {
+      padding: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      user-select: none;
+      margin: 5px 5px;
+      background-color: @bg-color;
+      &:hover {
+        color: @bg-color;
+        background-color: @primary-color;
+        transition: all 0.15s;
+      }
+    }
+  }
+  .clip-full-content {
     background-color: @text-bg-color;
-    padding: 10px;
+    padding: 20px;
+    border-radius: 5px;
   }
   &::-webkit-scrollbar {
     width: 10px;

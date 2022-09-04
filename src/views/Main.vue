@@ -59,18 +59,13 @@ const handleNavClick = (type) => {
   offset.value = 0 // 重置懒加载偏移量
 }
 
-const fullData = ref({ type: 'text', data: '' })
+const fullData = ref({ type: 'text' })
 const fullDataShow = ref(false)
 const toggleFullData = (item) => {
   // 是否显示全部数据 (查看全部)
-  const { type, data } = item
-  // type: 'text' | 'file'
-  if (type === 'text') {
-    fullData.value.type = 'text'
-    fullData.value.data = data
-  } else if (type === 'file') {
-    fullData.value.type = 'file'
-    fullData.value.data = JSON.parse(data)
+  const { type } = item
+  if (type === 'text' || type === 'file') {
+    fullData.value = item
   }
   fullDataShow.value = !fullDataShow.value
 }
