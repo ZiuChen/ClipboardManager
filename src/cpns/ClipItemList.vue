@@ -48,18 +48,19 @@
         </div>
       </div>
       <div class="clip-operate" v-show="activeIndex === index">
-        <template v-for="{ id, title } of operation">
+        <template v-for="{ id, title, icon } of operation">
           <div
             v-if="
-              (id !== 'collect' && id !== 'view') ||
+              (id !== 'collect' && id !== 'view' && id !== 'un-collect') ||
               (id === 'collect' && item.collect !== true) ||
+              (id === 'un-collect' && item.collect === true) ||
               (id === 'view' && item.type !== 'image')
             "
             :class="id"
             :title="title"
             @click.stop="handleOperateClick({ id, item })"
           >
-            {{ title.slice(0, 1) }}
+            {{ icon }}
           </div>
         </template>
       </div>
@@ -100,10 +101,11 @@ const handleDataClick = (item) => emit('onDataChange', item)
 const activeIndex = ref(0)
 const handleMouseOver = (index) => (activeIndex.value = index)
 const operation = [
-  { id: 'copy', title: '复制' },
-  { id: 'view', title: '查看全部' },
-  { id: 'collect', title: '收藏' },
-  { id: 'remove', title: '删除' }
+  { id: 'copy', title: '复制', icon: '📄' },
+  { id: 'view', title: '查看全部', icon: '💬' },
+  { id: 'collect', title: '收藏', icon: '⭐' },
+  { id: 'un-collect', title: '取消收藏', icon: '📤' },
+  { id: 'remove', title: '删除', icon: '❌' }
 ]
 const handleOperateClick = ({ id, item }) => {
   switch (id) {
@@ -114,7 +116,11 @@ const handleOperateClick = ({ id, item }) => {
       emit('onDataChange', item)
       break
     case 'collect':
-      item.collect = true // important
+      item.collect = true
+      window.db.updateDataBaseLocal(db)
+      break
+    case 'un-collect':
+      item.collect = undefined
       window.db.updateDataBaseLocal(db)
       break
     case 'remove':
