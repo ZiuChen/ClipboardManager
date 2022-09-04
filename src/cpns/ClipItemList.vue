@@ -47,7 +47,16 @@
           </template>
         </div>
       </div>
-      <div class="clip-count">{{ index + 1 }}</div>
+      <div class="clip-operate" v-show="activeIndex === index">
+        <template v-for="{ id, title } of operation">
+          <div :class="id" :title="title" @click.stop="handleOperateClick({ id, item })">
+            {{ title.slice(0, 1) }}
+          </div>
+        </template>
+      </div>
+      <div class="clip-count" v-show="activeIndex !== index">
+        {{ index + 1 }}
+      </div>
     </div>
   </div>
 </template>
@@ -81,6 +90,30 @@ const handleItemClick = (ev, item) => {
 const handleDataClick = (item) => emit('onDataChange', item)
 const activeIndex = ref(0)
 const handleMouseOver = (index) => (activeIndex.value = index)
+const operation = [
+  {
+    id: 'collect',
+    title: '收藏'
+  },
+  {
+    id: 'big-bang',
+    title: '分词'
+  },
+  {
+    id: 'delete',
+    title: '删除'
+  }
+]
+const handleOperateClick = (type) => {
+  switch (type) {
+    case 'collect':
+      break
+    case 'big-bang':
+      break
+    case 'remove':
+      break
+  }
+}
 // 父组件中改变了引用类型的地址 故要用 getter返回
 watch(
   () => props.showList,
