@@ -112,7 +112,7 @@ const operation = [
 const handleOperateClick = ({ id, item }) => {
   switch (id) {
     case 'copy':
-      window.copy(item)
+      window.copy(item, false)
       break
     case 'view':
       emit('onDataChange', item)

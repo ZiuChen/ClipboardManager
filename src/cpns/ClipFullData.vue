@@ -48,10 +48,11 @@ onMounted(() => {
 @import '../style';
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.15s ease;
+  transition: all 0.15s ease;
 }
 .fade-enter-from,
 .fade-leave-to {
+  width: 0px;
   opacity: 0;
 }
 </style>

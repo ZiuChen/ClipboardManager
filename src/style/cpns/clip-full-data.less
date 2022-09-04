@@ -2,14 +2,19 @@
   z-index: 9999999999;
   position: fixed;
   top: 0;
-  height: 100%;
+  height: -webkit-fill-available;
   width: 70%;
   color: @text-color;
   background: @bg-color;
-  padding: 0px 20px 0px 20px;
+  margin: 0px 0px;
+  padding: 10px 20px;
   overflow-y: scroll;
   word-break: break-all;
   white-space: pre-wrap;
+  div {
+    background-color: @text-bg-color;
+    padding: 10px;
+  }
   &::-webkit-scrollbar {
     width: 10px;
     height: 10px;
@@ -25,9 +30,9 @@
   &::-webkit-scrollbar-thumb {
     background: @text-color-lighter;
     border-radius: 5px;
-  }
-  &::-webkit-scrollbar-thumb:hover {
-    background: @text-color;
+    &:hover {
+      background: @text-color;
+    }
   }
 }
 .clip-overlay {

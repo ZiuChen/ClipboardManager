@@ -161,7 +161,7 @@ const watchClipboard = async (db, fn) => {
   }, 250)
 }
 
-const copy = (item) => {
+const copy = (item, isHideMainWindow = true) => {
   switch (item.type) {
     case 'text':
       utools.copyText(item.data)
@@ -174,7 +174,7 @@ const copy = (item) => {
       utools.copyFile(paths)
       break
   }
-  utools.hideMainWindow()
+  isHideMainWindow && utools.hideMainWindow()
 }
 
 const paste = () => {
