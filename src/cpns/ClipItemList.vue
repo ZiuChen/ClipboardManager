@@ -51,10 +51,11 @@
         <template v-for="{ id, title, icon } of operation">
           <div
             v-if="
-              (id !== 'collect' && id !== 'view' && id !== 'un-collect') ||
+              (id !== 'collect' && id !== 'view' && id !== 'open-folder' && id !== 'un-collect') ||
               (id === 'collect' && item.collect !== true) ||
-              (id === 'un-collect' && item.collect === true) ||
-              (id === 'view' && item.type !== 'image')
+              (id === 'view' && item.type !== 'image') ||
+              (id === 'open-folder' && item.type === 'file') ||
+              (id === 'un-collect' && item.collect === true)
             "
             :class="id"
             :title="title"
@@ -103,6 +104,7 @@ const handleMouseOver = (index) => (activeIndex.value = index)
 const operation = [
   { id: 'copy', title: '复制', icon: '📄' },
   { id: 'view', title: '查看全部', icon: '💬' },
+  { id: 'open-folder', title: '打开文件夹', icon: '📁' },
   { id: 'collect', title: '收藏', icon: '⭐' },
   { id: 'un-collect', title: '取消收藏', icon: '📤' },
   { id: 'remove', title: '删除', icon: '❌' }
@@ -114,6 +116,11 @@ const handleOperateClick = ({ id, item }) => {
       break
     case 'view':
       emit('onDataChange', item)
+      break
+    case 'open-folder':
+      const { data } = item
+      const fl = JSON.parse(data)
+      window.openFileFolder(fl[0].path) // 取第一个文件的路径打开
       break
     case 'collect':
       item.collect = true

@@ -248,6 +248,7 @@ window.copy = copy
 window.paste = paste
 window.remove = remove
 window.openFile = utools.shellOpenPath
+window.openFileFolder = utools.shellShowItemInFolder
 window.getIcon = utools.getFileIcon
 window.focus = focus
 window.toTop = toTop
