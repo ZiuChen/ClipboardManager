@@ -106,6 +106,16 @@ class DB {
     })
     this.updateDataBaseLocal()
   }
+  removeItemViaId(id) {
+    for (const item of this.dataBase.data) {
+      if (item.id === id) {
+        this.dataBase.data.splice(this.dataBase.data.indexOf(item), 1)
+        this.updateDataBaseLocal()
+        return true
+      }
+    }
+    return false
+  }
 }
 
 const pbpaste = async () => {
@@ -171,12 +181,15 @@ const paste = () => {
   else utools.simulateKeyboardTap('v', 'ctrl')
 }
 
+const db = new DB(DBPath)
+db.init()
+
+const remove = (item) => db.removeItemViaId(item.id)
+
 const focus = () => document.querySelector('.clip-search input')?.focus()
 const toTop = () => (document.scrollingElement.scrollTop = 0)
 const resetNav = () => document.querySelectorAll('.clip-switch-item')[0]?.click()
 
-const db = new DB(DBPath)
-db.init()
 watchClipboard(db, (item) => {
   // 此函数不断执行
   if (!item) return
@@ -204,6 +217,7 @@ utools.onPluginEnter(() => {
 window.db = db
 window.copy = copy
 window.paste = paste
+window.remove = remove
 window.openFile = utools.shellOpenPath
 window.getIcon = utools.getFileIcon
 window.focus = focus

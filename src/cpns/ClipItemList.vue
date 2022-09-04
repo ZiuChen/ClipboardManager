@@ -75,7 +75,7 @@ const props = defineProps({
     required: true
   }
 })
-const emit = defineEmits(['onDataChange'])
+const emit = defineEmits(['onDataChange', 'onDataRemove'])
 const handleItemClick = (ev, item) => {
   const { button } = ev
   if (button === 0) {
@@ -91,26 +91,20 @@ const handleDataClick = (item) => emit('onDataChange', item)
 const activeIndex = ref(0)
 const handleMouseOver = (index) => (activeIndex.value = index)
 const operation = [
-  {
-    id: 'collect',
-    title: '收藏'
-  },
-  {
-    id: 'big-bang',
-    title: '分词'
-  },
-  {
-    id: 'delete',
-    title: '删除'
-  }
+  { id: 'copy', title: '复制' },
+  { id: 'collect', title: '收藏' },
+  { id: 'remove', title: '删除' }
 ]
-const handleOperateClick = (type) => {
-  switch (type) {
+const handleOperateClick = ({ id, item }) => {
+  switch (id) {
+    case 'copy':
+      window.copy(item)
+      break
     case 'collect':
       break
-    case 'big-bang':
-      break
     case 'remove':
+      window.remove(item)
+      emit('onDataRemove')
       break
   }
 }

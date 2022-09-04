@@ -21,7 +21,8 @@ const tabs = ref([
   { name: '📚 全部', type: 'all' },
   { name: '📋 文字', type: 'text' },
   { name: '⛺ 图片', type: 'image' },
-  { name: '📂 文件', type: 'file' }
+  { name: '📂 文件', type: 'file' },
+  { name: '⭐ 收藏', type: 'collect' }
 ])
 const activeTab = ref('all')
 const emit = defineEmits(['onNavClick'])

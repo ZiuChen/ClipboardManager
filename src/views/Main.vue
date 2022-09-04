@@ -13,7 +13,12 @@
     </ClipSwitch>
     <div class="clip-break"></div>
     <div class="clip-empty-status" v-if="showList.length === 0">📪 无记录</div>
-    <ClipItemList :showList="showList" :fullData="fullData" @onDataChange="toggleFullData">
+    <ClipItemList
+      :showList="showList"
+      :fullData="fullData"
+      @onDataChange="toggleFullData"
+      @onDataRemove="handleDataRemove"
+    >
     </ClipItemList>
   </div>
 </template>
@@ -67,6 +72,14 @@ const toggleFullData = (item) => {
   fullDataShow.value = !fullDataShow.value
 }
 
+const ClipSwitchRef = ref()
+
+const handleDataRemove = () => {
+  // 此函数须在挂载后执行
+  list.value = window.db.dataBase.data
+  updateShowList(ClipSwitchRef.value.activeTab)
+}
+
 const restoreDataBase = () => {
   // 情况数据库
   const flag = window.confirm('确定要清空剪贴板记录吗?')
@@ -76,11 +89,11 @@ const restoreDataBase = () => {
   }
 }
 
-const ClipSwitchRef = ref()
 onMounted(() => {
   // 获取挂载的导航组件 Ref
   const activeTab = computed(() => ClipSwitchRef.value.activeTab)
   const toggleNav = ClipSwitchRef.value.toggleNav
+  const tabs = ClipSwitchRef.value.tabs
 
   // 初始化数据
   list.value = window.db.dataBase.data
@@ -129,9 +142,9 @@ onMounted(() => {
       (ctrlKey && (key === 'F' || key === 'f')) || (ctrlKey && (key === 'L' || key === 'l'))
     const isExit = key === 'Escape'
     if (isTab) {
-      const list = ['all', 'text', 'image', 'file']
-      const index = list.indexOf(activeTab.value)
-      const target = index === list.length - 1 ? list[0] : list[index + 1]
+      const tabTypes = tabs.map((item) => item.type)
+      const index = tabTypes.indexOf(activeTab.value)
+      const target = index === tabTypes.length - 1 ? tabTypes[0] : tabTypes[index + 1]
       toggleNav(target)
       updateShowList(activeTab.value)
     } else if (isSearch) {
