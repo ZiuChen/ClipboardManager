@@ -50,7 +50,6 @@ const updateShowList = (type) => {
           : item // 无过滤词 返回全部
     )
     .slice(0, GAP) // 重新切分懒加载列表
-  console.log(showList.value)
   window.toTop()
 }
 
