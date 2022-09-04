@@ -17,6 +17,7 @@ const isWindows = utools.isWindows()
 const DBPath = `${isMacOs ? userDataPath : homePath}${isWindows ? '\\' : '/'}${dbName}`
 
 let globalImageOversize = false
+let globalTimmerSet = false
 
 class DB {
   constructor(path) {
@@ -146,7 +147,7 @@ const pbpaste = async () => {
 
 const watchClipboard = async (db, fn) => {
   let prev = db.dataBase.data[0] || {}
-  setInterval(() => {
+  return setInterval(() => {
     pbpaste().then((item) => {
       item.id = crypto.createHash('md5').update(item.data).digest('hex')
       if (item && prev.id != item.id) {
@@ -190,7 +191,7 @@ const focus = () => document.querySelector('.clip-search input')?.focus()
 const toTop = () => (document.scrollingElement.scrollTop = 0)
 const resetNav = () => document.querySelectorAll('.clip-switch-item')[0]?.click()
 
-watchClipboard(db, (item) => {
+let timmer = watchClipboard(db, (item) => {
   // 此函数不断执行
   if (!item) return
   if (db.updateItemViaId(item.id)) {
@@ -203,15 +204,37 @@ watchClipboard(db, (item) => {
   db.addItem(item)
 })
 
+globalTimmerSet = true // 计时器成功添加
+
 utools.onPluginEnter(() => {
   if (globalImageOversize) {
     utools.copyText('ImageOverSized')
     globalImageOversize = false
   }
+  if (!globalTimmerSet) {
+    // 定时器被清除了 重新添加计时器
+    // same to code above
+    timmer = watchClipboard(db, (item) => {
+      if (!item) return
+      if (db.updateItemViaId(item.id)) {
+        return
+      }
+      item.createTime = new Date().getTime()
+      item.updateTime = new Date().getTime()
+      db.addItem(item)
+    })
+  }
   document.querySelector('.clip-search input').select() // 进入插件将搜索框内容全选
   focus()
   toTop()
   resetNav()
+})
+
+utools.onPluginOut((processExit) => {
+  // 卡顿来源: 似乎插件每次启动 uTools不会清除插件设置的 interval定时器
+  // 插件重复进入/退出会产生多个计时器导致插件卡退
+  // 插件退出 清除计时器 插件隐藏后台 不清除
+  processExit ? (clearInterval(timmer), (globalTimmerSet = false)) : (globalTimmerSet = true)
 })
 
 window.db = db
