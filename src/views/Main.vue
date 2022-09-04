@@ -1,6 +1,6 @@
 <template>
   <div class="main">
-    <div class="clip-restore" @click="restoreDataBase">🧺</div>
+    <ClipFloatBtn></ClipFloatBtn>
     <ClipFullData
       :isShow="fullDataShow"
       :fullData="fullData"
@@ -29,6 +29,7 @@ import ClipItemList from '../cpns/ClipItemList.vue'
 import ClipFullData from '../cpns/ClipFullData.vue'
 import ClipSearch from '../cpns/ClipSearch.vue'
 import ClipSwitch from '../cpns/ClipSwitch.vue'
+import ClipFloatBtn from '../cpns/ClipFloatBtn.vue'
 
 const GAP = 15 // 懒加载 每次添加的条数
 const offset = ref(0) // 懒加载 偏移量
@@ -80,15 +81,6 @@ const handleDataRemove = () => {
   // 此函数须在挂载后执行
   list.value = window.db.dataBase.data
   updateShowList(ClipSwitchRef.value.activeTab)
-}
-
-const restoreDataBase = () => {
-  // 情况数据库
-  const flag = window.confirm('确定要清空剪贴板记录吗?')
-  if (flag) {
-    window.db.emptyDataBase()
-    updateShowList('all')
-  }
 }
 
 onMounted(() => {
@@ -168,25 +160,6 @@ onMounted(() => {
 
 <style lang="less" scoped>
 @import '../style';
-.clip-restore {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: fixed;
-  bottom: 10px;
-  right: 10px;
-  height: 50px;
-  width: 50px;
-  cursor: pointer;
-  border-radius: 50%;
-  font-size: 20px;
-  background-color: rgb(232, 232, 232);
-  user-select: none;
-  &:hover {
-    // background-color: @primary-color;
-    transition: all 0.15s;
-  }
-}
 .clip-break {
   height: 60px;
 }
