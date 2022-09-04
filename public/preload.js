@@ -187,7 +187,13 @@ db.init()
 
 const remove = (item) => db.removeItemViaId(item.id)
 
-const focus = () => document.querySelector('.clip-search input')?.focus()
+const select = () => document.querySelector('.clip-search input').select()
+const focus = () => {
+  document.querySelector('.clip-search-input').style.display !== 'none'
+    ? document.querySelector('.clip-search-input')?.focus()
+    : (document.querySelector('.clip-search-btn')?.click(),
+      document.querySelector('.clip-search-input')?.focus())
+}
 const toTop = () => (document.scrollingElement.scrollTop = 0)
 const resetNav = () => document.querySelectorAll('.clip-switch-item')[0]?.click()
 
@@ -224,8 +230,8 @@ utools.onPluginEnter(() => {
       db.addItem(item)
     })
   }
-  document.querySelector('.clip-search input').select() // 进入插件将搜索框内容全选
   focus()
+  select() // 进入插件将搜索框内容全选
   toTop()
   resetNav()
 })
