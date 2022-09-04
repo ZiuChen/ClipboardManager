@@ -14,7 +14,7 @@
           <template v-if="item.type === 'text'">
             <span
               class="clip-data-status"
-              v-if="item.data.split(`\n`).length - 1 > 8"
+              v-if="item.data.split(`\n`).length - 1 > 7"
               @click.stop="handleDataClick(item)"
             >
               查看全部
@@ -27,7 +27,7 @@
           <template v-if="item.type === 'file'">
             <span
               class="clip-data-status"
-              v-if="JSON.parse(item.data).length >= 8"
+              v-if="JSON.parse(item.data).length >= 7"
               @click.stop="handleDataClick(item)"
             >
               查看全部
@@ -37,7 +37,7 @@
         </div>
         <div class="clip-data">
           <template v-if="item.type === 'text'">
-            <div>{{ item.data.split(`\n`).slice(0, 8).join(`\n`).trim() }}</div>
+            <div>{{ item.data.split(`\n`).slice(0, 7).join(`\n`).trim() }}</div>
           </template>
           <template v-if="item.type === 'image'">
             <img class="clip-data-image" :src="item.data" alt="Image" />
