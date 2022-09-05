@@ -7,6 +7,7 @@
 const fs = require('fs')
 const crypto = require('crypto')
 const { clipboard } = require('electron')
+const time = require('./time')
 
 const homePath = utools.getPath('home')
 const userDataPath = utools.getPath('userData')
@@ -17,7 +18,6 @@ const isWindows = utools.isWindows()
 const DBPath = `${isMacOs ? userDataPath : homePath}${isWindows ? '\\' : '/'}${dbName}`
 
 let globalImageOversize = false
-let globalTimmerSet = false
 
 class DB {
   constructor(path) {
@@ -119,46 +119,46 @@ class DB {
   }
 }
 
-const pbpaste = async () => {
-  return new Promise((res) => {
-    // file
-    const files = utools.getCopyedFiles() // null | Array
-    if (files) {
-      res({
-        type: 'file',
-        data: JSON.stringify(files)
-      })
+const pbpaste = () => {
+  // file
+  const files = utools.getCopyedFiles() // null | Array
+  if (files) {
+    return {
+      type: 'file',
+      data: JSON.stringify(files)
     }
-    // text
-    const text = clipboard.readText()
-    if (text.trim()) res({ type: 'text', data: text })
-    // image
-    const image = clipboard.readImage() // 大图卡顿来源
-    const data = image.toDataURL()
-    globalImageOversize = data.length > 4e5
-    if (!image.isEmpty()) {
-      res({
-        type: 'image',
-        data: data
-      })
+  }
+  // text
+  const text = clipboard.readText()
+  if (text.trim()) return { type: 'text', data: text }
+  // image
+  const image = clipboard.readImage() // 大图卡顿来源
+  const data = image.toDataURL()
+  globalImageOversize = data.length > 4e5
+  if (!image.isEmpty()) {
+    return {
+      type: 'image',
+      data: data
     }
-  })
+  }
 }
 
 const watchClipboard = async (db, fn) => {
   let prev = db.dataBase.data[0] || {}
-  return setInterval(() => {
-    pbpaste().then((item) => {
-      item.id = crypto.createHash('md5').update(item.data).digest('hex')
-      if (item && prev.id != item.id) {
-        // 剪切板元素 与最近一次复制内容不同
-        prev = item
-        fn(item)
-      } else {
-        // 剪切板元素 与上次复制内容相同
-      }
-    })
-  }, 250)
+  function loop() {
+    time.sleep(250).then(loop)
+    const item = pbpaste()
+    if (!item) return
+    item.id = crypto.createHash('md5').update(item.data).digest('hex')
+    if (item && prev.id != item.id) {
+      // 剪切板元素 与最近一次复制内容不同
+      prev = item
+      fn(item)
+    } else {
+      // 剪切板元素 与上次复制内容相同
+    }
+  }
+  loop()
 }
 
 const copy = (item, isHideMainWindow = true) => {
@@ -210,37 +210,15 @@ let timmer = watchClipboard(db, (item) => {
   db.addItem(item)
 })
 
-globalTimmerSet = true // 计时器成功添加
-
 utools.onPluginEnter(() => {
   if (globalImageOversize) {
     utools.copyText('ImageOverSized')
     globalImageOversize = false
   }
-  if (!globalTimmerSet) {
-    // 定时器被清除了 重新添加计时器
-    // same to code above
-    timmer = watchClipboard(db, (item) => {
-      if (!item) return
-      if (db.updateItemViaId(item.id)) {
-        return
-      }
-      item.createTime = new Date().getTime()
-      item.updateTime = new Date().getTime()
-      db.addItem(item)
-    })
-  }
   focus()
   select() // 进入插件将搜索框内容全选
   toTop()
   resetNav()
-})
-
-utools.onPluginOut((processExit) => {
-  // 卡顿来源: 似乎插件每次启动 uTools不会清除插件设置的 interval定时器
-  // 插件重复进入/退出会产生多个计时器导致插件卡退
-  // 插件退出 清除计时器 插件隐藏后台 不清除
-  processExit ? (clearInterval(timmer), (globalTimmerSet = false)) : (globalTimmerSet = true)
 })
 
 window.db = db
