@@ -44,12 +44,25 @@ const updateShowList = (type) => {
       type === 'collect' ? item.collect === true : type === 'all' ? item : item.type === type
     ) // 是 collect则返回所有收藏 否则按照 type返回
     .filter((item) => (filterText.value ? item.type !== 'image' : item)) // 有过滤词 排除掉图片 DataURL
-    .filter(
-      (item) =>
-        filterText.value
-          ? item.data.toLowerCase().indexOf(filterText.value.toLowerCase()) !== -1 // 有过滤词 不区分大小写检索
-          : item // 无过滤词 返回全部
-    )
+    .filter((item) => {
+      if (filterText.value.trim()) {
+        if (filterText.value.trim().indexOf(' ') !== -1) {
+          // 有过滤词 有空格
+          const hitArray = []
+          for (const f of filterText.value.trim().split(' ')) {
+            hitArray.push(item.data.toLowerCase().indexOf(f.toLowerCase()) !== -1)
+          }
+          // 只返回全命中的 只要存在 false即不返回
+          return hitArray.indexOf(false) === -1
+        } else {
+          // 有过滤词 无空格 不区分大小写检索
+          return item.data.toLowerCase().indexOf(filterText.value.trim().toLowerCase()) !== -1
+        }
+      } else {
+        // 无过滤词 返回全部
+        return true
+      }
+    })
     .slice(0, GAP) // 重新切分懒加载列表
   window.toTop()
 }
