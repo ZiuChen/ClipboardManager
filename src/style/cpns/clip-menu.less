@@ -1,0 +1,42 @@
+.clip-menu {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  position: fixed;
+  z-index: 9999;
+  height: 100%;
+  width: 100%;
+  background-color: rgb(232, 232, 232);
+  &-title {
+    font-size: 18px;
+    font-weight: bold;
+    align-items: flex-start;
+    text-align: left;
+  }
+  &-config-list {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    // flex-direction: column;
+    &-item {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      .clip-btn {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        width: 25px;
+        height: 25px;
+        border-radius: 5px;
+        margin: 5px;
+        background-color: @text-bg-color;
+        &:hover {
+          background-color: @primary-color;
+        }
+      }
+    }
+  }
+}
