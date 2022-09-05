@@ -47,7 +47,21 @@
           </template>
         </div>
       </div>
-      <div class="clip-count">{{ index + 1 }}</div>
+      <div class="clip-operate" v-show="activeIndex === index">
+        <template v-for="{ id, title } of operation">
+          <div
+            v-if="id !== 'collect' || (id === 'collect' && item.collect !== true)"
+            :class="id"
+            :title="title"
+            @click.stop="handleOperateClick({ id, item })"
+          >
+            {{ title.slice(0, 1) }}
+          </div>
+        </template>
+      </div>
+      <div class="clip-count" v-show="activeIndex !== index">
+        {{ index + 1 }}
+      </div>
     </div>
   </div>
 </template>
@@ -66,7 +80,7 @@ const props = defineProps({
     required: true
   }
 })
-const emit = defineEmits(['onDataChange'])
+const emit = defineEmits(['onDataChange', 'onDataRemove'])
 const handleItemClick = (ev, item) => {
   const { button } = ev
   if (button === 0) {
@@ -81,6 +95,26 @@ const handleItemClick = (ev, item) => {
 const handleDataClick = (item) => emit('onDataChange', item)
 const activeIndex = ref(0)
 const handleMouseOver = (index) => (activeIndex.value = index)
+const operation = [
+  { id: 'copy', title: '复制' },
+  { id: 'collect', title: '收藏' },
+  { id: 'remove', title: '删除' }
+]
+const handleOperateClick = ({ id, item }) => {
+  switch (id) {
+    case 'copy':
+      window.copy(item)
+      break
+    case 'collect':
+      item.collect = true // important
+      window.db.updateDataBaseLocal(db)
+      break
+    case 'remove':
+      window.remove(item)
+      emit('onDataRemove')
+      break
+  }
+}
 // 父组件中改变了引用类型的地址 故要用 getter返回
 watch(
   () => props.showList,

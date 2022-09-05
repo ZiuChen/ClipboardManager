@@ -1,8 +1,7 @@
 .clip-search {
-  width: 40%;
-  margin-right: 30px;
+  min-width: 300px;
   input {
-    width: 100%;
+    width: 90%;
     /* normalize */
     background: none;
     outline: none;
@@ -20,7 +19,7 @@
   }
   .clip-search-suffix {
     text-align: center;
-    position: absolute;
+    position: fixed;
     right: 20px;
     top: 18px;
     font-size: 13px;
@@ -28,7 +27,7 @@
     width: 20px;
     height: 20px;
     background-color: @nav-bg-color;
-    border-radius: 20px;
+    border-radius: 5px;
     cursor: pointer;
     &:hover {
       background-color: @nav-hover-bg-color;
