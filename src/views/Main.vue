@@ -143,6 +143,8 @@ onMounted(() => {
     const isSearch =
       (ctrlKey && (key === 'F' || key === 'f')) || (ctrlKey && (key === 'L' || key === 'l'))
     const isExit = key === 'Escape'
+    const isArrow = key === 'ArrowDown' || key === 'ArrowUp'
+    const isEnter = key === 'Enter'
     if (isTab) {
       const tabTypes = tabs.map((item) => item.type)
       const index = tabTypes.indexOf(activeTab.value)
@@ -156,9 +158,8 @@ onMounted(() => {
         filterText.value = ''
         e.stopPropagation()
       }
-    } else if (ctrlKey || metaKey) {
-      // 仅有 Ctrl时 什么也不执行
-      // utools模拟执行粘贴时触发
+    } else if (ctrlKey || metaKey || isArrow || isEnter) {
+      // 仅有 Ctrl时 什么也不执行 (utools模拟执行粘贴时触发)
     } else {
       window.focus() // 其他键盘事件 直接聚焦搜索框
     }
