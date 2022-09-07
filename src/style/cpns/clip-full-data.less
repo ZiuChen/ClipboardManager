@@ -1,15 +1,44 @@
-.clip-full {
+.clip-full-wrapper {
   z-index: 9999999999;
   position: fixed;
   top: 0;
-  height: 100%;
+  height: -webkit-fill-available;
   width: 70%;
   color: @text-color;
   background: @bg-color;
-  padding: 0px 20px 0px 20px;
+  margin: 0px 0px;
+  padding: 10px 20px;
   overflow-y: scroll;
   word-break: break-all;
   white-space: pre-wrap;
+  .clip-full-operate-list {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    color: @text-color;
+    background-color: @text-bg-color;
+    padding: 5px 10px;
+    margin-bottom: 5px;
+    border-radius: 5px;
+    &-item {
+      padding: 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      user-select: none;
+      margin: 5px 5px;
+      background-color: @bg-color;
+      &:hover {
+        color: @bg-color;
+        background-color: @primary-color;
+        transition: all 0.15s;
+      }
+    }
+  }
+  .clip-full-content {
+    background-color: @text-bg-color;
+    padding: 20px;
+    border-radius: 5px;
+  }
   &::-webkit-scrollbar {
     width: 10px;
     height: 10px;
@@ -25,9 +54,9 @@
   &::-webkit-scrollbar-thumb {
     background: @text-color-lighter;
     border-radius: 5px;
-  }
-  &::-webkit-scrollbar-thumb:hover {
-    background: @text-color;
+    &:hover {
+      background: @text-color;
+    }
   }
 }
 .clip-overlay {

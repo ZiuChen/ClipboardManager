@@ -14,7 +14,7 @@
           <template v-if="item.type === 'text'">
             <span
               class="clip-data-status"
-              v-if="item.data.split(`\n`).length - 1 > 8"
+              v-if="item.data.split(`\n`).length - 1 > 7"
               @click.stop="handleDataClick(item)"
             >
               查看全部
@@ -27,7 +27,7 @@
           <template v-if="item.type === 'file'">
             <span
               class="clip-data-status"
-              v-if="JSON.parse(item.data).length >= 8"
+              v-if="JSON.parse(item.data).length >= 7"
               @click.stop="handleDataClick(item)"
             >
               查看全部
@@ -37,7 +37,7 @@
         </div>
         <div class="clip-data">
           <template v-if="item.type === 'text'">
-            <div>{{ item.data.split(`\n`).slice(0, 8).join(`\n`).trim() }}</div>
+            <div>{{ item.data.split(`\n`).slice(0, 7).join(`\n`).trim() }}</div>
           </template>
           <template v-if="item.type === 'image'">
             <img class="clip-data-image" :src="item.data" alt="Image" />
@@ -48,14 +48,20 @@
         </div>
       </div>
       <div class="clip-operate" v-show="activeIndex === index">
-        <template v-for="{ id, title } of operation">
+        <template v-for="{ id, title, icon } of operation">
           <div
-            v-if="id !== 'collect' || (id === 'collect' && item.collect !== true)"
+            v-if="
+              (id !== 'collect' && id !== 'view' && id !== 'open-folder' && id !== 'un-collect') ||
+              (id === 'collect' && item.collect !== true) ||
+              (id === 'view' && item.type !== 'image') ||
+              (id === 'open-folder' && item.type === 'file') ||
+              (id === 'un-collect' && item.collect === true)
+            "
             :class="id"
             :title="title"
             @click.stop="handleOperateClick({ id, item })"
           >
-            {{ title.slice(0, 1) }}
+            {{ icon }}
           </div>
         </template>
       </div>
@@ -96,17 +102,32 @@ const handleDataClick = (item) => emit('onDataChange', item)
 const activeIndex = ref(0)
 const handleMouseOver = (index) => (activeIndex.value = index)
 const operation = [
-  { id: 'copy', title: '复制' },
-  { id: 'collect', title: '收藏' },
-  { id: 'remove', title: '删除' }
+  { id: 'copy', title: '复制', icon: '📄' },
+  { id: 'view', title: '查看全部', icon: '💬' },
+  { id: 'open-folder', title: '打开文件夹', icon: '📁' },
+  { id: 'collect', title: '收藏', icon: '⭐' },
+  { id: 'un-collect', title: '取消收藏', icon: '📤' },
+  { id: 'remove', title: '删除', icon: '❌' }
 ]
 const handleOperateClick = ({ id, item }) => {
   switch (id) {
     case 'copy':
-      window.copy(item)
+      window.copy(item, false)
+      break
+    case 'view':
+      emit('onDataChange', item)
+      break
+    case 'open-folder':
+      const { data } = item
+      const fl = JSON.parse(data)
+      window.openFileFolder(fl[0].path) // 取第一个文件的路径打开
       break
     case 'collect':
-      item.collect = true // important
+      item.collect = true
+      window.db.updateDataBaseLocal(db)
+      break
+    case 'un-collect':
+      item.collect = undefined
       window.db.updateDataBaseLocal(db)
       break
     case 'remove':

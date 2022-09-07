@@ -52,14 +52,15 @@
         display: flex;
         overflow: hidden;
         word-break: break-all;
-        max-height: 150px;
+        max-height: 120px;
+        max-width: 500px;
         padding: 5px;
         white-space: pre-wrap;
         flex-direction: column;
         color: @text-color;
         img.clip-data-image {
           // 此 class用于区分 file的 image
-          max-height: 140px; // 比外框 max-height少一点 因为有 5px的边框
+          max-height: 100px; // 比外框 max-height少一点 因为有 5px的边框
           max-width: 90%;
           box-shadow: 0px 0px 3px @text-color;
         }
@@ -79,8 +80,8 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      min-width: 100px;
-      padding: 10px;
+      min-width: 150px;
+      padding: 0px 10px;
       & * {
         display: flex;
         align-items: center;

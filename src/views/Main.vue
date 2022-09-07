@@ -1,6 +1,6 @@
 <template>
   <div class="main">
-    <div class="clip-restore" @click="restoreDataBase">🧺</div>
+    <ClipFloatBtn></ClipFloatBtn>
     <ClipFullData
       :isShow="fullDataShow"
       :fullData="fullData"
@@ -29,6 +29,7 @@ import ClipItemList from '../cpns/ClipItemList.vue'
 import ClipFullData from '../cpns/ClipFullData.vue'
 import ClipSearch from '../cpns/ClipSearch.vue'
 import ClipSwitch from '../cpns/ClipSwitch.vue'
+import ClipFloatBtn from '../cpns/ClipFloatBtn.vue'
 
 const GAP = 15 // 懒加载 每次添加的条数
 const offset = ref(0) // 懒加载 偏移量
@@ -43,12 +44,25 @@ const updateShowList = (type) => {
       type === 'collect' ? item.collect === true : type === 'all' ? item : item.type === type
     ) // 是 collect则返回所有收藏 否则按照 type返回
     .filter((item) => (filterText.value ? item.type !== 'image' : item)) // 有过滤词 排除掉图片 DataURL
-    .filter(
-      (item) =>
-        filterText.value
-          ? item.data.toLowerCase().indexOf(filterText.value.toLowerCase()) !== -1 // 有过滤词 不区分大小写检索
-          : item // 无过滤词 返回全部
-    )
+    .filter((item) => {
+      if (filterText.value.trim()) {
+        if (filterText.value.trim().indexOf(' ') !== -1) {
+          // 有过滤词 有空格
+          const hitArray = []
+          for (const f of filterText.value.trim().split(' ')) {
+            hitArray.push(item.data.toLowerCase().indexOf(f.toLowerCase()) !== -1)
+          }
+          // 只返回全命中的 只要存在 false即不返回
+          return hitArray.indexOf(false) === -1
+        } else {
+          // 有过滤词 无空格 不区分大小写检索
+          return item.data.toLowerCase().indexOf(filterText.value.trim().toLowerCase()) !== -1
+        }
+      } else {
+        // 无过滤词 返回全部
+        return true
+      }
+    })
     .slice(0, GAP) // 重新切分懒加载列表
   window.toTop()
 }
@@ -58,18 +72,13 @@ const handleNavClick = (type) => {
   offset.value = 0 // 重置懒加载偏移量
 }
 
-const fullData = ref({ type: 'text', data: '' })
+const fullData = ref({ type: 'text' })
 const fullDataShow = ref(false)
 const toggleFullData = (item) => {
   // 是否显示全部数据 (查看全部)
-  const { type, data } = item
-  // type: 'text' | 'file'
-  if (type === 'text') {
-    fullData.value.type = 'text'
-    fullData.value.data = data
-  } else if (type === 'file') {
-    fullData.value.type = 'file'
-    fullData.value.data = JSON.parse(data)
+  const { type } = item
+  if (type === 'text' || type === 'file') {
+    fullData.value = item
   }
   fullDataShow.value = !fullDataShow.value
 }
@@ -80,15 +89,6 @@ const handleDataRemove = () => {
   // 此函数须在挂载后执行
   list.value = window.db.dataBase.data
   updateShowList(ClipSwitchRef.value.activeTab)
-}
-
-const restoreDataBase = () => {
-  // 情况数据库
-  const flag = window.confirm('确定要清空剪贴板记录吗?')
-  if (flag) {
-    window.db.emptyDataBase()
-    updateShowList('all')
-  }
 }
 
 onMounted(() => {
@@ -143,6 +143,8 @@ onMounted(() => {
     const isSearch =
       (ctrlKey && (key === 'F' || key === 'f')) || (ctrlKey && (key === 'L' || key === 'l'))
     const isExit = key === 'Escape'
+    const isArrow = key === 'ArrowDown' || key === 'ArrowUp'
+    const isEnter = key === 'Enter'
     if (isTab) {
       const tabTypes = tabs.map((item) => item.type)
       const index = tabTypes.indexOf(activeTab.value)
@@ -156,9 +158,8 @@ onMounted(() => {
         filterText.value = ''
         e.stopPropagation()
       }
-    } else if (ctrlKey || metaKey) {
-      // 仅有 Ctrl时 什么也不执行
-      // utools模拟执行粘贴时触发
+    } else if (ctrlKey || metaKey || isArrow || isEnter) {
+      // 仅有 Ctrl时 什么也不执行 (utools模拟执行粘贴时触发)
     } else {
       window.focus() // 其他键盘事件 直接聚焦搜索框
     }
@@ -168,25 +169,6 @@ onMounted(() => {
 
 <style lang="less" scoped>
 @import '../style';
-.clip-restore {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: fixed;
-  bottom: 10px;
-  right: 10px;
-  height: 50px;
-  width: 50px;
-  cursor: pointer;
-  border-radius: 50%;
-  font-size: 20px;
-  background-color: rgb(232, 232, 232);
-  user-select: none;
-  &:hover {
-    // background-color: @primary-color;
-    transition: all 0.15s;
-  }
-}
 .clip-break {
   height: 60px;
 }

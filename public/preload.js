@@ -7,6 +7,7 @@
 const fs = require('fs')
 const crypto = require('crypto')
 const { clipboard } = require('electron')
+const time = require('./time')
 
 const homePath = utools.getPath('home')
 const userDataPath = utools.getPath('userData')
@@ -36,10 +37,12 @@ class DB {
         // 读取磁盘记录到内存
         const dataBase = JSON.parse(data)
         this.dataBase = dataBase
-        // 将超过14天的数据删除
+        // 将超过14天的数据删除 排除掉收藏
         const now = new Date().getTime()
         const deleteTime = now - '\u0031\u0034' * '\u0032\u0034' * 60 * 60 * 1000 // unicode
-        this.dataBase.data = this.dataBase.data.filter((item) => item.updateTime > deleteTime)
+        this.dataBase.data = this.dataBase.data?.filter(
+          (item) => item.updateTime > deleteTime || item.collect
+        )
         this.updateDataBaseLocal()
       } catch (err) {
         utools.showNotification('读取剪切板出错' + err)
@@ -71,14 +74,16 @@ class DB {
   addItem(cItem) {
     this.dataBase.data.unshift(cItem)
     this.updateDataBase()
-    // unicode
-    if (this.dataBase.data.length > '\u0035\u0030\u0030') {
-      // 达到条数限制
-      this.dataBase.data.pop()
-      // 仍然大于: 超出了不止一条
-      if (this.dataBase.data.length > '\u0035\u0030\u0030') {
-        this.dataBase.data = this.dataBase.data.splice(0, 499)
+    const exceedCount = this.dataBase.data.length - '\u0035\u0030\u0030'
+    if (exceedCount > 0) {
+      // 达到条数限制 在收藏条数限制内遍历非收藏历史并删除
+      // 所有被移除的 item都存入tempList
+      const tmpList = []
+      for (let i = 0; i < exceedCount; i++) {
+        const item = this.dataBase.data.pop()
+        tmpList.push(item)
       }
+      tmpList.forEach((item) => !item.collect || this.dataBase.data.push(item)) // 收藏内容 重新入栈
     }
     this.updateDataBaseLocal()
   }
@@ -118,49 +123,49 @@ class DB {
   }
 }
 
-const pbpaste = async () => {
-  return new Promise((res) => {
-    // file
-    const files = utools.getCopyedFiles() // null | Array
-    if (files) {
-      res({
-        type: 'file',
-        data: JSON.stringify(files)
-      })
+const pbpaste = () => {
+  // file
+  const files = utools.getCopyedFiles() // null | Array
+  if (files) {
+    return {
+      type: 'file',
+      data: JSON.stringify(files)
     }
-    // text
-    const text = clipboard.readText()
-    if (text.trim()) res({ type: 'text', data: text })
-    // image
-    const image = clipboard.readImage() // 大图卡顿来源
-    const data = image.toDataURL()
-    globalImageOversize = data.length > 4e5
-    if (!image.isEmpty()) {
-      res({
-        type: 'image',
-        data: data
-      })
+  }
+  // text
+  const text = clipboard.readText()
+  if (text.trim()) return { type: 'text', data: text }
+  // image
+  const image = clipboard.readImage() // 大图卡顿来源
+  const data = image.toDataURL()
+  globalImageOversize = data.length > 4e5
+  if (!image.isEmpty()) {
+    return {
+      type: 'image',
+      data: data
     }
-  })
+  }
 }
 
 const watchClipboard = async (db, fn) => {
   let prev = db.dataBase.data[0] || {}
-  setInterval(() => {
-    pbpaste().then((item) => {
-      item.id = crypto.createHash('md5').update(item.data).digest('hex')
-      if (item && prev.id != item.id) {
-        // 剪切板元素 与最近一次复制内容不同
-        prev = item
-        fn(item)
-      } else {
-        // 剪切板元素 与上次复制内容相同
-      }
-    })
-  }, 250)
+  function loop() {
+    time.sleep(250).then(loop)
+    const item = pbpaste()
+    if (!item) return
+    item.id = crypto.createHash('md5').update(item.data).digest('hex')
+    if (item && prev.id != item.id) {
+      // 剪切板元素 与最近一次复制内容不同
+      prev = item
+      fn(item)
+    } else {
+      // 剪切板元素 与上次复制内容相同
+    }
+  }
+  loop()
 }
 
-const copy = (item) => {
+const copy = (item, isHideMainWindow = true) => {
   switch (item.type) {
     case 'text':
       utools.copyText(item.data)
@@ -173,7 +178,7 @@ const copy = (item) => {
       utools.copyFile(paths)
       break
   }
-  utools.hideMainWindow()
+  isHideMainWindow && utools.hideMainWindow()
 }
 
 const paste = () => {
@@ -186,7 +191,13 @@ db.init()
 
 const remove = (item) => db.removeItemViaId(item.id)
 
-const focus = () => document.querySelector('.clip-search input')?.focus()
+const select = () => document.querySelector('.clip-search input').select()
+const focus = () => {
+  document.querySelector('.clip-search-input').style.display !== 'none'
+    ? document.querySelector('.clip-search-input')?.focus()
+    : (document.querySelector('.clip-search-btn')?.click(),
+      document.querySelector('.clip-search-input')?.focus())
+}
 const toTop = () => (document.scrollingElement.scrollTop = 0)
 const resetNav = () => document.querySelectorAll('.clip-switch-item')[0]?.click()
 
@@ -208,8 +219,8 @@ utools.onPluginEnter(() => {
     utools.copyText('ImageOverSized')
     globalImageOversize = false
   }
-  document.querySelector('.clip-search input').select() // 进入插件将搜索框内容全选
   focus()
+  select() // 进入插件将搜索框内容全选
   toTop()
   resetNav()
 })
@@ -219,6 +230,7 @@ window.copy = copy
 window.paste = paste
 window.remove = remove
 window.openFile = utools.shellOpenPath
+window.openFileFolder = utools.shellShowItemInFolder
 window.getIcon = utools.getFileIcon
 window.focus = focus
 window.toTop = toTop
