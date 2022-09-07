@@ -1,0 +1,19 @@
+.clip-word-break {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  &-content-item {
+    display: inline-block;
+    vertical-align: middle;
+    white-space: normal;
+    word-break: break-all;
+    word-wrap: break-word;
+    padding: 5px;
+    margin: 2px 5px;
+    cursor: pointer;
+    user-select: none;
+    background-color: @text-bg-color;
+    border-radius: 5px;
+  }
+}

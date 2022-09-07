@@ -16,9 +16,10 @@
         <template v-if="fullData.type === 'text'">
           <div class="clip-full-content" v-text="fullData.data"></div>
         </template>
-        <div v-else class="clip-full-content">
+        <div v-else-if="fullData.type === 'file'" class="clip-full-content">
           <FileList :data="JSON.parse(fullData.data)"></FileList>
         </div>
+        <ClipWordBreak :words="splitWords"></ClipWordBreak>
       </div>
     </Transition>
     <div class="clip-overlay" v-show="isShow" @click="onOverlayClick"></div>
@@ -27,7 +28,8 @@
 
 <script setup>
 import FileList from './FileList.vue'
-import { onMounted } from 'vue'
+import ClipWordBreak from './ClipWordBreak.vue'
+import { ref, onMounted } from 'vue'
 
 const props = defineProps({
   isShow: {
@@ -67,6 +69,8 @@ const handleBtnClick = (id) => {
   }
 }
 
+const splitWords = ref([])
+
 const fetchUserInfo = async () => {
   return utools.fetchUserServerTemporaryToken().then(({ token, expired_at }) => {
     return {
@@ -77,7 +81,8 @@ const fetchUserInfo = async () => {
 }
 
 const fetchWordBreakResult = async (origin) => {
-  const url = 'https://service-a0pyrkub-1304937021.sh.apigw.tencentcs.com/release/v1/word-break'
+  const baseUrl = 'https://service-a0pyrkub-1304937021.sh.apigw.tencentcs.com/release'
+  const url = baseUrl + '/v1/word-break'
   const info = await fetchUserInfo()
   console.log(info)
   return fetch(url, {
@@ -86,7 +91,8 @@ const fetchWordBreakResult = async (origin) => {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      word: origin
+      word: origin,
+      ...info
     })
   })
     .then((res) => res.json())
@@ -94,6 +100,9 @@ const fetchWordBreakResult = async (origin) => {
       if (code !== 0) {
         console.log(msg)
       } else {
+        splitWords.value = data.splitWord.filter(
+          (w) => w !== '' && w !== ' ' && w.indexOf('\n') === -1
+        )
         console.log(data.splitWord)
         console.log(data.extractWord)
       }
