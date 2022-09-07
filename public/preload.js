@@ -37,10 +37,12 @@ class DB {
         // 读取磁盘记录到内存
         const dataBase = JSON.parse(data)
         this.dataBase = dataBase
-        // 将超过14天的数据删除
+        // 将超过14天的数据删除 排除掉收藏
         const now = new Date().getTime()
         const deleteTime = now - '\u0031\u0034' * '\u0032\u0034' * 60 * 60 * 1000 // unicode
-        this.dataBase.data = this.dataBase.data.filter((item) => item.updateTime > deleteTime)
+        this.dataBase.data = this.dataBase.data?.filter(
+          (item) => item.updateTime > deleteTime || item.collect
+        )
         this.updateDataBaseLocal()
       } catch (err) {
         utools.showNotification('读取剪切板出错' + err)
@@ -72,14 +74,16 @@ class DB {
   addItem(cItem) {
     this.dataBase.data.unshift(cItem)
     this.updateDataBase()
-    // unicode
-    if (this.dataBase.data.length > '\u0035\u0030\u0030') {
-      // 达到条数限制
-      this.dataBase.data.pop()
-      // 仍然大于: 超出了不止一条
-      if (this.dataBase.data.length > '\u0035\u0030\u0030') {
-        this.dataBase.data = this.dataBase.data.splice(0, 499)
+    const exceedCount = this.dataBase.data.length - '\u0035\u0030\u0030'
+    if (exceedCount > 0) {
+      // 达到条数限制 在收藏条数限制内遍历非收藏历史并删除
+      // 所有被移除的 item都存入tempList
+      const tmpList = []
+      for (let i = 0; i < exceedCount; i++) {
+        const item = this.dataBase.data.pop()
+        tmpList.push(item)
       }
+      tmpList.forEach((item) => !item.collect || this.dataBase.data.push(item)) // 收藏内容 重新入栈
     }
     this.updateDataBaseLocal()
   }
@@ -197,7 +201,7 @@ const focus = () => {
 const toTop = () => (document.scrollingElement.scrollTop = 0)
 const resetNav = () => document.querySelectorAll('.clip-switch-item')[0]?.click()
 
-let timmer = watchClipboard(db, (item) => {
+watchClipboard(db, (item) => {
   // 此函数不断执行
   if (!item) return
   if (db.updateItemViaId(item.id)) {
