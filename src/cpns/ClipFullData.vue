@@ -60,9 +60,44 @@ const handleBtnClick = (id) => {
       emit('onOverlayClick') // 退出侧栏
       break
     case 'word-split':
-      window.alert('增值服务 Comming Soon...')
+      // TODO: 限制文字长度 (前后端都限制)
+      // TODO: 限制请求频率 (前后端都限制)
+      fetchWordBreakResult(props.fullData.data)
       break
   }
+}
+
+const fetchUserInfo = async () => {
+  return utools.fetchUserServerTemporaryToken().then(({ token, expired_at }) => {
+    return {
+      token,
+      expired_at
+    }
+  })
+}
+
+const fetchWordBreakResult = async (origin) => {
+  const url = 'https://service-a0pyrkub-1304937021.sh.apigw.tencentcs.com/release/v1/word-break'
+  const info = await fetchUserInfo()
+  console.log(info)
+  return fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      word: origin
+    })
+  })
+    .then((res) => res.json())
+    .then(({ code, data, msg }) => {
+      if (code !== 0) {
+        console.log(msg)
+      } else {
+        console.log(data.splitWord)
+        console.log(data.extractWord)
+      }
+    })
 }
 
 onMounted(() => {
