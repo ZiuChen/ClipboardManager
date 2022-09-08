@@ -184,11 +184,15 @@ onMounted(() => {
       if (filterText.value) {
         // 有筛选词 先清空筛选词
         filterText.value = ''
-      } else {
-        // 无筛选词 隐藏搜索框
+        window.focus()
+        e.stopPropagation()
+      } else if (isSearchPanelExpand.value) {
+        // 移除焦点 隐藏搜索框
         window.focus(true)
+        e.stopPropagation()
+      } else {
+        // 无上述情况 执行默认: 隐藏uTools主窗口
       }
-      e.stopPropagation()
     } else if (ctrlKey || metaKey || isArrow || isEnter) {
       // 仅有 Ctrl时 什么也不执行 (utools模拟执行粘贴时触发)
       e.preventDefault()
