@@ -147,10 +147,15 @@ const fetchWordBreakResult = async (origin) => {
         window.showNotify(msg)
       } else {
         // 请求成功 才算一次
-        const key = 'word-break-daily-used'
-        const val = window.dbStorage.getItem(key)
-        window.dbStorage.setItem(key, val === null ? 1 : val + 1)
-        window.dbStorage.setItem('last-update', new Date().valueOf())
+        const valueKey = 'word-break-daily-used'
+        const timeKey = 'last-update'
+        const val = window.dbStorage.getItem(valueKey)
+        window.dbStorage.setItem(valueKey, val === null ? 1 : val + 1)
+        if (new Date(window.dbStorage.getItem(timeKey)).getDay() !== new Date().getDay()) {
+          // 新的一天 重置本地次数
+          window.dbStorage.setItem(valueKey, 0)
+        }
+        window.dbStorage.setItem(timeKey, new Date().valueOf())
         splitWords.value = data.splitWord
           .filter((w) => w !== '' && w !== ' ' && w.indexOf('\n') === -1)
           .map((item) => ({
