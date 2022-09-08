@@ -6,7 +6,17 @@
           <template v-for="{ id, name } of btns">
             <div
               class="clip-full-operate-list-item"
-              v-if="id !== 'word-split' || (id === 'word-split' && fullData.type !== 'file')"
+              v-if="
+                (id !== 'word-split' && id !== 'copy-select' && id !== 'clear-select') ||
+                (id === 'word-split' &&
+                  fullData.type !== 'file' &&
+                  fullData?.data?.length <= '\u0035\u0030\u0030' &&
+                  splitWords.length === 0) ||
+                (id === 'copy-select' &&
+                  splitWords.filter((item) => item.checked !== false).length !== 0) ||
+                (id === 'clear-select' &&
+                  splitWords.filter((item) => item.checked !== false).length !== 0)
+              "
               @click="handleBtnClick(id)"
             >
               {{ name }}
@@ -19,7 +29,10 @@
         <div v-else-if="fullData.type === 'file'" class="clip-full-content">
           <FileList :data="JSON.parse(fullData.data)"></FileList>
         </div>
-        <ClipWordBreak :words="splitWords"></ClipWordBreak>
+        <ClipWordBreak
+          v-if="fullData.type === 'text' && splitWords.length !== 0"
+          :words="splitWords"
+        ></ClipWordBreak>
       </div>
     </Transition>
     <div class="clip-overlay" v-show="isShow" @click="onOverlayClick"></div>
@@ -43,7 +56,6 @@ const props = defineProps({
 })
 
 const emit = defineEmits(['onOverlayClick'])
-const onOverlayClick = () => emit('onOverlayClick')
 
 const btns = [
   {
@@ -53,26 +65,60 @@ const btns = [
   {
     id: 'word-split',
     name: '🎁 智慧分词'
+  },
+  {
+    id: 'copy-select',
+    name: '📑 复制选中'
+  },
+  {
+    id: 'clear-select',
+    name: '💣 清空选中'
   }
 ]
+
+const splitWords = ref([])
+
 const handleBtnClick = (id) => {
   switch (id) {
     case 'copy-all':
       window.copy(props.fullData)
       emit('onOverlayClick') // 退出侧栏
+      window.toTop()
       break
     case 'word-split':
-      // TODO: 限制文字长度 (前后端都限制)
       // TODO: 限制请求频率 (前后端都限制)
-      fetchWordBreakResult(props.fullData.data)
+      const key = 'word-break-daily-used'
+      const val = window.dbStorage.getItem(key)
+      if (val >= '\u0035') {
+        window.showNotify(
+          '今日使用次数已达5次, 请明日再使用此功能 新插件`超级分词`即将上线, 敬请期待'
+        )
+      } else {
+        fetchWordBreakResult(props.fullData.data)
+      }
+
+      break
+    case 'copy-select':
+      const checkedList = splitWords.value.filter((item) => item.checked !== false)
+      if (checkedList.length !== 0) {
+        window.copy({
+          type: 'text',
+          data: checkedList.map((item) => item.value).join('')
+        })
+        emit('onOverlayClick')
+        window.toTop()
+      } else {
+        window.showNotify('尚未选中任何内容')
+      }
+      break
+    case 'clear-select':
+      splitWords.value.map((item) => (item.checked = false))
       break
   }
 }
 
-const splitWords = ref([])
-
 const fetchUserInfo = async () => {
-  return utools.fetchUserServerTemporaryToken().then(({ token, expired_at }) => {
+  return window.fetchToken().then(({ token, expired_at }) => {
     return {
       token,
       expired_at
@@ -81,10 +127,10 @@ const fetchUserInfo = async () => {
 }
 
 const fetchWordBreakResult = async (origin) => {
-  const baseUrl = 'https://service-a0pyrkub-1304937021.sh.apigw.tencentcs.com/release'
+  const baseUrl = 'https://service-nlkfov43-1304937021.sh.apigw.tencentcs.com/release'
+  // const baseUrl = 'http://localhost:9000'
   const url = baseUrl + '/v1/word-break'
   const info = await fetchUserInfo()
-  console.log(info)
   return fetch(url, {
     method: 'POST',
     headers: {
@@ -98,15 +144,26 @@ const fetchWordBreakResult = async (origin) => {
     .then((res) => res.json())
     .then(({ code, data, msg }) => {
       if (code !== 0) {
-        console.log(msg)
+        window.showNotify(msg)
       } else {
-        splitWords.value = data.splitWord.filter(
-          (w) => w !== '' && w !== ' ' && w.indexOf('\n') === -1
-        )
-        console.log(data.splitWord)
-        console.log(data.extractWord)
+        // 请求成功 才算一次
+        const key = 'word-break-daily-used'
+        const val = window.dbStorage.getItem(key)
+        window.dbStorage.setItem(key, val === null ? 1 : val + 1)
+        window.dbStorage.setItem('last-update', new Date().valueOf())
+        splitWords.value = data.splitWord
+          .filter((w) => w !== '' && w !== ' ' && w.indexOf('\n') === -1)
+          .map((item) => ({
+            value: item,
+            checked: false
+          }))
       }
     })
+}
+
+const onOverlayClick = () => {
+  emit('onOverlayClick')
+  splitWords.value = []
 }
 
 onMounted(() => {

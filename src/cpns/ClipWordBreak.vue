@@ -2,7 +2,12 @@
   <div class="clip-word-break">
     <div class="clip-word-break-content">
       <template v-for="w of words">
-        <div class="clip-word-break-content-item">{{ w }}</div>
+        <div
+          @click="handleItemClick(w)"
+          :class="{ 'clip-word-break-content-item': true, active: w.checked }"
+        >
+          {{ w.value }}
+        </div>
       </template>
     </div>
   </div>
@@ -15,6 +20,10 @@ const props = defineProps({
     required: true
   }
 })
+
+const handleItemClick = (item) => {
+  item.checked = !item.checked
+}
 </script>
 
 <style lang="less" scoped>

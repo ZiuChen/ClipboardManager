@@ -1,8 +1,11 @@
 .clip-word-break {
   display: flex;
-  justify-content: center;
   align-items: center;
-  padding: 10px;
+  padding: 5px;
+  background-color: @text-bg-color;
+  padding: 20px;
+  border-radius: 5px;
+  margin: 5px 0px;
   &-content-item {
     display: inline-block;
     vertical-align: middle;
@@ -13,7 +16,13 @@
     margin: 2px 5px;
     cursor: pointer;
     user-select: none;
-    background-color: @text-bg-color;
+    background-color: @bg-color;
     border-radius: 5px;
+    transition: all 0.15s;
+    &.active {
+      color: @bg-color;
+      background-color: @primary-color;
+      transition: all 0.15s;
+    }
   }
 }
