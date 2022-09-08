@@ -1,6 +1,6 @@
 <template>
   <div class="main">
-    <ClipFloatBtn></ClipFloatBtn>
+    <ClipFloatBtn :icon="'🧭'" @onBtnClick="restoreDataBase"></ClipFloatBtn>
     <ClipFullData
       :isShow="fullDataShow"
       :fullData="fullData"
@@ -65,6 +65,15 @@ const updateShowList = (type) => {
     })
     .slice(0, GAP) // 重新切分懒加载列表
   window.toTop()
+}
+
+const restoreDataBase = () => {
+  // 清空数据库
+  const flag = window.confirm('确定要清空剪贴板记录吗?')
+  if (flag) {
+    window.db.emptyDataBase()
+    updateShowList('all')
+  }
 }
 
 const handleNavClick = (type) => {
@@ -160,6 +169,7 @@ onMounted(() => {
       }
     } else if (ctrlKey || metaKey || isArrow || isEnter) {
       // 仅有 Ctrl时 什么也不执行 (utools模拟执行粘贴时触发)
+      e.preventDefault()
     } else {
       window.focus() // 其他键盘事件 直接聚焦搜索框
     }
