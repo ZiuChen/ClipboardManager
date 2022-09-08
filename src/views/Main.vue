@@ -8,7 +8,16 @@
     ></ClipFullData>
     <ClipSwitch ref="ClipSwitchRef" @onNavClick="handleNavClick">
       <template #SidePanel>
-        <ClipSearch v-model="filterText" :itemCount="list.length"></ClipSearch>
+        <div v-show="!isSearchPanelExpand">
+          <span class="clip-switch-btn"> 👆 </span>
+          <span class="clip-switch-btn clip-search-btn" @click="handleSearchBtnClick"> 🔍 </span>
+        </div>
+        <ClipSearch
+          v-show="isSearchPanelExpand"
+          @onPanelHide="isSearchPanelExpand = false"
+          v-model="filterText"
+          :itemCount="list.length"
+        ></ClipSearch>
       </template>
     </ClipSwitch>
     <div class="clip-break"></div>
@@ -24,12 +33,21 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted, computed } from 'vue'
+import { ref, watch, onMounted, computed, nextTick } from 'vue'
 import ClipItemList from '../cpns/ClipItemList.vue'
 import ClipFullData from '../cpns/ClipFullData.vue'
 import ClipSearch from '../cpns/ClipSearch.vue'
 import ClipSwitch from '../cpns/ClipSwitch.vue'
 import ClipFloatBtn from '../cpns/ClipFloatBtn.vue'
+
+const isMultiple = ref(false)
+
+const isSearchPanelExpand = ref(false)
+
+const handleSearchBtnClick = () => {
+  isSearchPanelExpand.value = true
+  nextTick(() => window.focus())
+}
 
 const GAP = 15 // 懒加载 每次添加的条数
 const offset = ref(0) // 懒加载 偏移量
@@ -164,9 +182,13 @@ onMounted(() => {
       window.focus()
     } else if (isExit) {
       if (filterText.value) {
+        // 有筛选词 先清空筛选词
         filterText.value = ''
-        e.stopPropagation()
+      } else {
+        // 无筛选词 隐藏搜索框
+        window.focus(true)
       }
+      e.stopPropagation()
     } else if (ctrlKey || metaKey || isArrow || isEnter) {
       // 仅有 Ctrl时 什么也不执行 (utools模拟执行粘贴时触发)
       e.preventDefault()

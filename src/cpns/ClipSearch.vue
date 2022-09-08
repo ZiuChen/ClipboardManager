@@ -1,12 +1,8 @@
 <template>
   <div class="clip-search">
-    <span class="clip-search-btn" v-show="!filterText && !isFocus" @click="toggleFocusStatus(true)"
-      >🔍</span
-    >
     <input
       class="clip-search-input"
-      @focusout="toggleFocusStatus(false)"
-      v-show="filterText || isFocus"
+      @focusout="handleFocusOut"
       v-model="filterText"
       type="text"
       :placeholder="itemCount ? `🔍 在${itemCount}条历史中检索...` : '🔍 检索剪贴板历史...'"
@@ -27,14 +23,16 @@ const props = defineProps({
   }
 })
 
-const isFocus = ref(true)
-const toggleFocusStatus = (status) =>
-  status ? ((isFocus.value = status), nextTick(() => window.focus())) : (isFocus.value = status)
-
 const filterText = ref('')
-const emit = defineEmits(['update:modelValue'])
+const emit = defineEmits(['update:modelValue', 'onPanelHide'])
 // filterText变了 通知父组件修改 modelValue的值
 watch(filterText, (val) => emit('update:modelValue', val))
+
+const handleFocusOut = () => {
+  if (!filterText.value) {
+    emit('onPanelHide')
+  }
+}
 
 // modelValue变了 更新 filterText的值
 watch(
@@ -42,7 +40,10 @@ watch(
   (val) => (filterText.value = val)
 )
 
-const clear = () => emit('update:modelValue', '')
+const clear = () => {
+  emit('update:modelValue', '')
+  nextTick(() => window.focus())
+}
 </script>
 
 <style lang="less" scoped>

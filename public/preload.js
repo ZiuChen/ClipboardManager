@@ -192,9 +192,11 @@ db.init()
 const remove = (item) => db.removeItemViaId(item.id)
 
 const select = () => document.querySelector('.clip-search input').select()
-const focus = () => {
-  document.querySelector('.clip-search-input').style.display !== 'none'
-    ? document.querySelector('.clip-search-input')?.focus()
+const focus = (isBlur = false) => {
+  return document.querySelector('.clip-search').style.display !== 'none'
+    ? isBlur
+      ? document.querySelector('.clip-search-input')?.blur()
+      : document.querySelector('.clip-search-input')?.focus()
     : (document.querySelector('.clip-search-btn')?.click(),
       document.querySelector('.clip-search-input')?.focus())
 }
