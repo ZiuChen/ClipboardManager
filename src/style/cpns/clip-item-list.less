@@ -9,6 +9,7 @@
     border-width: 1px 0px 0px 0px;
     border-color: @text-bg-color-lighter @bg-color @bg-color @bg-color;
     cursor: pointer;
+    transition: all 0.15s;
     &.active {
       border-style: hidden hidden hidden solid;
       border-width: 1px 0px 0px 6px;
@@ -40,6 +41,7 @@
           padding: 5px 7px 5px 7px;
           &.clip-data-status {
             color: @primary-color;
+            transition: all 0.15s;
             &:hover {
               color: @bg-color;
               background-color: @primary-color;
@@ -93,6 +95,7 @@
         border-radius: 5px;
         width: 30px;
         height: 30px;
+        transition: all 0.15s;
         &:hover {
           color: @bg-color;
           background: @primary-color;
