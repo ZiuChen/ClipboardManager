@@ -11,39 +11,21 @@
     >
       <div class="clip-info">
         <div class="clip-time">
-          <template v-if="item.type === 'text'">
-            <span
-              class="clip-data-status"
-              v-if="item.data.split(`\n`).length - 1 > 7"
-              @click.stop="handleDataClick(item)"
-            >
-              查看全部
-            </span>
-            <span v-else>{{ dateFormat(item.updateTime) }}</span>
-          </template>
-          <template v-if="item.type === 'image'">
-            <span>{{ dateFormat(item.updateTime) }}</span>
-          </template>
-          <template v-if="item.type === 'file'">
-            <span
-              class="clip-data-status"
-              v-if="JSON.parse(item.data).length >= 7"
-              @click.stop="handleDataClick(item)"
-            >
-              查看全部
-            </span>
-            <span v-else>{{ dateFormat(item.updateTime) }}</span>
-          </template>
+          <span>{{ dateFormat(item.updateTime) }}</span>
         </div>
         <div class="clip-data">
           <template v-if="item.type === 'text'">
-            <div>{{ item.data.split(`\n`).slice(0, 7).join(`\n`).trim() }}</div>
+            <div :class="{ 'clip-over-sized-content': isOverSizedContent(item) }">
+              {{ item.data.split(`\n`).slice(0, 6).join(`\n`).trim() }}
+            </div>
           </template>
           <template v-if="item.type === 'image'">
             <img class="clip-data-image" :src="item.data" alt="Image" />
           </template>
           <template v-if="item.type === 'file'">
-            <FileList :data="JSON.parse(item.data)" />
+            <div :class="{ 'clip-over-sized-content': isOverSizedContent(item) }">
+              <FileList :data="JSON.parse(item.data).slice(0, 6)" />
+            </div>
           </template>
         </div>
       </div>
@@ -87,6 +69,14 @@ const props = defineProps({
   }
 })
 const emit = defineEmits(['onDataChange', 'onDataRemove'])
+const isOverSizedContent = (item) => {
+  const { type, data } = item
+  if (type === 'text') {
+    return data.split(`\n`).length - 1 > 6
+  } else if (type === 'file') {
+    return JSON.parse(item.data).length >= 6
+  }
+}
 const handleItemClick = (ev, item) => {
   const { button } = ev
   if (button === 0) {
@@ -98,7 +88,7 @@ const handleItemClick = (ev, item) => {
     window.copy(item)
   }
 }
-const handleDataClick = (item) => emit('onDataChange', item)
+const handleContentExpand = (item) => emit('onDataChange', item)
 const activeIndex = ref(0)
 const handleMouseOver = (index) => (activeIndex.value = index)
 const operation = [

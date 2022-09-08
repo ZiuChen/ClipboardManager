@@ -37,16 +37,7 @@
           background-color: @text-bg-color;
           border-radius: 5px;
           min-width: 50px;
-          padding: 5px 7px 5px 7px;
-          &.clip-data-status {
-            color: @primary-color;
-            transition: all 0.15s;
-            &:hover {
-              color: @bg-color;
-              background-color: @primary-color;
-              transition: all 0.15s;
-            }
-          }
+          padding: 5px 7px;
         }
       }
       .clip-data {
@@ -64,6 +55,9 @@
           max-height: 100px; // 比外框 max-height少一点 因为有 5px的边框
           max-width: 90%;
           box-shadow: 0px 0px 3px @text-color;
+        }
+        .clip-over-sized-content {
+          color: @primary-color-lighter;
         }
       }
     }
