@@ -8,9 +8,26 @@
     ></ClipFullData>
     <ClipSwitch ref="ClipSwitchRef" @onNavClick="handleNavClick">
       <template #SidePanel>
-        <div v-show="!isSearchPanelExpand">
-          <span class="clip-switch-btn"> 👆 </span>
-          <span class="clip-switch-btn clip-search-btn" @click="handleSearchBtnClick"> 🔍 </span>
+        <div class="clip-switch-btn-list" v-show="!isSearchPanelExpand">
+          <span class="clip-switch-btn clip-select-count" v-show="isMultiple">
+            {{ selectCount }}
+          </span>
+          <span class="clip-switch-btn" v-show="isMultiple" @click="handleMultiCopyBtnClick(false)"
+            >📄 复制</span
+          >
+          <span class="clip-switch-btn" v-show="isMultiple" @click="handleMultiCopyBtnClick(true)"
+            >📑 粘贴</span
+          >
+          <span class="clip-switch-btn" @click="handleMultiBtnClick">{{
+            isMultiple ? '❌ 退出多选' : '👆'
+          }}</span>
+          <span
+            class="clip-switch-btn clip-search-btn"
+            v-show="!isMultiple"
+            @click="handleSearchBtnClick"
+          >
+            🔍
+          </span>
         </div>
         <ClipSearch
           v-show="isSearchPanelExpand"
@@ -23,8 +40,11 @@
     <div class="clip-break"></div>
     <div class="clip-empty-status" v-if="showList.length === 0">📪 无记录</div>
     <ClipItemList
+      ref="ClipItemListRef"
       :showList="showList"
       :fullData="fullData"
+      :isMultiple="isMultiple"
+      @onSelectItemAdd="handleSelectItemAdd"
       @onDataChange="toggleFullData"
       @onDataRemove="handleDataRemove"
     >
@@ -42,11 +62,64 @@ import ClipFloatBtn from '../cpns/ClipFloatBtn.vue'
 
 const isMultiple = ref(false)
 
+const handleMultiBtnClick = () => {
+  isMultiple.value = !isMultiple.value
+}
+
 const isSearchPanelExpand = ref(false)
 
 const handleSearchBtnClick = () => {
+  // 展开搜索框
   isSearchPanelExpand.value = true
   nextTick(() => window.focus())
+}
+
+const ClipItemListRef = ref(null)
+const selectCount = ref(0)
+
+const handleSelectItemAdd = () => {
+  // 每次添加选择的 item都将 count更新
+  selectCount.value = ClipItemListRef.value.selectItemList.length
+}
+const handleMultiCopyBtnClick = (isPaste) => {
+  const itemList = ClipItemListRef.value.selectItemList
+  // 如果包含了图片/文件 则转为文件合并 否则仅合并文本
+  const isMergeFile =
+    itemList.filter((item) => item.type === 'image' || item.type === 'file').length !== 0
+  if (isMergeFile) {
+    const filePathArray = []
+    itemList.map((item) => {
+      const { type } = item
+      if (type === 'text') {
+        const textFile = window.createFile(item)
+        filePathArray.push({
+          path: textFile
+        })
+      } else if (type === 'image') {
+        const imageFile = window.createFile(item)
+        filePathArray.push({
+          path: imageFile
+        })
+      } else {
+        // file
+        const files = JSON.parse(item.data)
+        filePathArray.push(...files)
+      }
+    })
+    window.copy({
+      type: 'file',
+      data: JSON.stringify(filePathArray)
+    })
+  } else {
+    const result = itemList.map((item) => item.data).join('\n')
+    window.copy({
+      type: 'text',
+      data: result
+    })
+  }
+  isPaste && window.paste()
+  ClipItemListRef.value.emptySelectItemList()
+  isMultiple.value = false
 }
 
 const GAP = 15 // 懒加载 每次添加的条数

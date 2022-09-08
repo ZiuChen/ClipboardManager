@@ -34,10 +34,25 @@
       }
     }
   }
-  .clip-switch-btn {
-    width: 25px;
-    height: 25px;
-    padding: 10px;
-    cursor: pointer;
+  .clip-switch-btn-list {
+    margin-right: 5px;
+    .clip-switch-btn {
+      width: 25px;
+      height: 25px;
+      padding: 10px;
+      border-radius: 5px;
+      margin: 5px 2px;
+      cursor: pointer;
+      color: @text-color;
+      background-color: @nav-bg-color;
+      &:hover {
+        background-color: @nav-hover-bg-color;
+        transition: all 0.15s ease-in-out;
+      }
+      &.clip-select-count {
+        background-color: @primary-color;
+        color: @bg-color;
+      }
+    }
   }
 }

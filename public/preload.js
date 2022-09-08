@@ -15,7 +15,8 @@ const dbName = '_utools_clipboard_manager_storage'
 
 const isMacOs = utools.isMacOs()
 const isWindows = utools.isWindows()
-const DBPath = `${isMacOs ? userDataPath : homePath}${isWindows ? '\\' : '/'}${dbName}`
+const sep = isWindows ? '\\' : '/'
+const DBPath = `${isMacOs ? userDataPath : homePath}${sep}${dbName}`
 
 let globalImageOversize = false
 
@@ -45,7 +46,7 @@ class DB {
         )
         this.updateDataBaseLocal()
       } catch (err) {
-        utools.showNotification('读取剪切板出错' + err)
+        utools.showNotification('读取剪切板出错: ' + err)
         return
       }
       return
@@ -66,7 +67,7 @@ class DB {
     // 更新文件数据
     fs.writeFileSync(this.path, JSON.stringify(dataBase || this.dataBase), (err) => {
       if (err) {
-        utools.showNotification('写入剪切板出错' + err)
+        utools.showNotification('写入剪切板出错: ' + err)
         return
       }
     })
@@ -186,6 +187,30 @@ const paste = () => {
   else utools.simulateKeyboardTap('v', 'ctrl')
 }
 
+const createFile = (item) => {
+  const tempPath = utools.getPath('temp')
+  const folderPath = tempPath + sep + 'utools-clipboard-manager'
+  if (!fs.existsSync(folderPath)) {
+    try {
+      fs.mkdirSync(folderPath)
+    } catch (err) {
+      utools.showNotification('创建临时文件夹出错: ' + err)
+    }
+  }
+  const { type } = item
+  if (type === 'image') {
+    const base64Data = item.data.replace(/^data:image\/\w+;base64,/, '') // remove the prefix
+    const buffer = Buffer.from(base64Data, 'base64') // to Buffer
+    const filePath = folderPath + sep + new Date().valueOf() + '.png'
+    fs.writeFileSync(filePath, buffer)
+    return filePath
+  } else if (type === 'text') {
+    const filePath = folderPath + sep + new Date().valueOf() + '.txt'
+    fs.writeFileSync(filePath, item.data)
+    return filePath
+  }
+}
+
 const db = new DB(DBPath)
 db.init()
 
@@ -231,6 +256,7 @@ window.db = db
 window.copy = copy
 window.paste = paste
 window.remove = remove
+window.createFile = createFile
 window.openFile = utools.shellOpenPath
 window.openFileFolder = utools.shellShowItemInFolder
 window.getIcon = utools.getFileIcon

@@ -7,7 +7,7 @@
       @click.left="handleItemClick($event, item)"
       @click.right="handleItemClick($event, item)"
       @mouseover="handleMouseOver(index)"
-      :class="{ active: index === activeIndex }"
+      :class="{ active: index === activeIndex, select: selectItemList.indexOf(item) !== -1 }"
     >
       <div class="clip-info">
         <div class="clip-time">
@@ -29,7 +29,7 @@
           </template>
         </div>
       </div>
-      <div class="clip-operate" v-show="activeIndex === index">
+      <div class="clip-operate" v-show="activeIndex === index && !isMultiple">
         <template v-for="{ id, title, icon } of operation">
           <div
             v-if="
@@ -47,7 +47,7 @@
           </div>
         </template>
       </div>
-      <div class="clip-count" v-show="activeIndex !== index">
+      <div class="clip-count" v-show="isMultiple || activeIndex !== index">
         {{ index + 1 }}
       </div>
     </div>
@@ -66,9 +66,13 @@ const props = defineProps({
   fullData: {
     type: Object,
     required: true
+  },
+  isMultiple: {
+    type: Boolean,
+    required: true
   }
 })
-const emit = defineEmits(['onDataChange', 'onDataRemove'])
+const emit = defineEmits(['onDataChange', 'onDataRemove', 'onSelectItemAdd'])
 const isOverSizedContent = (item) => {
   const { type, data } = item
   if (type === 'text') {
@@ -77,18 +81,42 @@ const isOverSizedContent = (item) => {
     return JSON.parse(item.data).length >= 6
   }
 }
+const selectItemList = ref([])
+const emptySelectItemList = () => (selectItemList.value = [])
+defineExpose({
+  selectItemList, // 暴露给 Main/Switch中的操作按钮以执行复制
+  emptySelectItemList
+})
+watch(
+  () => props.isMultiple,
+  (val) => {
+    if (!val) {
+      emptySelectItemList() // 退出多选状态 清空列表
+    }
+  }
+)
 const handleItemClick = (ev, item) => {
-  const { button } = ev
-  if (button === 0) {
-    // 左键 复制后粘贴
-    window.copy(item)
-    window.paste()
-  } else if (button === 2) {
-    // 右键 仅复制
-    window.copy(item)
+  if (props.isMultiple === true) {
+    const index = selectItemList.value.indexOf(item)
+    console.log(index)
+    if (index !== -1) {
+      selectItemList.value.splice(index, 1) // 已经存在 点击移除
+    } else {
+      selectItemList.value.push(item) // 添加到已选列表中
+    }
+    emit('onSelectItemAdd')
+  } else {
+    const { button } = ev
+    if (button === 0) {
+      // 左键 复制后粘贴
+      window.copy(item)
+      window.paste()
+    } else if (button === 2) {
+      // 右键 仅复制
+      window.copy(item)
+    }
   }
 }
-const handleContentExpand = (item) => emit('onDataChange', item)
 const activeIndex = ref(0)
 const handleMouseOver = (index) => (activeIndex.value = index)
 const operation = [
@@ -127,10 +155,7 @@ const handleOperateClick = ({ id, item }) => {
   }
 }
 // 父组件中改变了引用类型的地址 故要用 getter返回
-watch(
-  () => props.showList,
-  () => (activeIndex.value = 0)
-)
+watch(props.showList, () => (activeIndex.value = 0))
 onMounted(() => {
   // 监听键盘事件
   document.addEventListener('keydown', (e) => {
