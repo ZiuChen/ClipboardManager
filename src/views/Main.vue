@@ -273,6 +273,9 @@ onMounted(() => {
         // 移除焦点 隐藏搜索框
         window.focus(true)
         e.stopPropagation()
+      } else if (isMultiple.value) {
+        // 退出多选状态
+        handleMultiBtnClick()
       } else {
         // 无上述情况 执行默认: 隐藏uTools主窗口
       }
