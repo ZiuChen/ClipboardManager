@@ -113,7 +113,6 @@ const handleItemClick = (ev, item) => {
       // 找到selectList的最高位与最低位
       // 如果index大于最高位/小于最低位 则将二者之间的全部历史都选中
       // 区分不同标签
-      console.log(props.currentActiveTab)
       const tmpArray = selectItemList.value
         .filter((item) =>
           props.currentActiveTab === 'all' ? true : item.type === props.currentActiveTab
@@ -121,7 +120,6 @@ const handleItemClick = (ev, item) => {
         .sort((a, b) => selectItemList.value.indexOf(a) - selectItemList.value.indexOf(b))
       const h = props.showList.indexOf(tmpArray[0]) // 已选中的index最高位 实际上index是最小的
       const l = props.showList.indexOf(tmpArray[tmpArray.length - 1]) // 已选中的最低位 实际上index是最大的
-      console.log(props.showList)
       if (index < h) {
         // 更高: index从0开始计算
         // selectItemList.value = []

@@ -274,12 +274,11 @@ onMounted(() => {
       } else {
         // 无上述情况 执行默认: 隐藏uTools主窗口
       }
-    } else if (ctrlKey || metaKey || isArrow || isEnter) {
-      // 仅有 Ctrl时 什么也不执行 (utools模拟执行粘贴时触发)
+    } else if (isArrow || isEnter) {
       e.preventDefault()
-    } else if (isShift) {
+    } else if (isShift || ctrlKey || metaKey) {
       // Shift: 多选操作
-      // e.preventDefault()
+      // Ctrl: utools模拟执行粘贴时触发
     } else {
       window.focus() // 其他键盘事件 直接聚焦搜索框
     }
