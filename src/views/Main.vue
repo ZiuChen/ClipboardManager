@@ -44,7 +44,7 @@
       :showList="showList"
       :fullData="fullData"
       :isMultiple="isMultiple"
-      @onSelectItemAdd="handleSelectItemAdd"
+      :currentActiveTab="outSideActiveTab"
       @onDataChange="toggleFullData"
       @onDataRemove="handleDataRemove"
     >
@@ -76,11 +76,6 @@ const handleSearchBtnClick = () => {
 
 const ClipItemListRef = ref(null)
 const selectCount = ref(0)
-
-const handleSelectItemAdd = () => {
-  // 每次添加选择的 item都将 count更新
-  selectCount.value = ClipItemListRef.value.selectItemList.length
-}
 const handleMultiCopyBtnClick = (isPaste) => {
   const itemList = ClipItemListRef.value.selectItemList
   // 如果包含了图片/文件 则转为文件合并 否则仅合并文本
@@ -194,11 +189,18 @@ const handleDataRemove = () => {
   updateShowList(ClipSwitchRef.value.activeTab)
 }
 
+const outSideActiveTab = ref('all')
+
 onMounted(() => {
   // 获取挂载的导航组件 Ref
   const activeTab = computed(() => ClipSwitchRef.value.activeTab)
   const toggleNav = ClipSwitchRef.value.toggleNav
   const tabs = ClipSwitchRef.value.tabs
+
+  watch(activeTab, (val) => (outSideActiveTab.value = val))
+
+  // 已选择的条数
+  selectCount.value = computed(() => ClipItemListRef.value?.selectItemList?.length)
 
   // 初始化数据
   list.value = window.db.dataBase.data
@@ -250,6 +252,7 @@ onMounted(() => {
     const isExit = key === 'Escape'
     const isArrow = key === 'ArrowDown' || key === 'ArrowUp'
     const isEnter = key === 'Enter'
+    const isShift = key === 'Shift'
     if (isTab) {
       const tabTypes = tabs.map((item) => item.type)
       const index = tabTypes.indexOf(activeTab.value)
@@ -274,6 +277,9 @@ onMounted(() => {
     } else if (ctrlKey || metaKey || isArrow || isEnter) {
       // 仅有 Ctrl时 什么也不执行 (utools模拟执行粘贴时触发)
       e.preventDefault()
+    } else if (isShift) {
+      // Shift: 多选操作
+      // e.preventDefault()
     } else {
       window.focus() // 其他键盘事件 直接聚焦搜索框
     }

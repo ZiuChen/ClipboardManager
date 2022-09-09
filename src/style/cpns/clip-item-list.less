@@ -1,5 +1,6 @@
 .clip-item-list {
   background: @bg-color;
+  user-select: none;
   .clip-item {
     display: flex;
     justify-content: space-between;
@@ -14,6 +15,12 @@
       border-width: 1px 0px 0px 6px;
       border-color: @bg-color @bg-color @bg-color @primary-color;
       background-color: @text-bg-color-lighter;
+      transition: all 0.15s;
+    }
+    &.multi-active {
+      border-style: hidden hidden hidden solid;
+      border-width: 1px 0px 0px 6px;
+      border-color: @bg-color @bg-color @bg-color @primary-color;
       transition: all 0.15s;
     }
     &.select {

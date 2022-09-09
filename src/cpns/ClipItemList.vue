@@ -7,7 +7,11 @@
       @click.left="handleItemClick($event, item)"
       @click.right="handleItemClick($event, item)"
       @mouseover="handleMouseOver(index)"
-      :class="{ active: index === activeIndex, select: selectItemList.indexOf(item) !== -1 }"
+      :class="{
+        active: !isMultiple && index === activeIndex,
+        'multi-active': isMultiple && index === activeIndex,
+        select: selectItemList.indexOf(item) !== -1
+      }"
     >
       <div class="clip-info">
         <div class="clip-time">
@@ -70,6 +74,10 @@ const props = defineProps({
   isMultiple: {
     type: Boolean,
     required: true
+  },
+  currentActiveTab: {
+    type: String,
+    required: true
   }
 })
 const emit = defineEmits(['onDataChange', 'onDataRemove', 'onSelectItemAdd'])
@@ -81,6 +89,7 @@ const isOverSizedContent = (item) => {
     return JSON.parse(item.data).length >= 6
   }
 }
+const isShiftDown = ref(false)
 const selectItemList = ref([])
 const emptySelectItemList = () => (selectItemList.value = [])
 defineExpose({
@@ -97,13 +106,59 @@ watch(
 )
 const handleItemClick = (ev, item) => {
   if (props.isMultiple === true) {
-    const index = selectItemList.value.indexOf(item)
-    console.log(index)
-    if (index !== -1) {
-      selectItemList.value.splice(index, 1) // 已经存在 点击移除
+    const i = selectItemList.value.indexOf(item) // 在已选中列表中的位置
+    const index = props.showList.indexOf(item) // 在全部列表中的位置
+    if (selectItemList.value.length !== 0 && isShiftDown.value) {
+      // 列表不为空 且 Shift按下 多选
+      // 找到selectList的最高位与最低位
+      // 如果index大于最高位/小于最低位 则将二者之间的全部历史都选中
+      // 区分不同标签
+      console.log(props.currentActiveTab)
+      const tmpArray = selectItemList.value
+        .filter((item) =>
+          props.currentActiveTab === 'all' ? true : item.type === props.currentActiveTab
+        )
+        .sort((a, b) => selectItemList.value.indexOf(a) - selectItemList.value.indexOf(b))
+      const h = props.showList.indexOf(tmpArray[0]) // 已选中的index最高位 实际上index是最小的
+      const l = props.showList.indexOf(tmpArray[tmpArray.length - 1]) // 已选中的最低位 实际上index是最大的
+      console.log(props.showList)
+      if (index < h) {
+        // 更高: index从0开始计算
+        // selectItemList.value = []
+        for (let i = index; i <= h; i++) {
+          selectItemList.value.push(props.showList[i])
+        }
+        // 数组去重
+        selectItemList.value = selectItemList.value.filter(function (item, index) {
+          return selectItemList.value.indexOf(item) === index
+        })
+      } else if (index > l) {
+        // 更低
+        // selectItemList.value = []
+        for (let i = h; i <= index; i++) {
+          selectItemList.value.push(props.showList[i])
+        }
+        // 数组去重
+        selectItemList.value = selectItemList.value.filter(function (item, index) {
+          return selectItemList.value.indexOf(item) === index
+        })
+      } else if (index <= l && index >= h) {
+        // 单选操作 与下面代码相同
+        if (i !== -1) {
+          selectItemList.value.splice(i, 1) // 已经存在 点击移除
+        } else {
+          selectItemList.value.push(item) // 添加到已选列表中
+        }
+      }
     } else {
-      selectItemList.value.push(item) // 添加到已选列表中
+      // Shift未按下 单选
+      if (i !== -1) {
+        selectItemList.value.splice(i, 1) // 已经存在 点击移除
+      } else {
+        selectItemList.value.push(item) // 添加到已选列表中
+      }
     }
+
     emit('onSelectItemAdd')
   } else {
     const { button } = ev
@@ -165,6 +220,7 @@ onMounted(() => {
     const isEnter = key === 'Enter'
     const isCopy = (ctrlKey || metaKey) && (key === 'C' || key === 'c')
     const isNumber = parseInt(key) <= 9 && parseInt(key) >= 0
+    const isShift = key === 'Shift'
     if (isArrowUp) {
       if (activeIndex.value > 0) {
         activeIndex.value--
@@ -196,6 +252,19 @@ onMounted(() => {
     } else if ((ctrlKey || metaKey || altKey) && isNumber) {
       window.copy(props.showList[parseInt(key) - 1])
       window.paste()
+    } else if (isShift) {
+      if (props.isMultiple) {
+        isShiftDown.value = true
+      }
+    }
+  })
+  document.addEventListener('keyup', (e) => {
+    const { key } = e
+    const isShift = key === 'Shift'
+    if (isShift) {
+      if (props.isMultiple) {
+        isShiftDown.value = false
+      }
     }
   })
 })
