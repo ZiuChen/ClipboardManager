@@ -262,6 +262,5 @@ window.openFileFolder = utools.shellShowItemInFolder
 window.getIcon = utools.getFileIcon
 window.showNotify = utools.showNotification
 window.fetchToken = utools.fetchUserServerTemporaryToken
-window.dbStorage = utools.dbStorage
 window.focus = focus
 window.toTop = toTop

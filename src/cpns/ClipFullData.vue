@@ -88,7 +88,7 @@ const handleBtnClick = (id) => {
     case 'word-split':
       // TODO: 限制请求频率 (前后端都限制)
       const key = 'word-break-daily-used'
-      const val = window.dbStorage.getItem(key)
+      const val = utools.dbStorage.getItem(key)
       if (val >= '\u0035') {
         window.showNotify(
           '今日使用次数已达5次, 请明日再使用此功能 新插件`超级分词`即将上线, 敬请期待'
@@ -149,13 +149,13 @@ const fetchWordBreakResult = async (origin) => {
         // 请求成功 才算一次
         const valueKey = 'word-break-daily-used'
         const timeKey = 'last-update'
-        const val = window.dbStorage.getItem(valueKey)
-        window.dbStorage.setItem(valueKey, val === null ? 1 : val + 1)
-        if (new Date(window.dbStorage.getItem(timeKey)).getDay() !== new Date().getDay()) {
+        const val = utools.dbStorage.getItem(valueKey)
+        utools.dbStorage.setItem(valueKey, val === null ? 1 : val + 1)
+        if (new Date(utools.dbStorage.getItem(timeKey)).getDay() !== new Date().getDay()) {
           // 新的一天 重置本地次数
-          window.dbStorage.setItem(valueKey, 0)
+          utools.dbStorage.setItem(valueKey, 0)
         }
-        window.dbStorage.setItem(timeKey, new Date().valueOf())
+        utools.dbStorage.setItem(timeKey, new Date().valueOf())
         splitWords.value = data.splitWord
           .filter((w) => w !== '' && w !== ' ' && w.indexOf('\n') === -1)
           .map((item) => ({
