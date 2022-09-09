@@ -253,6 +253,7 @@ onMounted(() => {
     const isArrow = key === 'ArrowDown' || key === 'ArrowUp'
     const isEnter = key === 'Enter'
     const isShift = key === 'Shift'
+    const isAlt = key === 'Alt'
     if (isTab) {
       const tabTypes = tabs.map((item) => item.type)
       const index = tabTypes.indexOf(activeTab.value)
@@ -276,9 +277,10 @@ onMounted(() => {
       }
     } else if (isArrow || isEnter) {
       e.preventDefault()
-    } else if (isShift || ctrlKey || metaKey) {
+    } else if (isShift || ctrlKey || metaKey || isAlt) {
       // Shift: 多选操作
       // Ctrl: utools模拟执行粘贴时触发
+      // Alt:
     } else {
       window.focus() // 其他键盘事件 直接聚焦搜索框
     }
