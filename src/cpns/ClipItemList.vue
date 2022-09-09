@@ -80,7 +80,7 @@ const props = defineProps({
     required: true
   }
 })
-const emit = defineEmits(['onDataChange', 'onDataRemove', 'onSelectItemAdd'])
+const emit = defineEmits(['onDataChange', 'onDataRemove', 'onSelectItemAdd', 'onMultiCopyExecute'])
 const isOverSizedContent = (item) => {
   const { type, data } = item
   if (type === 'text') {
@@ -242,14 +242,23 @@ onMounted(() => {
     } else if (isCopy) {
       if (props.fullData.data === '') {
         // 如果侧栏中有数据 证明侧栏是打开的 不执行复制
-        window.copy(props.showList[activeIndex.value])
+        if (!props.isMultiple) {
+          window.copy(props.showList[activeIndex.value])
+        } else {
+          emit('onMultiCopyExecute', false)
+        }
       }
     } else if (isEnter) {
-      window.copy(props.showList[activeIndex.value])
-      window.paste()
+      if (!props.isMultiple) {
+        window.copy(props.showList[activeIndex.value])
+        window.paste()
+      } else {
+        emit('onMultiCopyExecute', true)
+      }
     } else if ((ctrlKey || metaKey || altKey) && isNumber) {
       window.copy(props.showList[parseInt(key) - 1])
       window.paste()
+      selectItemList.value = []
     } else if (isShift) {
       if (props.isMultiple) {
         isShiftDown.value = true

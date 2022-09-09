@@ -45,6 +45,7 @@
       :fullData="fullData"
       :isMultiple="isMultiple"
       :currentActiveTab="outSideActiveTab"
+      @onMultiCopyExecute="handleMultiCopyBtnClick"
       @onDataChange="toggleFullData"
       @onDataRemove="handleDataRemove"
     >
