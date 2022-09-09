@@ -13,14 +13,14 @@
     &.active {
       border-style: hidden hidden hidden solid;
       border-width: 1px 0px 0px 6px;
-      border-color: @bg-color @bg-color @bg-color @primary-color;
+      border-color: @text-bg-color-lighter @bg-color @bg-color @primary-color;
       background-color: @text-bg-color-lighter;
       transition: all 0.15s;
     }
     &.multi-active {
-      border-style: hidden hidden hidden solid;
+      border-style: solid hidden hidden solid; // TODO: 会导致左侧提示块上部被切下去一块
       border-width: 1px 0px 0px 6px;
-      border-color: @bg-color @bg-color @bg-color @primary-color;
+      border-color: @text-bg-color-lighter @bg-color @bg-color @primary-color;
       transition: all 0.15s;
     }
     &.select {
