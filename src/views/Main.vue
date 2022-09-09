@@ -276,10 +276,14 @@ onMounted(() => {
       } else {
         // 无上述情况 执行默认: 隐藏uTools主窗口
       }
+    } else if (isShift) {
+      // Shift: 多选操作
+      if (!isMultiple.value) {
+        handleMultiBtnClick()
+      }
     } else if (isArrow || isEnter) {
       e.preventDefault()
-    } else if (isShift || ctrlKey || metaKey || isAlt) {
-      // Shift: 多选操作
+    } else if (ctrlKey || metaKey || isAlt) {
       // Ctrl: utools模拟执行粘贴时触发
       // Alt:
     } else {

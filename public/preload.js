@@ -246,8 +246,6 @@ utools.onPluginEnter(() => {
     utools.copyText('ImageOverSized')
     globalImageOversize = false
   }
-  focus()
-  select() // 进入插件将搜索框内容全选
   toTop()
   resetNav()
 })
