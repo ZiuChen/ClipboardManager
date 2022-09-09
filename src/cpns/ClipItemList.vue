@@ -240,7 +240,7 @@ onMounted(() => {
           ?.scrollIntoView({ block: 'nearest', inline: 'nearest' })
       }
     } else if (isCopy) {
-      if (props.fullData.data === '') {
+      if (!props.fullData.data) {
         // 如果侧栏中有数据 证明侧栏是打开的 不执行复制
         if (!props.isMultiple) {
           window.copy(props.showList[activeIndex.value])
