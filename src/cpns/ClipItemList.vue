@@ -46,7 +46,10 @@
               (id === 'view' && item.type !== 'image') ||
               (id === 'open-folder' && item.type === 'file') ||
               (id === 'un-collect' && item.collect === true) ||
-              (id === 'word-break' && item.type === 'text' && item.data.length <= 500)
+              (id === 'word-break' &&
+                item.type === 'text' &&
+                item.data.length <= 500 &&
+                item.data.length >= 2)
             "
             :class="id"
             :title="title"
@@ -182,8 +185,8 @@ const operation = [
   { id: 'view', title: '查看全部', icon: '💬' },
   { id: 'open-folder', title: '打开文件夹', icon: '📁' },
   { id: 'collect', title: '收藏', icon: '⭐' },
-  { id: 'word-break', title: '分词', icon: '💣' },
   { id: 'un-collect', title: '取消收藏', icon: '📤' },
+  { id: 'word-break', title: '分词', icon: '💣' },
   { id: 'remove', title: '删除', icon: '❌' }
 ]
 const handleOperateClick = ({ id, item }) => {
@@ -204,7 +207,11 @@ const handleOperateClick = ({ id, item }) => {
       window.db.updateDataBaseLocal(db)
       break
     case 'word-break':
-      utools.redirect('超级分词', item.data)
+      const success = utools.redirect('超级分词', item.data)
+      if (success) {
+      } else {
+        utools.shellOpenExternal('https://ziuchen.github.io/project/SmartWordBreak/')
+      }
       break
     case 'un-collect':
       item.collect = undefined
