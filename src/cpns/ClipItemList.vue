@@ -37,11 +37,16 @@
         <template v-for="{ id, title, icon } of operation">
           <div
             v-if="
-              (id !== 'collect' && id !== 'view' && id !== 'open-folder' && id !== 'un-collect') ||
+              (id !== 'collect' &&
+                id !== 'view' &&
+                id !== 'open-folder' &&
+                id !== 'un-collect' &&
+                id !== 'word-break') ||
               (id === 'collect' && item.collect !== true) ||
               (id === 'view' && item.type !== 'image') ||
               (id === 'open-folder' && item.type === 'file') ||
-              (id === 'un-collect' && item.collect === true)
+              (id === 'un-collect' && item.collect === true) ||
+              (id === 'word-break' && item.type === 'text' && item.data.length <= 500)
             "
             :class="id"
             :title="title"
@@ -177,6 +182,7 @@ const operation = [
   { id: 'view', title: '查看全部', icon: '💬' },
   { id: 'open-folder', title: '打开文件夹', icon: '📁' },
   { id: 'collect', title: '收藏', icon: '⭐' },
+  { id: 'word-break', title: '分词', icon: '💣' },
   { id: 'un-collect', title: '取消收藏', icon: '📤' },
   { id: 'remove', title: '删除', icon: '❌' }
 ]
@@ -196,6 +202,9 @@ const handleOperateClick = ({ id, item }) => {
     case 'collect':
       item.collect = true
       window.db.updateDataBaseLocal(db)
+      break
+    case 'word-break':
+      utools.redirect('超级分词', item.data)
       break
     case 'un-collect':
       item.collect = undefined
