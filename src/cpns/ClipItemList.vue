@@ -92,7 +92,8 @@ const emit = defineEmits(['onDataChange', 'onDataRemove', 'onSelectItemAdd', 'on
 const isOverSizedContent = (item) => {
   const { type, data } = item
   if (type === 'text') {
-    return data.split(`\n`).length - 1 > 6
+    // 没有换行的长文本也应当被纳入考虑
+    return data.split(`\n`).length - 1 > 6 || data.length > 255
   } else if (type === 'file') {
     return JSON.parse(item.data).length >= 6
   }
