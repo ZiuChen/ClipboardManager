@@ -15,7 +15,9 @@
     >
       <div class="clip-info">
         <div class="clip-time">
-          <span>{{ dateFormat(item.updateTime) }}</span>
+          <span class="relative-date" :title="new Date(item.updateTime).toLocaleString()">{{
+            dateFormat(item.updateTime)
+          }}</span>
         </div>
         <div class="clip-data">
           <template v-if="item.type === 'text'">

@@ -37,8 +37,13 @@
         flex-direction: column;
         justify-content: center;
         align-items: center;
-        min-width: 100px;
-        span {
+        min-width: 95px;
+        max-width: 100px;
+        border: 0px solid @text-bg-color-lighter;
+        border-color: @text-bg-color-lighter;
+        border-style: solid;
+        border-width: 0px 2px 0px 0px;
+        .relative-date {
           display: flex;
           justify-content: center;
           align-items: center;
@@ -55,8 +60,8 @@
         overflow: hidden;
         word-break: break-all;
         max-height: 120px;
-        max-width: 490px;
-        padding: 5px;
+        max-width: 520px;
+        padding: 5px 5px 5px 10px;
         white-space: pre-wrap;
         flex-direction: column;
         color: @text-color;
