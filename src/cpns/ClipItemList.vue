@@ -21,7 +21,10 @@
         </div>
         <div class="clip-data">
           <template v-if="item.type === 'text'">
-            <div :class="{ 'clip-over-sized-content': isOverSizedContent(item) }">
+            <div
+              :class="{ 'clip-over-sized-content': isOverSizedContent(item) }"
+              :title="item.data"
+            >
               {{ item.data.split(`\n`).slice(0, 6).join(`\n`).trim() }}
             </div>
           </template>
@@ -29,7 +32,14 @@
             <img class="clip-data-image" :src="item.data" alt="Image" />
           </template>
           <template v-if="item.type === 'file'">
-            <div :class="{ 'clip-over-sized-content': isOverSizedContent(item) }">
+            <div
+              :class="{ 'clip-over-sized-content': isOverSizedContent(item) }"
+              :title="
+                JSON.parse(item.data)
+                  .map((item) => item.path)
+                  .join('\n')
+              "
+            >
               <FileList :data="JSON.parse(item.data).slice(0, 6)" />
             </div>
           </template>
