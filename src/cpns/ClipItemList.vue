@@ -6,7 +6,7 @@
       :key="item.createTime"
       @click.left="handleItemClick($event, item)"
       @click.right="handleItemClick($event, item)"
-      @mouseover="handleMouseOver(index)"
+      @mouseenter.prevent="handleMouseOver(index)"
       :class="{
         active: !isMultiple && index === activeIndex,
         'multi-active': isMultiple && index === activeIndex,
