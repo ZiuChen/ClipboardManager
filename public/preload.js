@@ -216,7 +216,6 @@ db.init()
 
 const remove = (item) => db.removeItemViaId(item.id)
 
-const select = () => document.querySelector('.clip-search input').select()
 const focus = (isBlur = false) => {
   return document.querySelector('.clip-search').style.display !== 'none'
     ? isBlur
@@ -258,7 +257,5 @@ window.createFile = createFile
 window.openFile = utools.shellOpenPath
 window.openFileFolder = utools.shellShowItemInFolder
 window.getIcon = utools.getFileIcon
-window.showNotify = utools.showNotification
-window.fetchToken = utools.fetchUserServerTemporaryToken
 window.focus = focus
 window.toTop = toTop
