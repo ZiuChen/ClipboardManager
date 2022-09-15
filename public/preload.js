@@ -75,7 +75,7 @@ class DB {
   addItem(cItem) {
     this.dataBase.data.unshift(cItem)
     this.updateDataBase()
-    const exceedCount = this.dataBase.data.length - '\u0035\u0030\u0030'
+    const exceedCount = this.dataBase.data.length - '\u0038\u0030\u0030'
     if (exceedCount > 0) {
       // 达到条数限制 在收藏条数限制内遍历非收藏历史并删除
       // 所有被移除的 item都存入tempList
@@ -139,7 +139,7 @@ const pbpaste = () => {
   // image
   const image = clipboard.readImage() // 大图卡顿来源
   const data = image.toDataURL()
-  globalImageOversize = data.length > 4e5
+  globalImageOversize = data.length > 3e5
   if (!image.isEmpty()) {
     return {
       type: 'image',
