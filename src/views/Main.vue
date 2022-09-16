@@ -286,8 +286,10 @@ onMounted(() => {
       }
     } else if (isShift) {
       // Shift: 多选操作
-      if (!isMultiple.value) {
-        handleMultiBtnClick()
+      if (!isSearchPanelExpand.value) {
+        if (!isMultiple.value) {
+          handleMultiBtnClick()
+        }
       }
     } else if (isArrow || isEnter) {
       e.preventDefault()
