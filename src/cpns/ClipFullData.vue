@@ -13,8 +13,13 @@
         <template v-if="fullData.type === 'text'">
           <div class="clip-full-content" v-text="fullData.data"></div>
         </template>
-        <div v-else-if="fullData.type === 'file'" class="clip-full-content">
-          <FileList :data="JSON.parse(fullData.data)"></FileList>
+        <div v-else-if="fullData.type === 'image'">
+          <div class="clip-full-content">
+            <img :src="fullData.data" />
+          </div>
+        </div>
+        <div v-else-if="fullData.type === 'file'">
+          <FileList class="clip-full-content" :data="JSON.parse(fullData.data)"></FileList>
         </div>
       </div>
     </Transition>

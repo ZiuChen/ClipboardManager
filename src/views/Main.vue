@@ -183,10 +183,7 @@ const fullData = ref({ type: 'text', data: '' })
 const fullDataShow = ref(false)
 const toggleFullData = (item) => {
   // 是否显示全部数据 (查看全部)
-  const { type } = item
-  if (type === 'text' || type === 'file') {
-    fullData.value = item
-  }
+  fullData.value = item
   fullDataShow.value = !fullDataShow.value
 }
 

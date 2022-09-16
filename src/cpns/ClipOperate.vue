@@ -7,12 +7,15 @@
             id !== 'view' &&
             id !== 'open-folder' &&
             id !== 'un-collect' &&
-            id !== 'word-break') ||
+            id !== 'word-break' &&
+            id !== 'save-file') ||
           (id === 'collect' && item.collect !== true) ||
-          (id === 'view' && !isFullData && item.type !== 'image') ||
+          (id === 'view' && !isFullData) ||
           (id === 'open-folder' && item.type === 'file') ||
           (id === 'un-collect' && item.collect === true) ||
+          (id === 'save-file' && isFullData && item.type !== 'file') ||
           (id === 'word-break' &&
+            isFullData &&
             item.type === 'text' &&
             item.data.length <= 500 &&
             item.data.length >= 2)
@@ -46,6 +49,7 @@ const operation = [
   { id: 'collect', title: '收藏', icon: '⭐' },
   { id: 'un-collect', title: '取消收藏', icon: '📤' },
   { id: 'word-break', title: '分词', icon: '💣' },
+  { id: 'save-file', title: '保存', icon: '💾' },
   { id: 'remove', title: '删除', icon: '❌' }
 ]
 const handleOperateClick = ({ id, item }) => {
@@ -66,11 +70,18 @@ const handleOperateClick = ({ id, item }) => {
       window.db.updateDataBaseLocal(db)
       break
     case 'word-break':
-      const success = utools.redirect('超级分词', item.data)
-      if (success) {
-      } else {
-        utools.shellOpenExternal('https://ziuchen.github.io/project/SmartWordBreak/')
+      utools.redirect('超级分词', item.data)
+      break
+    case 'save-file':
+      const typeMap = {
+        text: 'text',
+        file: 'files',
+        image: 'img'
       }
+      utools.redirect('收集文件', {
+        type: typeMap[item.type],
+        data: item.data
+      })
       break
     case 'un-collect':
       item.collect = undefined
