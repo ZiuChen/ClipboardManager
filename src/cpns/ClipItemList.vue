@@ -45,32 +45,12 @@
           </template>
         </div>
       </div>
-      <div class="clip-operate" v-show="activeIndex === index && !isMultiple">
-        <template v-for="{ id, title, icon } of operation">
-          <div
-            v-if="
-              (id !== 'collect' &&
-                id !== 'view' &&
-                id !== 'open-folder' &&
-                id !== 'un-collect' &&
-                id !== 'word-break') ||
-              (id === 'collect' && item.collect !== true) ||
-              (id === 'view' && item.type !== 'image') ||
-              (id === 'open-folder' && item.type === 'file') ||
-              (id === 'un-collect' && item.collect === true) ||
-              (id === 'word-break' &&
-                item.type === 'text' &&
-                item.data.length <= 500 &&
-                item.data.length >= 2)
-            "
-            :class="id"
-            :title="title"
-            @click.stop="handleOperateClick({ id, item })"
-          >
-            {{ icon }}
-          </div>
-        </template>
-      </div>
+      <ClipOperate
+        v-show="isMultiple || activeIndex === index"
+        :item="item"
+        @onDataChange="() => emit('onDataChange', item)"
+        @onDataRemove="() => emit('onDataRemove')"
+      ></ClipOperate>
       <div class="clip-count" v-show="isMultiple || activeIndex !== index">
         {{ index + 1 }}
       </div>
@@ -81,6 +61,7 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue'
 import FileList from './FileList.vue'
+import ClipOperate from './ClipOperate.vue'
 import { dateFormat } from '../utils'
 const props = defineProps({
   showList: {
@@ -193,49 +174,6 @@ const handleItemClick = (ev, item) => {
 }
 const activeIndex = ref(0)
 const handleMouseOver = (index) => (activeIndex.value = index)
-const operation = [
-  { id: 'copy', title: '复制', icon: '📄' },
-  { id: 'view', title: '查看全部', icon: '💬' },
-  { id: 'open-folder', title: '打开文件夹', icon: '📁' },
-  { id: 'collect', title: '收藏', icon: '⭐' },
-  { id: 'un-collect', title: '取消收藏', icon: '📤' },
-  { id: 'word-break', title: '分词', icon: '💣' },
-  { id: 'remove', title: '删除', icon: '❌' }
-]
-const handleOperateClick = ({ id, item }) => {
-  switch (id) {
-    case 'copy':
-      window.copy(item, false)
-      break
-    case 'view':
-      emit('onDataChange', item)
-      break
-    case 'open-folder':
-      const { data } = item
-      const fl = JSON.parse(data)
-      window.openFileFolder(fl[0].path) // 取第一个文件的路径打开
-      break
-    case 'collect':
-      item.collect = true
-      window.db.updateDataBaseLocal(db)
-      break
-    case 'word-break':
-      const success = utools.redirect('超级分词', item.data)
-      if (success) {
-      } else {
-        utools.shellOpenExternal('https://ziuchen.github.io/project/SmartWordBreak/')
-      }
-      break
-    case 'un-collect':
-      item.collect = undefined
-      window.db.updateDataBaseLocal(db)
-      break
-    case 'remove':
-      window.remove(item)
-      emit('onDataRemove')
-      break
-  }
-}
 // 父组件中改变了引用类型的地址 故要用 getter返回
 watch(
   () => props.showList,

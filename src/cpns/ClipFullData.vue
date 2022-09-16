@@ -3,20 +3,12 @@
     <Transition name="fade">
       <div class="clip-full-wrapper" v-show="isShow">
         <div class="clip-full-operate-list">
-          <template v-for="{ id, name } of btns">
-            <div
-              class="clip-full-operate-list-item"
-              v-if="
-                id !== 'word-split' ||
-                (id === 'word-split' &&
-                  fullData.type !== 'file' &&
-                  fullData?.data?.length <= '\u0035\u0030\u0030')
-              "
-              @click="handleBtnClick(id)"
-            >
-              {{ name }}
-            </div>
-          </template>
+          <ClipOperate
+            :item="fullData"
+            :isFullData="true"
+            @onDataRemove="emit('onDataRemove')"
+            @onOperateExecute="emit('onOverlayClick')"
+          ></ClipOperate>
         </div>
         <template v-if="fullData.type === 'text'">
           <div class="clip-full-content" v-text="fullData.data"></div>
@@ -32,6 +24,7 @@
 
 <script setup>
 import FileList from './FileList.vue'
+import ClipOperate from './ClipOperate.vue'
 import { onMounted } from 'vue'
 
 const props = defineProps({
@@ -45,32 +38,7 @@ const props = defineProps({
   }
 })
 
-const emit = defineEmits(['onOverlayClick'])
-
-const btns = [
-  {
-    id: 'copy-all',
-    name: '📄 复制全部'
-  },
-  {
-    id: 'word-split',
-    name: '🎁 智慧分词'
-  }
-]
-
-const handleBtnClick = (id) => {
-  switch (id) {
-    case 'copy-all':
-      window.copy(props.fullData)
-      emit('onOverlayClick') // 退出侧栏
-      window.toTop()
-      break
-    case 'word-split':
-      utools.redirect('超级分词', props.fullData.data)
-      // fetchWordBreakResult(props.fullData.data)
-      break
-  }
-}
+const emit = defineEmits(['onOverlayClick', 'onDataRemove'])
 
 const onOverlayClick = () => {
   emit('onOverlayClick')

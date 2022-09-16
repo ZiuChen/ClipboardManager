@@ -4,6 +4,7 @@
     <ClipFullData
       :isShow="fullDataShow"
       :fullData="fullData"
+      @onDataRemove="handleDataRemove"
       @onOverlayClick="toggleFullData({ type: 'text', data: '' })"
     ></ClipFullData>
     <ClipSwitch ref="ClipSwitchRef" @onNavClick="handleNavClick">
@@ -171,7 +172,7 @@ const handleNavClick = (type) => {
   offset.value = 0 // 重置懒加载偏移量
 }
 
-const fullData = ref({ type: 'text' })
+const fullData = ref({ type: 'text', data: '' })
 const fullDataShow = ref(false)
 const toggleFullData = (item) => {
   // 是否显示全部数据 (查看全部)
