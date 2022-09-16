@@ -46,7 +46,7 @@
         </div>
       </div>
       <ClipOperate
-        v-show="isMultiple || activeIndex === index"
+        v-show="!isMultiple && activeIndex === index"
         :item="item"
         @onDataChange="() => emit('onDataChange', item)"
         @onDataRemove="() => emit('onDataRemove')"
