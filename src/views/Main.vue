@@ -219,7 +219,7 @@ onMounted(() => {
       updateShowList(activeTab.value)
       prev = now
     }
-  }, 500)
+  }, 800)
 
   // 监听搜索框
   watch(filterText, (val) => updateShowList(activeTab.value))
