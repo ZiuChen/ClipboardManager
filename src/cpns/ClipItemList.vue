@@ -237,7 +237,10 @@ const handleOperateClick = ({ id, item }) => {
   }
 }
 // 父组件中改变了引用类型的地址 故要用 getter返回
-watch(props.showList, () => (activeIndex.value = 0))
+watch(
+  () => props.showList,
+  () => (activeIndex.value = 0)
+)
 onMounted(() => {
   // 监听键盘事件
   document.addEventListener('keydown', (e) => {
