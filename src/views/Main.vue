@@ -1,5 +1,6 @@
 <template>
   <div class="main">
+    <ClipCard :isShow="notifyShown" v-bind="notify" @onClose="notifyShown = false"></ClipCard>
     <ClipFloatBtn :icon="'🧭'" @onBtnClick="restoreDataBase"></ClipFloatBtn>
     <ClipFullData
       :isShow="fullDataShow"
@@ -56,11 +57,17 @@
 
 <script setup>
 import { ref, watch, onMounted, computed, nextTick } from 'vue'
+import ClipCard from '../cpns/ClipCard.vue'
 import ClipItemList from '../cpns/ClipItemList.vue'
 import ClipFullData from '../cpns/ClipFullData.vue'
 import ClipSearch from '../cpns/ClipSearch.vue'
 import ClipSwitch from '../cpns/ClipSwitch.vue'
 import ClipFloatBtn from '../cpns/ClipFloatBtn.vue'
+import notify from '../data/notify.json'
+
+const notifyShown = ref(false)
+const storageNotify = utools.dbStorage.getItem('notify')
+notifyShown.value = storageNotify ? storageNotify.version < notify.version : true
 
 const isMultiple = ref(false)
 
