@@ -12,9 +12,13 @@
   word-break: break-all;
   white-space: pre-wrap;
   .clip-full-operate-list {
+    position: fixed;
+    right: 50%;
+    z-index: 99;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
     display: flex;
     align-items: center;
-    justify-content: flex-end;
+    justify-content: center;
     color: @text-color;
     background-color: @text-bg-color;
     padding: 5px 5px;
@@ -22,9 +26,11 @@
     border-radius: 5px;
   }
   .clip-full-content {
-    background-color: @text-bg-color;
+    position: relative;
+    top: 50px;
     padding: 20px;
     border-radius: 5px;
+    background-color: @text-bg-color;
   }
   &::-webkit-scrollbar {
     width: 10px;
