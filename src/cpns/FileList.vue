@@ -1,6 +1,11 @@
 <template>
   <div class="clip-file-list">
-    <div class="clip-file" v-for="file of data.slice(0, 8)" @click.stop="openFile(file.path)">
+    <div
+      class="clip-file"
+      v-for="file of data.slice(0, 8)"
+      @click.stop="openFile(file.path)"
+      :title="file.path"
+    >
       <img class="clip-file-icon" :src="getIcon(file.path)" alt="icon" />
       {{ file.name }}
     </div>
