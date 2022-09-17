@@ -2,10 +2,10 @@ lockfileVersion: 5.4
 
 specifiers:
   '@vue/cli-service': ^5.0.8
+  clipboard-event: ^1.6.0
   copy-webpack-plugin: ^6.0.2
   core-js: ^3.6.4
   crypto: ^1.0.1
-  deepmerge: ^4.2.2
   less: ^4.1.3
   less-loader: ^11.0.0
   licia: ^1.23.0
@@ -15,6 +15,7 @@ specifiers:
   webpack: 4.37.0
 
 dependencies:
+  clipboard-event: registry.npmmirror.com/clipboard-event/1.6.0
   core-js: registry.npmmirror.com/core-js/3.24.1
   crypto: registry.npmmirror.com/crypto/1.0.1
   less: registry.npmmirror.com/less/4.1.3
@@ -25,7 +26,6 @@ dependencies:
 devDependencies:
   '@vue/cli-service': registry.npmmirror.com/@vue/cli-service/5.0.8_rd7zcyopzq3edztmqqbboasfsu
   copy-webpack-plugin: registry.npmmirror.com/copy-webpack-plugin/6.4.1_webpack@4.37.0
-  deepmerge: registry.npmmirror.com/deepmerge/4.2.2
   less-loader: registry.npmmirror.com/less-loader/11.0.0_less@4.1.3+webpack@4.37.0
   uglifyjs-webpack-plugin: registry.npmmirror.com/uglifyjs-webpack-plugin/2.2.0_webpack@4.37.0
   vue-template-compiler: registry.npmmirror.com/vue-template-compiler/2.7.8
@@ -2056,6 +2056,12 @@ packages:
     engines: {node: '>=6'}
     dev: true
 
+  registry.npmmirror.com/clipboard-event/1.6.0:
+    resolution: {integrity: sha512-a69QYimd43xM+5hcHkucs0V/QoiZz1fqEFRTnewOITVQOtypRLbCx76Q91Djn6h7O24817dQw44sFUxRYWIuYA==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/clipboard-event/-/clipboard-event-1.6.0.tgz}
+    name: clipboard-event
+    version: 1.6.0
+    dev: false
+
   registry.npmmirror.com/clipboardy/2.3.0:
     resolution: {integrity: sha512-mKhiIL2DrQIsuXMgBgnfEHOZOryC7kY7YO//TN6c63wlEm3NG5tz+YgY5rVi29KCmq/QQjKYvM7a19+MDOTHOQ==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/clipboardy/-/clipboardy-2.3.0.tgz}
     name: clipboardy
@@ -2846,13 +2852,6 @@ packages:
     resolution: {integrity: sha512-95k0GDqvBjZavkuvzx/YqVLv/6YYa17fz6ILMSf7neqQITCPbnfEnQvEgMPNjH4kgobe7+WIL0yJEHku+H3qtQ==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/deepmerge/-/deepmerge-1.5.2.tgz}
     name: deepmerge
     version: 1.5.2
-    engines: {node: '>=0.10.0'}
-    dev: true
-
-  registry.npmmirror.com/deepmerge/4.2.2:
-    resolution: {integrity: sha512-FJ3UgI4gIl+PHZm53knsuSFpE+nESMr7M4v9QcgB7S63Kj/6WqMiFQJpBBYz1Pt+66bZpP3Q7Lye0Oo9MPKEdg==, registry: http://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/deepmerge/-/deepmerge-4.2.2.tgz}
-    name: deepmerge
-    version: 4.2.2
     engines: {node: '>=0.10.0'}
     dev: true
 

@@ -6,19 +6,13 @@
 
 const fs = require('fs')
 const crypto = require('crypto')
+const listener = require('clipboard-event')
 const { clipboard } = require('electron')
-const time = require('./time')
 
-const homePath = utools.getPath('home')
-const userDataPath = utools.getPath('userData')
-const dbName = '_utools_clipboard_manager_storage'
-
-const isMacOs = utools.isMacOs()
-const isWindows = utools.isWindows()
-const sep = isWindows ? '\\' : '/'
-const DBPath = `${isMacOs ? userDataPath : homePath}${sep}${dbName}`
-
-let globalImageOversize = false
+const sep = utools.isWindows() ? '\\' : '/'
+const DBPath = `${
+  utools.isMacOs() ? utools.getPath('userData') : utools.getPath('home')
+}${sep}_utools_clipboard_manager_storage`
 
 class DB {
   constructor(path) {
@@ -133,31 +127,12 @@ const pbpaste = () => {
   // image
   const image = clipboard.readImage() // 大图卡顿来源
   const data = image.toDataURL()
-  globalImageOversize = data.length > 3e5
   if (!image.isEmpty()) {
     return {
       type: 'image',
       data: data
     }
   }
-}
-
-const watchClipboard = async (db, fn) => {
-  let prev = db.dataBase.data[0] || {}
-  function loop() {
-    time.sleep(250).then(loop)
-    const item = pbpaste()
-    if (!item) return
-    item.id = crypto.createHash('md5').update(item.data).digest('hex')
-    if (item && prev.id != item.id) {
-      // 剪切板元素 与最近一次复制内容不同
-      prev = item
-      fn(item)
-    } else {
-      // 剪切板元素 与上次复制内容相同
-    }
-  }
-  loop()
 }
 
 const copy = (item, isHideMainWindow = true) => {
@@ -221,9 +196,12 @@ const focus = (isBlur = false) => {
 const toTop = () => (document.scrollingElement.scrollTop = 0)
 const resetNav = () => document.querySelectorAll('.clip-switch-item')[0]?.click()
 
-watchClipboard(db, (item) => {
-  // 此函数不断执行
+listener.startListening()
+
+listener.on('change', () => {
+  const item = pbpaste()
   if (!item) return
+  item.id = crypto.createHash('md5').update(item.data).digest('hex')
   if (db.updateItemViaId(item.id)) {
     // 在库中 由 updateItemViaId 更新 updateTime
     return
@@ -235,10 +213,6 @@ watchClipboard(db, (item) => {
 })
 
 utools.onPluginEnter(() => {
-  if (globalImageOversize) {
-    utools.copyText('ImageOverSized')
-    globalImageOversize = false
-  }
   toTop()
   resetNav()
 })
