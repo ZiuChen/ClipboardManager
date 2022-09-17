@@ -20,7 +20,7 @@
           <span class="clip-switch-btn" v-show="isMultiple" @click="handleMultiCopyBtnClick(true)"
             >📑 粘贴</span
           >
-          <span class="clip-switch-btn" @click="handleMultiBtnClick">{{
+          <span class="clip-switch-btn" @click="isMultiple = !isMultiple">{{
             isMultiple ? '❌ 退出多选' : '👆'
           }}</span>
           <span
@@ -46,7 +46,7 @@
       :showList="showList"
       :fullData="fullData"
       :isMultiple="isMultiple"
-      :currentActiveTab="outSideActiveTab"
+      :currentActiveTab="activeTab"
       @onMultiCopyExecute="handleMultiCopyBtnClick"
       @onDataChange="toggleFullData"
       @onDataRemove="handleDataRemove"
@@ -70,10 +70,6 @@ const storageNotify = utools.dbStorage.getItem('notify')
 notifyShown.value = storageNotify ? storageNotify.version < notify.version : true
 
 const isMultiple = ref(false)
-
-const handleMultiBtnClick = () => {
-  isMultiple.value = !isMultiple.value
-}
 
 const isSearchPanelExpand = ref(false)
 
@@ -165,8 +161,7 @@ const updateShowList = (type) => {
 
 const restoreDataBase = () => {
   // 清空数据库
-  const flag = window.confirm('确定要清空剪贴板记录吗?')
-  if (flag) {
+  if (window.confirm('确定要清空剪贴板记录吗?')) {
     window.db.emptyDataBase()
     updateShowList('all')
   }
@@ -193,17 +188,22 @@ const handleDataRemove = () => {
   updateShowList(ClipSwitchRef.value.activeTab)
 }
 
-const outSideActiveTab = ref('all')
+const activeTab = ref('all')
 
 onMounted(() => {
   // 获取挂载的导航组件 Ref
-  const activeTab = computed(() => ClipSwitchRef.value.activeTab)
   const toggleNav = ClipSwitchRef.value.toggleNav
   const tabs = ClipSwitchRef.value.tabs
 
-  watch(activeTab, (val) => (outSideActiveTab.value = val))
+  watch(
+    () => ClipSwitchRef.value.activeTab,
+    (newVal) => {
+      activeTab.value = newVal
+      updateShowList(newVal)
+    }
+  )
 
-  // 已选择的条数
+  // 多选已选择的条数
   selectCount.value = computed(() => ClipItemListRef.value?.selectItemList?.length)
 
   // 初始化数据
@@ -278,7 +278,7 @@ onMounted(() => {
         e.stopPropagation()
       } else if (isMultiple.value) {
         // 退出多选状态
-        handleMultiBtnClick()
+        isMultiple.value = !isMultiple.value
       } else {
         // 无上述情况 执行默认: 隐藏uTools主窗口
       }
@@ -286,7 +286,7 @@ onMounted(() => {
       // Shift: 多选操作
       if (!isSearchPanelExpand.value) {
         if (!isMultiple.value) {
-          handleMultiBtnClick()
+          isMultiple.value = !isMultiple.value
         }
       }
     } else if (isArrow || isEnter) {

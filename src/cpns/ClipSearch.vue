@@ -29,6 +29,7 @@ const emit = defineEmits(['update:modelValue', 'onPanelHide'])
 watch(filterText, (val) => emit('update:modelValue', val))
 
 const handleFocusOut = () => {
+  // 失去焦点时 如果没有输入内容 则隐藏输入框
   if (!filterText.value) {
     emit('onPanelHide')
   }
