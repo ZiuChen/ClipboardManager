@@ -6,13 +6,11 @@
           (id !== 'collect' &&
             id !== 'view' &&
             id !== 'open-folder' &&
-            id !== 'un-collect' &&
             id !== 'word-break' &&
             id !== 'save-file') ||
           (id === 'collect' && item.collect !== true) ||
           (id === 'view' && !isFullData) ||
           (id === 'open-folder' && item.type === 'file') ||
-          (id === 'un-collect' && item.collect === true) ||
           (id === 'save-file' && isFullData && item.type !== 'file') ||
           (id === 'word-break' &&
             isFullData &&
@@ -47,12 +45,16 @@ const operation = [
   { id: 'view', title: '查看全部', icon: '💬' },
   { id: 'open-folder', title: '打开文件夹', icon: '📁' },
   { id: 'collect', title: '收藏', icon: '⭐' },
-  { id: 'un-collect', title: '取消收藏', icon: '📤' },
   { id: 'word-break', title: '分词', icon: '💣' },
   { id: 'save-file', title: '保存', icon: '💾' },
   { id: 'remove', title: '删除', icon: '❌' }
 ]
 const handleOperateClick = ({ id, item }) => {
+  const typeMap = {
+    text: 'text',
+    file: 'files',
+    image: 'img'
+  }
   switch (id) {
     case 'copy':
       window.copy(item, false)
@@ -63,29 +65,22 @@ const handleOperateClick = ({ id, item }) => {
     case 'open-folder':
       const { data } = item
       const fl = JSON.parse(data)
-      window.openFileFolder(fl[0].path) // 取第一个文件的路径打开
+      utools.shellShowItemInFolder(fl[0].path) // 取第一个文件的路径打开
       break
     case 'collect':
-      item.collect = true
-      window.db.updateDataBaseLocal(db)
+      utools.redirect('添加到「备忘快贴」', {
+        type: typeMap[item.type],
+        data: item.data
+      })
       break
     case 'word-break':
       utools.redirect('超级分词', item.data)
       break
     case 'save-file':
-      const typeMap = {
-        text: 'text',
-        file: 'files',
-        image: 'img'
-      }
       utools.redirect('收集文件', {
         type: typeMap[item.type],
         data: item.data
       })
-      break
-    case 'un-collect':
-      item.collect = undefined
-      window.db.updateDataBaseLocal(db)
       break
     case 'remove':
       window.remove(item)
