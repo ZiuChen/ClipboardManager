@@ -8,7 +8,7 @@
             id !== 'open-folder' &&
             id !== 'word-break' &&
             id !== 'save-file') ||
-          (id === 'collect' && item.collect !== true) ||
+          (id === 'collect' && item.type !== 'file') ||
           (id === 'view' && !isFullData) ||
           (id === 'open-folder' && item.type === 'file') ||
           (id === 'save-file' && isFullData && item.type !== 'file') ||
