@@ -19,8 +19,8 @@ const props = defineProps({
     required: true
   }
 })
-const openFile = (path) => window.openFile(path)
-const getIcon = (path) => window.getIcon(path)
+const openFile = (path) => utools.shellOpenPath(path)
+const getIcon = (path) => utools.getFileIcon(path)
 </script>
 
 <style lang="less" scoped>
