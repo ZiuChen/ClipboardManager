@@ -1,6 +1,12 @@
 <template>
   <div class="setting">
     <el-card class="setting-card">
+      <template #header>
+        <el-button type="primary" @click="handleLinkClick(0)">🚀 主页</el-button>
+        <el-button @click="handleLinkClick(1)">⚡ 云同步教程</el-button>
+        <el-button @click="handleLinkClick(2)">⭐ 开源代码</el-button>
+        <el-button @click="handleLinkClick(3)">🎈 论坛发布页</el-button>
+      </template>
       <div class="setting-card-content">
         <div class="setting-card-content-item">
           <span>数据库路径</span>
@@ -43,6 +49,16 @@ const { database } = setting
 const path = ref(database.path)
 const maxsize = ref(database.maxsize)
 const maxage = ref(database.maxage)
+
+const handleLinkClick = (index) => {
+  const links = [
+    'https://ziuchen.gitee.io/project/ClipboardManager/',
+    'https://ziuchen.gitee.io/project/ClipboardManager/guide/',
+    'https://github.com/ZiuChen/ClipboardManager',
+    'https://yuanliao.info/d/5722'
+  ]
+  utools.shellOpenExternal(links[index])
+}
 
 const handlePathBtnClick = (param) => {
   if (param === 'modify') {
