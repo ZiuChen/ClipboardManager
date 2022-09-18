@@ -1,35 +1,25 @@
 <template>
   <div class="clip-operate">
-    <template v-for="{ id, title, icon } of operation">
+    <template v-for="o of operation">
       <div
-        v-if="
-          (id !== 'collect' &&
-            id !== 'view' &&
-            id !== 'open-folder' &&
-            id !== 'word-break' &&
-            id !== 'save-file') ||
-          (id === 'collect' && item.type !== 'file') ||
-          (id === 'view' && !isFullData) ||
-          (id === 'open-folder' && item.type === 'file') ||
-          (id === 'save-file' && isFullData && item.type !== 'file') ||
-          (id === 'word-break' &&
-            isFullData &&
-            item.type === 'text' &&
-            item.data.length <= 500 &&
-            item.data.length >= 2)
-        "
-        :class="id"
-        :title="title"
-        @click.stop="handleOperateClick({ id, item })"
+        v-if="filterOperate(o, item, isFullData)"
+        :class="o.id"
+        :title="o.title"
+        @click.stop="handleOperateClick(o, item)"
       >
-        {{ icon }}
+        {{ o.icon }}
       </div>
     </template>
   </div>
 </template>
 
 <script setup>
-import { ElMessage } from 'element-plus'
+import { computed } from 'vue'
+import defaultOperation from '../data/operation.json'
+import setting from '../global/readSetting'
+import useClipOperate from '../hooks/useClipOperate'
+
+const emit = defineEmits(['onDataChange', 'onDataRemove', 'onOperateExecute'])
 const props = defineProps({
   item: {
     type: Object,
@@ -40,60 +30,14 @@ const props = defineProps({
     default: false
   }
 })
-const emit = defineEmits(['onDataChange', 'onDataRemove', 'onOperateExecute'])
-const operation = [
-  { id: 'copy', title: '复制', icon: '📄' },
-  { id: 'view', title: '查看全部', icon: '💬' },
-  { id: 'open-folder', title: '打开文件夹', icon: '📁' },
-  { id: 'collect', title: '收藏', icon: '⭐' },
-  { id: 'word-break', title: '分词', icon: '💣' },
-  { id: 'save-file', title: '保存', icon: '💾' },
-  { id: 'remove', title: '删除', icon: '❌' }
-]
-const handleOperateClick = ({ id, item }) => {
-  const typeMap = {
-    text: 'text',
-    file: 'files',
-    image: 'img'
-  }
-  switch (id) {
-    case 'copy':
-      window.copy(item, false)
-      ElMessage({
-        message: '复制成功',
-        type: 'success'
-      })
-      break
-    case 'view':
-      emit('onDataChange', item)
-      break
-    case 'open-folder':
-      const { data } = item
-      const fl = JSON.parse(data)
-      utools.shellShowItemInFolder(fl[0].path) // 取第一个文件的路径打开
-      break
-    case 'collect':
-      utools.redirect('添加到「备忘快贴」', {
-        type: typeMap[item.type],
-        data: item.data
-      })
-      break
-    case 'word-break':
-      utools.redirect('超级分词', item.data)
-      break
-    case 'save-file':
-      utools.redirect('收集文件', {
-        type: typeMap[item.type],
-        data: item.data
-      })
-      break
-    case 'remove':
-      window.remove(item)
-      emit('onDataRemove')
-      break
-  }
-  emit('onOperateExecute')
-}
+
+const operation = computed(() =>
+  props.isFullData
+    ? [...defaultOperation, ...setting.operation.custom]
+    : [...defaultOperation, ...setting.operation.custom].splice(0, 5)
+)
+
+const { handleOperateClick, filterOperate } = useClipOperate({ emit })
 </script>
 
 <style lang="less" scoped>
