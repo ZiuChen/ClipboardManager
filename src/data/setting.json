@@ -5,28 +5,28 @@
   "operation.shown": ["copy", "view", "collect", "remove"],
   "operation.custom": [
     {
-      "id": "custom",
+      "id": "custom.1663490858",
       "title": "讯飞OCR识别",
       "icon": "⚡",
       "match": ["image", { "type": "file", "regex": ".(?:jpg|jpeg|png)$" }],
       "command": "redirect:讯飞ocr"
     },
     {
-      "id": "custom",
+      "id": "custom.1663490859",
       "title": "百度搜索",
       "icon": "🔍",
       "match": ["text"],
       "command": "redirect:百度一下"
     },
     {
-      "id": "custom",
+      "id": "custom.1663490860",
       "title": "统计文本字数",
       "icon": "🧮",
       "match": ["text"],
       "command": "redirect:统计文本次数"
     },
     {
-      "id": "custom",
+      "id": "custom.1663490861",
       "title": "颜色管理",
       "icon": "🎨",
       "match": [
@@ -38,28 +38,28 @@
       "command": "redirect:统计文本次数"
     },
     {
-      "id": "custom",
+      "id": "custom.1663490862",
       "title": "百度识图",
       "icon": "🌄",
       "match": ["image"],
       "command": "redirect:百度识图"
     },
     {
-      "id": "custom",
+      "id": "custom.1663490863",
       "title": "识别图片中二维码",
       "icon": "📜",
       "match": ["image"],
       "command": "redirect:识别图片中二维码"
     },
     {
-      "id": "custom",
+      "id": "custom.1663490864",
       "title": "上传到图床",
       "icon": "🚀",
       "match": ["image", { "type": "file", "regex": ".(?:jpg|jpeg|png)$" }],
       "command": "redirect:上传到图床"
     },
     {
-      "id": "custom",
+      "id": "custom.1663490865",
       "title": "翻译",
       "icon": "🌎",
       "match": ["text"],
