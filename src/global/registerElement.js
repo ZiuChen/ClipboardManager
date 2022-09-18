@@ -1,6 +1,14 @@
 import 'element-plus/theme-chalk/base.css'
 import 'element-plus/theme-chalk/dark/css-vars.css'
 import 'element-plus/theme-chalk/el-overlay.css'
+import 'element-plus/theme-chalk/el-button.css'
+import 'element-plus/theme-chalk/el-message-box.css'
+import 'element-plus/theme-chalk/el-message.css'
+import 'element-plus/theme-chalk/el-card.css'
+import 'element-plus/theme-chalk/el-input.css'
+import 'element-plus/theme-chalk/el-select.css'
+import 'element-plus/theme-chalk/el-option.css'
+import 'element-plus/theme-chalk/el-scrollbar.css'
 import {
   ElButton,
   ElMessageBox,
@@ -28,9 +36,6 @@ document.querySelector('html').className = utools.isDarkColors() ? 'dark' : ''
 export default function registerElement(app) {
   components.forEach((c) => {
     let name = transferCamel(c.name)
-    if (c.name === 'MessageBox') name = 'el-message-box'
-    if (c.name === 'message') name = 'el-message'
-    require(`element-plus/theme-chalk/${name}.css`)
     app.component(name, c)
   })
 }
