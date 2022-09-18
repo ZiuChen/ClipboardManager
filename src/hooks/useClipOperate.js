@@ -1,4 +1,5 @@
 import { ElMessage } from 'element-plus'
+import setting from '../global/readSetting'
 
 export default function useClipOperate({ emit }) {
   return {
@@ -37,29 +38,49 @@ export default function useClipOperate({ emit }) {
         window.remove(item)
         emit('onDataRemove')
       } else if (id.indexOf('custom') !== -1) {
-        console.log('custom')
+        const a = operation.command.split(':')
+        if (a[0] === 'redirect') {
+          utools.redirect(a[1], {
+            type: typeMap[item.type],
+            data: item.data
+          })
+        }
       }
       emit('onOperateExecute')
     },
 
     filterOperate: (operation, item, isFullData) => {
       const { id } = operation
-      if (id === 'copy') {
-        return true
-      } else if (id === 'view') {
-        return !isFullData
-      } else if (id === 'open-folder') {
-        return item.type === 'file'
-      } else if (id === 'collect') {
-        return item.type !== 'file'
-      } else if (id === 'word-break') {
-        return item.type === 'text' && item.data.length <= 500 && item.data.length >= 2
-      } else if (id === 'save-file') {
-        return item.type === 'file'
-      } else if (id === 'remove') {
-        return true
-      } else if (id.indexOf('custom') !== -1) {
-        return true
+      if (!isFullData) {
+        // 在非预览页 只展示配置在shown中的功能按钮 大小为 4
+        for (const sid of setting.operation.shown) {
+          if (id === sid) return true
+        }
+        return false
+      } else {
+        if (id === 'copy') {
+          return true
+        } else if (id === 'view') {
+          return !isFullData
+        } else if (id === 'open-folder') {
+          return item.type === 'file'
+        } else if (id === 'collect') {
+          return item.type !== 'file'
+        } else if (id === 'word-break') {
+          return item.type === 'text' && item.data.length <= 500 && item.data.length >= 2
+        } else if (id === 'save-file') {
+          return item.type === 'file'
+        } else if (id === 'remove') {
+          return true
+        } else if (id.indexOf('custom') !== -1) {
+          // 如果匹配到了自定义的操作 则展示
+          for (const m of operation.match) {
+            if (item.type === m) {
+              return true
+            }
+          }
+          return false
+        }
       }
     }
   }
