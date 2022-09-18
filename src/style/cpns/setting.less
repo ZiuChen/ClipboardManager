@@ -2,5 +2,25 @@
   margin: 10px;
   &-content {
     padding: 10px;
+    &-item {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      margin: 10px;
+      .el-select {
+        width: 85px;
+      }
+      .path {
+        width: 65%;
+      }
+      & div {
+        padding: 5px 10px;
+      }
+    }
+  }
+  &-footer {
+    display: flex;
+    justify-content: center;
+    align-items: center;
   }
 }
