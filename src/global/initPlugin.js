@@ -1,11 +1,14 @@
 const { utools, existsSync, readFileSync, writeFileSync, mkdirSync, crypto, listener, clipboard } =
   window.exports
+import setting from './readSetting'
 
 export default function initPlugin() {
   const sep = utools.isWindows() ? '\\' : '/'
-  const DBPath = `${
-    utools.isMacOs() ? utools.getPath('userData') : utools.getPath('home')
-  }${sep}_utools_clipboard_manager_storage`
+  const DBPath =
+    setting.database.path ||
+    `${
+      utools.isMacOs() ? utools.getPath('userData') : utools.getPath('home')
+    }${sep}_utools_clipboard_manager_storage`
   class DB {
     constructor(path) {
       const d = new Date()
@@ -26,7 +29,7 @@ export default function initPlugin() {
           this.dataBase = dataBase
           // 将超过14天的数据删除 排除掉收藏
           const now = new Date().getTime()
-          const deleteTime = now - '\u0031\u0034' * '\u0032\u0034' * 60 * 60 * 1000 // unicode
+          const deleteTime = now - setting.database.maxage * 24 * 60 * 60 * 1000 // unicode
           this.dataBase.data = this.dataBase.data?.filter((item) => item.updateTime > deleteTime)
           this.updateDataBaseLocal()
         } catch (err) {
@@ -59,7 +62,7 @@ export default function initPlugin() {
     addItem(cItem) {
       this.dataBase.data.unshift(cItem)
       this.updateDataBase()
-      const exceedCount = this.dataBase.data.length - '\u0038\u0030\u0030'
+      const exceedCount = this.dataBase.data.length - setting.database.maxsize
       if (exceedCount > 0) {
         // 达到条数限制 删除超出部分
         for (let i = 0; i < exceedCount; i++) {
