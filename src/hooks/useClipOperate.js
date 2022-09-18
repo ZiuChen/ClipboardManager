@@ -84,8 +84,6 @@ export default function useClipOperate({ emit }) {
               if (item.type === 'file') {
                 const fl = JSON.parse(item.data)
                 for (const f of fl) {
-                  console.log(f.name, r.test(f.name))
-                  // TODO: fix: 图片文件不能正确匹配
                   if (r.test(f.name)) {
                     return true
                   }

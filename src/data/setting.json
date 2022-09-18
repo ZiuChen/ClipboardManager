@@ -22,7 +22,7 @@
       "id": "custom.1663468466",
       "title": "上传到图床",
       "icon": "🚀",
-      "match": ["image", { "type": "file", "regex": "/.*(jpg|png|jpeg|gif)$/i" }],
+      "match": ["image", { "type": "file", "regex": ".(?:jpg|jpeg|png)$" }],
       "command": "redirect:上传到图床"
     },
     {
