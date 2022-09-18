@@ -1,6 +1,5 @@
 <template>
   <div class="main">
-    <ClipCard :isShow="notifyShown" v-bind="notify" @onClose="notifyShown = false"></ClipCard>
     <ClipFloatBtn :icon="'🧭'" @onBtnClick="restoreDataBase"></ClipFloatBtn>
     <ClipFullData
       :isShow="fullDataShow"
@@ -59,7 +58,6 @@
 <script setup>
 import { ref, watch, onMounted, computed, nextTick } from 'vue'
 import { ElMessageBox, ElMessage } from 'element-plus'
-import ClipCard from '../cpns/ClipCard.vue'
 import ClipItemList from '../cpns/ClipItemList.vue'
 import ClipFullData from '../cpns/ClipFullData.vue'
 import ClipSearch from '../cpns/ClipSearch.vue'
@@ -67,7 +65,7 @@ import ClipSwitch from '../cpns/ClipSwitch.vue'
 import ClipFloatBtn from '../cpns/ClipFloatBtn.vue'
 import notify from '../data/notify.json'
 
-const notifyShown = ref(false)
+const notifyShown = ref(false) // 将在onMounted时根据此值判断是否显示通知
 const storageNotify = utools.dbStorage.getItem('notify')
 notifyShown.value = storageNotify ? storageNotify.version < notify.version : true
 
@@ -240,6 +238,21 @@ onMounted(() => {
 
   // 监听搜索框
   watch(filterText, (val) => updateShowList(activeTab.value))
+
+  // 展示通知
+  if (notifyShown.value) {
+    ElMessageBox.alert(notify.content, notify.title, {
+      confirmButtonText: '确定',
+      dangerouslyUseHTMLString: true,
+      callback: () => {
+        utools.dbStorage.setItem('notify', {
+          title: notify.title,
+          content: notify.content,
+          version: notify.version
+        })
+      }
+    })
+  }
 
   // 列表懒加载
   document.addEventListener('scroll', (e) => {
