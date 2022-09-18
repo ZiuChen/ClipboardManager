@@ -19,4 +19,21 @@ const dateFormat = (timeStamp) => {
   return info
 }
 
-export { dateFormat }
+const pointToObj = (objWithPointKey) => {
+  let rtnObj = {}
+  for (const key in objWithPointKey) {
+    const keys = key.split('.')
+    let obj = rtnObj
+    for (let i = 0; i < keys.length; i++) {
+      if (i === keys.length - 1) {
+        obj[keys[i]] = objWithPointKey[key]
+      } else {
+        if (!obj[keys[i]]) obj[keys[i]] = {}
+        obj = obj[keys[i]]
+      }
+    }
+  }
+  return rtnObj
+}
+
+export { dateFormat, pointToObj }
