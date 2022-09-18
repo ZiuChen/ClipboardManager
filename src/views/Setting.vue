@@ -46,6 +46,10 @@
             />
           </el-select>
         </div>
+        <div class="setting-card-content-item">
+          <span>自定义功能</span>
+          <el-input v-model="stringCustom" :rows="5" type="textarea" placeholder="Please input" />
+        </div>
       </div>
       <div class="setting-card-footer">
         <el-button @click="handleRestoreBtnClick">重置</el-button>
@@ -72,6 +76,7 @@ const maxage = ref(database.maxage)
 
 const shown = ref(operation.shown)
 const custom = ref(operation.custom)
+const stringCustom = ref(JSON.stringify(operation.custom))
 
 const handleLinkClick = (index) => {
   const links = [
@@ -106,6 +111,12 @@ const handleSaveBtnClick = () => {
     ElMessage.error('数据库路径不正确')
     return
   }
+  try {
+    custom.value = JSON.parse(stringCustom.value)
+  } catch (error) {
+    custom.value = operation.custom
+    ElMessage.error('格式错误')
+  }
   utools.dbStorage.setItem(
     'setting',
     JSON.parse(
@@ -122,10 +133,7 @@ const handleSaveBtnClick = () => {
       })
     )
   )
-  ElMessage({
-    message: '保存成功 重启插件生效',
-    type: 'success'
-  })
+  ElMessage.success('保存成功 重启插件生效')
 }
 
 const handleRestoreBtnClick = () => {

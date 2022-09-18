@@ -5,28 +5,24 @@
   "operation.shown": ["copy", "view", "collect", "remove"],
   "operation.custom": [
     {
-      "id": "custom.1663468392",
       "title": "讯飞OCR识别",
       "icon": "⚡",
-      "match": ["image"],
+      "match": ["image", { "type": "file", "regex": ".(?:jpg|jpeg|png)$" }],
       "command": "redirect:讯飞ocr"
     },
     {
-      "id": "custom.1663468466",
       "title": "百度搜索",
       "icon": "🔍",
       "match": ["text"],
       "command": "redirect:百度一下"
     },
     {
-      "id": "custom.1663468466",
       "title": "上传到图床",
       "icon": "🚀",
       "match": ["image", { "type": "file", "regex": ".(?:jpg|jpeg|png)$" }],
       "command": "redirect:上传到图床"
     },
     {
-      "id": "custom.1663476961",
       "title": "翻译",
       "icon": "🌎",
       "match": ["text"],
