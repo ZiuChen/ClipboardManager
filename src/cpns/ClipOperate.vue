@@ -31,11 +31,7 @@ const props = defineProps({
   }
 })
 
-const operation = computed(() =>
-  props.isFullData
-    ? [...defaultOperation, ...setting.operation.custom]
-    : [...defaultOperation, ...setting.operation.custom].splice(0, 5)
-)
+const operation = computed(() => [...defaultOperation, ...setting.operation.custom])
 
 const { handleOperateClick, filterOperate } = useClipOperate({ emit })
 </script>

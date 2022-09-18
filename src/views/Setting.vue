@@ -17,20 +17,38 @@
         </div>
         <div class="setting-card-content-item">
           <span>最大历史条数</span>
-          <el-select v-model="maxsize" fit-input-width>
+          <el-select class="number-select" v-model="maxsize" fit-input-width>
             <el-option v-for="n in [600, 800, 1000, 1200, 1400]" :key="n" :value="n" />
           </el-select>
           条
         </div>
         <div class="setting-card-content-item">
           <span>最长保存时间</span>
-          <el-select v-model="maxage" fit-input-width>
+          <el-select class="number-select" v-model="maxage" fit-input-width>
             <el-option v-for="n in [10, 11, 12, 13, 14]" :key="n" :value="n" />
           </el-select>
           天
         </div>
+        <div class="setting-card-content-item">
+          <span>展示在主界面的功能按钮</span>
+          <el-select
+            class="operation-select"
+            v-model="shown"
+            multiple
+            :multiple-limit="4"
+            placeholder="请选择"
+          >
+            <el-option
+              v-for="{ id, title, icon } in defaultOperation"
+              :key="id"
+              :label="icon + title"
+              :value="id"
+            />
+          </el-select>
+        </div>
       </div>
       <div class="setting-card-footer">
+        <el-button @click="handleRestoreBtnClick">重置</el-button>
         <el-button @click="emit('back')">返回</el-button>
         <el-button @click="handleSaveBtnClick" type="primary">保存</el-button>
       </div>
@@ -40,15 +58,20 @@
 
 <script setup>
 import { ref } from 'vue'
-import { ElButton, ElInput, ElMessage } from 'element-plus'
+import { ElButton, ElInput, ElMessage, ElMessageBox } from 'element-plus'
 import setting from '../global/readSetting'
+import restoreSetting from '../global/restoreSetting'
+import defaultOperation from '../data/operation.json'
 
 const emit = defineEmits(['back'])
-const { database } = setting
+const { database, operation } = setting
 
 const path = ref(database.path)
 const maxsize = ref(database.maxsize)
 const maxage = ref(database.maxage)
+
+const shown = ref(operation.shown)
+const custom = ref(operation.custom)
 
 const handleLinkClick = (index) => {
   const links = [
@@ -83,18 +106,42 @@ const handleSaveBtnClick = () => {
     ElMessage.error('数据库路径不正确')
     return
   }
-  utools.dbStorage.setItem('setting', {
-    ...setting,
-    database: {
-      path: path.value,
-      maxsize: maxsize.value,
-      maxage: maxage.value
-    }
-  })
+  utools.dbStorage.setItem(
+    'setting',
+    JSON.parse(
+      JSON.stringify({
+        database: {
+          path: path.value,
+          maxsize: maxsize.value,
+          maxage: maxage.value
+        },
+        operation: {
+          shown: shown.value,
+          custom: custom.value
+        }
+      })
+    )
+  )
   ElMessage({
     message: '保存成功 重启插件生效',
     type: 'success'
   })
+}
+
+const handleRestoreBtnClick = () => {
+  ElMessageBox.confirm('确定要重置设置吗', '警告', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  })
+    .then(() => {
+      restoreSetting()
+      ElMessage({
+        message: '重置成功 重启插件生效',
+        type: 'success'
+      })
+    })
+    .catch(() => {})
 }
 </script>
 
