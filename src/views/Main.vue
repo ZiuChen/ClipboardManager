@@ -23,6 +23,7 @@
           <span class="clip-switch-btn" @click="isMultiple = !isMultiple">{{
             isMultiple ? '❌ 退出多选' : '👆'
           }}</span>
+          <span class="clip-switch-btn" v-show="!isMultiple" @click="emit('showSetting')">🎨</span>
           <span
             class="clip-switch-btn clip-search-btn"
             v-show="!isMultiple"
@@ -57,6 +58,7 @@
 
 <script setup>
 import { ref, watch, onMounted, computed, nextTick } from 'vue'
+import { ElMessageBox } from 'element-plus'
 import ClipCard from '../cpns/ClipCard.vue'
 import ClipItemList from '../cpns/ClipItemList.vue'
 import ClipFullData from '../cpns/ClipFullData.vue'
@@ -187,6 +189,8 @@ const handleDataRemove = () => {
   list.value = window.db.dataBase.data
   updateShowList(ClipSwitchRef.value.activeTab)
 }
+
+const emit = defineEmits(['showSetting'])
 
 const activeTab = ref('all')
 
