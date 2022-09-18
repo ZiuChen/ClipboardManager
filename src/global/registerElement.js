@@ -8,10 +8,20 @@ import {
   ElCard,
   ElInput,
   ElSelect,
-  ElOption
+  ElOption,
+  ElScrollbar
 } from 'element-plus'
 
-const components = [ElButton, ElMessageBox, ElMessage, ElCard, ElInput, ElSelect, ElOption]
+const components = [
+  ElButton,
+  ElMessageBox,
+  ElMessage,
+  ElCard,
+  ElInput,
+  ElSelect,
+  ElOption,
+  ElScrollbar
+]
 
 document.querySelector('html').className = utools.isDarkColors() ? 'dark' : ''
 

@@ -4,6 +4,7 @@
       <template #header>
         <el-button type="primary" @click="handleLinkClick(0)">🚀 主页</el-button>
         <el-button @click="handleLinkClick(1)">⚡ 云同步教程</el-button>
+        <el-button @click="handleLinkClick(1)">💡 创造自己的功能按钮</el-button>
         <el-button @click="handleLinkClick(2)">⭐ 开源代码</el-button>
         <el-button @click="handleLinkClick(3)">🎈 论坛发布页</el-button>
       </template>
@@ -30,16 +31,20 @@
           天
         </div>
         <div class="setting-card-content-item">
-          <span>展示在主界面的功能按钮</span>
+          <span>展示在主界面的功能</span>
           <el-select
             class="operation-select"
             v-model="shown"
             multiple
             :multiple-limit="4"
             placeholder="请选择"
+            :teleported="false"
           >
             <el-option
-              v-for="{ id, title, icon } in defaultOperation"
+              v-for="{ id, title, icon } in [
+                ...defaultOperation,
+                ...custom.map(({ id, title, icon }) => ({ id, title, icon }))
+              ]"
               :key="id"
               :label="icon + title"
               :value="id"
