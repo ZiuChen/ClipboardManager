@@ -3,12 +3,7 @@ const { utools, existsSync, readFileSync, writeFileSync, mkdirSync, crypto, list
 import setting from './readSetting'
 
 export default function initPlugin() {
-  const sep = utools.isWindows() ? '\\' : '/'
-  const DBPath =
-    setting.database.path ||
-    `${
-      utools.isMacOs() ? utools.getPath('userData') : utools.getPath('home')
-    }${sep}_utools_clipboard_manager_storage`
+  const SEP = utools.isWindows() ? '\\' : '/'
   class DB {
     constructor(path) {
       const d = new Date()
@@ -153,7 +148,7 @@ export default function initPlugin() {
 
   const createFile = (item) => {
     const tempPath = utools.getPath('temp')
-    const folderPath = tempPath + sep + 'utools-clipboard-manager'
+    const folderPath = tempPath + SEP + 'utools-clipboard-manager'
     if (!existsSync(folderPath)) {
       try {
         mkdirSync(folderPath)
@@ -165,17 +160,17 @@ export default function initPlugin() {
     if (type === 'image') {
       const base64Data = item.data.replace(/^data:image\/\w+;base64,/, '') // remove the prefix
       const buffer = Buffer.from(base64Data, 'base64') // to Buffer
-      const filePath = folderPath + sep + new Date().valueOf() + '.png'
+      const filePath = folderPath + SEP + new Date().valueOf() + '.png'
       writeFileSync(filePath, buffer)
       return filePath
     } else if (type === 'text') {
-      const filePath = folderPath + sep + new Date().valueOf() + '.txt'
+      const filePath = folderPath + SEP + new Date().valueOf() + '.txt'
       writeFileSync(filePath, item.data)
       return filePath
     }
   }
 
-  const db = new DB(DBPath)
+  const db = new DB(setting.database.path)
   db.init()
 
   const remove = (item) => db.removeItemViaId(item.id)

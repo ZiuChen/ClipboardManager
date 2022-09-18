@@ -1,5 +1,10 @@
 import defaultSetting from '../data/setting.json'
 
+const sep = utools.isWindows() ? '\\' : '/'
+const defaultPath = `${
+  utools.isMacOs() ? utools.getPath('userData') : utools.getPath('home')
+}${sep}_utools_clipboard_manager_storage`
+
 let setting = utools.dbStorage.getItem('setting')
 if (!setting) {
   // 将defaultSetting的key点语法转换为对象
@@ -16,6 +21,7 @@ if (!setting) {
       }
     }
   }
+  setting.database.path = defaultPath
   utools.dbStorage.setItem('setting', setting)
 }
 
