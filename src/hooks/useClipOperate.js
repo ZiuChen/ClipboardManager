@@ -32,7 +32,7 @@ export default function useClipOperate({ emit }) {
       } else if (id === 'save-file') {
         utools.redirect('收集文件', {
           type: typeMap[item.type],
-          data: item.data
+          data: item.type === 'file' ? JSON.parse(item.data).map((f) => f.path) : item.data
         })
       } else if (id === 'remove') {
         window.remove(item)
@@ -42,13 +42,12 @@ export default function useClipOperate({ emit }) {
         if (a[0] === 'redirect') {
           utools.redirect(a[1], {
             type: typeMap[item.type],
-            data: item.data
+            data: item.type === 'file' ? JSON.parse(item.data).map((f) => f.path) : item.data
           })
         }
       }
       emit('onOperateExecute')
     },
-
     filterOperate: (operation, item, isFullData) => {
       const { id } = operation
       if (!isFullData) {
@@ -69,14 +68,33 @@ export default function useClipOperate({ emit }) {
         } else if (id === 'word-break') {
           return item.type === 'text' && item.data.length <= 500 && item.data.length >= 2
         } else if (id === 'save-file') {
-          return item.type === 'file'
+          return true
         } else if (id === 'remove') {
           return true
         } else if (id.indexOf('custom') !== -1) {
           // 如果匹配到了自定义的操作 则展示
           for (const m of operation.match) {
-            if (item.type === m) {
-              return true
+            if (typeof m === 'string') {
+              if (item.type === m) {
+                return true
+              }
+            } else if (typeof m === 'object') {
+              // 根据正则匹配内容
+              const r = new RegExp(m.regex)
+              if (item.type === 'file') {
+                const fl = JSON.parse(item.data)
+                for (const f of fl) {
+                  console.log(f.name, r.test(f.name))
+                  // TODO: fix: 图片文件不能正确匹配
+                  if (r.test(f.name)) {
+                    return true
+                  }
+                }
+              } else {
+                if (r.test(item.data)) {
+                  return true
+                }
+              }
             }
           }
           return false

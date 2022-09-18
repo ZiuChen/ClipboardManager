@@ -17,6 +17,20 @@
       "icon": "🔍",
       "match": ["text"],
       "command": "redirect:百度一下"
+    },
+    {
+      "id": "custom.1663468466",
+      "title": "上传到图床",
+      "icon": "🚀",
+      "match": ["image", { "type": "file", "regex": "/.*(jpg|png|jpeg|gif)$/i" }],
+      "command": "redirect:上传到图床"
+    },
+    {
+      "id": "custom.1663476961",
+      "title": "翻译",
+      "icon": "🌎",
+      "match": ["text"],
+      "command": "redirect:翻译"
     }
   ]
 }
