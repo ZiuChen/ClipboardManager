@@ -60,6 +60,7 @@
 
 <script setup>
 import { ref, onMounted, watch } from 'vue'
+import { ElMessage } from 'element-plus'
 import FileList from './FileList.vue'
 import ClipOperate from './ClipOperate.vue'
 import { dateFormat } from '../utils'
@@ -170,6 +171,10 @@ const handleItemClick = (ev, item) => {
       // 右键 仅复制
       window.copy(item)
     }
+    ElMessage({
+      message: '复制成功',
+      type: 'success'
+    })
   }
 }
 const activeIndex = ref(0)
@@ -214,6 +219,10 @@ onMounted(() => {
         // 如果侧栏中有数据 证明侧栏是打开的 不执行复制
         if (!props.isMultiple) {
           window.copy(props.showList[activeIndex.value])
+          ElMessage({
+            message: '复制成功',
+            type: 'success'
+          })
         } else {
           emit('onMultiCopyExecute', false)
         }
@@ -222,6 +231,10 @@ onMounted(() => {
       if (!props.isMultiple) {
         window.copy(props.showList[activeIndex.value])
         window.paste()
+        ElMessage({
+          message: '复制成功',
+          type: 'success'
+        })
       } else {
         emit('onMultiCopyExecute', true)
       }

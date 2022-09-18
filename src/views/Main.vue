@@ -58,7 +58,7 @@
 
 <script setup>
 import { ref, watch, onMounted, computed, nextTick } from 'vue'
-import { ElMessageBox } from 'element-plus'
+import { ElMessageBox, ElMessage } from 'element-plus'
 import ClipCard from '../cpns/ClipCard.vue'
 import ClipItemList from '../cpns/ClipItemList.vue'
 import ClipFullData from '../cpns/ClipFullData.vue'
@@ -119,6 +119,10 @@ const handleMultiCopyBtnClick = (isPaste) => {
       data: result
     })
   }
+  ElMessage({
+    message: '复制成功',
+    type: 'success'
+  })
   isPaste && window.paste()
   ClipItemListRef.value.emptySelectItemList()
   isMultiple.value = false
@@ -163,10 +167,16 @@ const updateShowList = (type) => {
 
 const restoreDataBase = () => {
   // 清空数据库
-  if (window.confirm('确定要清空剪贴板记录吗?')) {
-    window.db.emptyDataBase()
-    updateShowList('all')
-  }
+  ElMessageBox.confirm('确定要清空剪贴板记录吗', '提示', {
+    confirmButtonText: '确定',
+    cancelButtonText: '取消',
+    type: 'warning'
+  })
+    .then(() => {
+      window.db.emptyDataBase()
+      updateShowList('all')
+    })
+    .catch(() => {})
 }
 
 const handleNavClick = (type) => {

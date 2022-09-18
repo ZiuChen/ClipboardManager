@@ -1,14 +1,15 @@
 import 'element-plus/theme-chalk/base.css'
 import 'element-plus/theme-chalk/dark/css-vars.css'
 import 'element-plus/theme-chalk/el-overlay.css'
-import { ElButton, ElMessageBox } from 'element-plus'
+import { ElButton, ElMessageBox, ElMessage } from 'element-plus'
 
-const components = [ElButton, ElMessageBox]
+const components = [ElButton, ElMessageBox, ElMessage]
 
 export default function registerElement(app) {
   components.forEach((c) => {
     let name = transferCamel(c.name)
-    if (name === 'message-box') name = 'el-message-box'
+    if (c.name === 'MessageBox') name = 'el-message-box'
+    if (c.name === 'message') name = 'el-message'
     require(`element-plus/theme-chalk/${name}.css`)
     app.component(name, c)
   })

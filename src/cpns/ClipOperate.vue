@@ -29,6 +29,7 @@
 </template>
 
 <script setup>
+import { ElMessage } from 'element-plus'
 const props = defineProps({
   item: {
     type: Object,
@@ -58,6 +59,10 @@ const handleOperateClick = ({ id, item }) => {
   switch (id) {
     case 'copy':
       window.copy(item, false)
+      ElMessage({
+        message: '复制成功',
+        type: 'success'
+      })
       break
     case 'view':
       emit('onDataChange', item)
