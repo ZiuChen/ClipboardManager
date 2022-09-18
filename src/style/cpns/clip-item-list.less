@@ -11,7 +11,7 @@
     border-color: @text-bg-color-lighter @bg-color @bg-color @bg-color;
     cursor: pointer;
     &.active {
-      border-style: hidden hidden hidden solid;
+      border-style: solid hidden hidden solid;
       border-width: 1px 0px 0px 6px;
       border-color: @text-bg-color-lighter @bg-color @bg-color @primary-color;
       background-color: @text-bg-color-lighter;
@@ -31,7 +31,7 @@
       justify-content: center;
       align-items: center;
       font-size: 14px;
-      padding: 10px;
+      padding: 10px 10px 10px 5px;
       .clip-time {
         display: flex;
         flex-direction: column;
@@ -43,6 +43,7 @@
         border-color: @text-bg-color-lighter;
         border-style: solid;
         border-width: 0px 2px 0px 0px;
+        margin: 0px 5px 0px 0px;
         .relative-date {
           display: flex;
           justify-content: center;
@@ -60,7 +61,7 @@
         overflow: hidden;
         word-break: break-all;
         max-height: 120px;
-        max-width: 480px;
+        max-width: 460px;
         padding: 5px 5px 5px 10px;
         white-space: pre-wrap;
         flex-direction: column;
@@ -68,7 +69,7 @@
         img.clip-data-image {
           // 此 class用于区分 file的 image
           max-height: 100px; // 比外框 max-height少一点 因为有 5px的边框
-          max-width: 90%;
+          max-width: 85%;
           box-shadow: 0px 0px 3px @text-color;
         }
         .clip-over-sized-content {
