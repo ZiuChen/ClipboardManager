@@ -1,7 +1,7 @@
 <template>
   <div class="app">
     <Main @show-setting="settingShown = true" v-show="!settingShown"></Main>
-    <Setting v-show="settingShown"></Setting>
+    <Setting v-show="settingShown" @back="settingShown = false"></Setting>
   </div>
 </template>
 

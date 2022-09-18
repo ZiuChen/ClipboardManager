@@ -1,9 +1,9 @@
 import 'element-plus/theme-chalk/base.css'
 import 'element-plus/theme-chalk/dark/css-vars.css'
 import 'element-plus/theme-chalk/el-overlay.css'
-import { ElButton, ElMessageBox, ElMessage } from 'element-plus'
+import { ElButton, ElMessageBox, ElMessage, ElCard } from 'element-plus'
 
-const components = [ElButton, ElMessageBox, ElMessage]
+const components = [ElButton, ElMessageBox, ElMessage, ElCard]
 
 export default function registerElement(app) {
   components.forEach((c) => {
