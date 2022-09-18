@@ -89,9 +89,7 @@ export default function useClipOperate({ emit }) {
                   }
                 }
               } else {
-                if (r.test(item.data)) {
-                  return true
-                }
+                return r.test(item.data)
               }
             }
           }
