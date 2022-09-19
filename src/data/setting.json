@@ -2,7 +2,7 @@
   "database.path": "",
   "database.maxsize": 800,
   "database.maxage": 14,
-  "operation.shown": ["copy", "view", "collect", "remove"],
+  "operation.shown": ["copy", "view", "collect", "un-collect", "remove"],
   "operation.custom": [
     {
       "id": "custom.1663583455000",

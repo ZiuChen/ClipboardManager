@@ -36,7 +36,7 @@
             class="operation-select"
             v-model="shown"
             multiple
-            :multiple-limit="4"
+            :multiple-limit="5"
             placeholder="请选择"
             :teleported="false"
           >
@@ -93,22 +93,6 @@ const handleLinkClick = (index) => {
   utools.shellOpenExternal(links[index])
 }
 
-const handlePathBtnClick = (param) => {
-  if (param === 'modify') {
-    const file = document.getElementById('database-path')
-    file.click()
-    file.onchange = (e) => {
-      const { files } = e.target
-      if (files.length > 0) {
-        path.value = files[0].path
-      }
-      ElMessage.info('修改成功 不要忘记点击保存按钮')
-    }
-  } else if (param === 'open') {
-    utools.shellShowItemInFolder(path.value)
-  }
-}
-
 const handleSaveBtnClick = () => {
   // 校验格式
   if (path.value === '') {
@@ -152,6 +136,22 @@ const handleSaveBtnClick = () => {
     )
   )
   ElMessage.success('保存成功 重启插件生效')
+}
+
+const handlePathBtnClick = (param) => {
+  if (param === 'modify') {
+    const file = document.getElementById('database-path')
+    file.click()
+    file.onchange = (e) => {
+      const { files } = e.target
+      if (files.length > 0) {
+        path.value = files[0].path
+      }
+      handleSaveBtnClick()
+    }
+  } else if (param === 'open') {
+    utools.shellShowItemInFolder(path.value)
+  }
 }
 
 const handleRestoreBtnClick = () => {
