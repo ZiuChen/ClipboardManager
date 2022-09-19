@@ -11,7 +11,7 @@
       <div class="setting-card-content">
         <div class="setting-card-content-item">
           <span>数据库路径</span>
-          <el-input class="path" v-model="path" disabled></el-input>
+          <el-input class="path" v-model="path" :title="path" disabled></el-input>
           <el-button type="primary" @click="handlePathBtnClick('modify')">修改</el-button>
           <el-button @click="handlePathBtnClick('open')" v-show="path">打开</el-button>
           <input type="file" id="database-path" :style="{ display: 'none' }" />
@@ -67,7 +67,7 @@
 
 <script setup>
 import { ref } from 'vue'
-import { ElButton, ElInput, ElMessage, ElMessageBox } from 'element-plus'
+import { ElMessage, ElMessageBox } from 'element-plus'
 import setting from '../global/readSetting'
 import restoreSetting from '../global/restoreSetting'
 import defaultOperation from '../data/operation.json'
