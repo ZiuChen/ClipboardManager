@@ -220,4 +220,5 @@ export default function initPlugin() {
   window.createFile = createFile
   window.focus = focus
   window.toTop = toTop
+  window.listener = listener
 }
