@@ -23,10 +23,11 @@ export default function useClipOperate({ emit }) {
         const fl = JSON.parse(data)
         utools.shellShowItemInFolder(fl[0].path) // 取第一个文件的路径打开
       } else if (id === 'collect') {
-        utools.redirect('添加到「备忘快贴」', {
-          type: typeMap[item.type],
-          data: item.data
-        })
+        item.collect = true
+        window.db.updateDataBaseLocal()
+      } else if (id === 'un-collect') {
+        item.collect = undefined
+        window.db.updateDataBaseLocal()
       } else if (id === 'word-break') {
         utools.redirect('超级分词', item.data)
       } else if (id === 'save-file') {
@@ -51,50 +52,50 @@ export default function useClipOperate({ emit }) {
     filterOperate: (operation, item, isFullData) => {
       const { id } = operation
       if (!isFullData) {
-        // 在非预览页 只展示配置在shown中的功能按钮 大小为 4
-        for (const sid of setting.operation.shown) {
-          if (id === sid) return true
-        }
-        return false
-      } else {
-        if (id === 'copy') {
-          return true
-        } else if (id === 'view') {
-          return !isFullData
-        } else if (id === 'open-folder') {
-          return item.type === 'file'
-        } else if (id === 'collect') {
-          return item.type !== 'file'
-        } else if (id === 'word-break') {
-          return item.type === 'text' && item.data.length <= 500 && item.data.length >= 2
-        } else if (id === 'save-file') {
-          return true
-        } else if (id === 'remove') {
-          return true
-        } else if (id.indexOf('custom') !== -1) {
-          // 如果匹配到了自定义的操作 则展示
-          for (const m of operation.match) {
-            if (typeof m === 'string') {
-              if (item.type === m) {
-                return true
-              }
-            } else if (typeof m === 'object') {
-              // 根据正则匹配内容
-              const r = new RegExp(m.regex)
-              if (item.type === 'file') {
-                const fl = JSON.parse(item.data)
-                for (const f of fl) {
-                  if (r.test(f.name)) {
-                    return true
-                  }
-                }
-              } else {
-                return r.test(item.data)
-              }
-            }
-          }
+        // 在非预览页 只展示setting.operation.shown中的功能按钮
+        if (!setting.operation.shown.includes(id)) {
           return false
         }
+      }
+      if (id === 'copy') {
+        return true
+      } else if (id === 'view') {
+        return !isFullData
+      } else if (id === 'open-folder') {
+        return item.type === 'file'
+      } else if (id === 'collect') {
+        return item.type !== 'file' && !item.collect
+      } else if (id === 'un-collect') {
+        return item.type !== 'file' && item.collect
+      } else if (id === 'word-break') {
+        return item.type === 'text' && item.data.length <= 500 && item.data.length >= 2
+      } else if (id === 'save-file') {
+        return true
+      } else if (id === 'remove') {
+        return true
+      } else if (id.indexOf('custom') !== -1) {
+        // 如果匹配到了自定义的操作 则展示
+        for (const m of operation.match) {
+          if (typeof m === 'string') {
+            if (item.type === m) {
+              return true
+            }
+          } else if (typeof m === 'object') {
+            // 根据正则匹配内容
+            const r = new RegExp(m.regex)
+            if (item.type === 'file') {
+              const fl = JSON.parse(item.data)
+              for (const f of fl) {
+                if (r.test(f.name)) {
+                  return true
+                }
+              }
+            } else {
+              return r.test(item.data)
+            }
+          }
+        }
+        return false
       }
     }
   }

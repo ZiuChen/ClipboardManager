@@ -25,7 +25,9 @@ export default function initPlugin() {
           // 将超过14天的数据删除 排除掉收藏
           const now = new Date().getTime()
           const deleteTime = now - setting.database.maxage * 24 * 60 * 60 * 1000 // unicode
-          this.dataBase.data = this.dataBase.data?.filter((item) => item.updateTime > deleteTime)
+          this.dataBase.data = this.dataBase.data?.filter(
+            (item) => item.updateTime > deleteTime || item.collect
+          )
           this.updateDataBaseLocal()
         } catch (err) {
           utools.showNotification('读取剪切板出错: ' + err)
@@ -59,10 +61,14 @@ export default function initPlugin() {
       this.updateDataBase()
       const exceedCount = this.dataBase.data.length - setting.database.maxsize
       if (exceedCount > 0) {
-        // 达到条数限制 删除超出部分
+        // 达到条数限制 在收藏条数限制内遍历非收藏历史并删除
+        // 所有被移除的 item都存入tempList
+        const tmpList = []
         for (let i = 0; i < exceedCount; i++) {
-          this.dataBase.data.pop()
+          const item = this.dataBase.data.pop()
+          tmpList.push(item)
         }
+        tmpList.forEach((item) => !item.collect || this.dataBase.data.push(item)) // 收藏内容 重新入栈
       }
       this.updateDataBaseLocal()
     }
