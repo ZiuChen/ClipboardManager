@@ -19,14 +19,14 @@
         <div class="setting-card-content-item">
           <span>最大历史条数</span>
           <el-select class="number-select" v-model="maxsize" fit-input-width>
-            <el-option v-for="n in [600, 800, 1000, 1200, 1400]" :key="n" :value="n" />
+            <el-option v-for="n in [500, 600, 700, 800, 900, 1000]" :key="n" :value="n" />
           </el-select>
           条
         </div>
         <div class="setting-card-content-item">
           <span>最长保存时间</span>
           <el-select class="number-select" v-model="maxage" fit-input-width>
-            <el-option v-for="n in [10, 11, 12, 13, 14]" :key="n" :value="n" />
+            <el-option v-for="n in [8, 9, 10, 11, 12, 13, 14]" :key="n" :value="n" />
           </el-select>
           天
         </div>
@@ -46,7 +46,7 @@
                 ...custom.map(({ id, title, icon }) => ({ id, title, icon }))
               ]"
               :key="id"
-              :label="icon + title"
+              :label="icon + ' ' + title"
               :value="id"
             />
           </el-select>
@@ -102,6 +102,7 @@ const handlePathBtnClick = (param) => {
       if (files.length > 0) {
         path.value = files[0].path
       }
+      ElMessage.info('修改成功 不要忘记点击保存按钮')
     }
   } else if (param === 'open') {
     utools.shellShowItemInFolder(path.value)
@@ -109,6 +110,7 @@ const handlePathBtnClick = (param) => {
 }
 
 const handleSaveBtnClick = () => {
+  // 校验格式
   if (path.value === '') {
     ElMessage.error('数据库路径不能为空')
     return
@@ -116,12 +118,23 @@ const handleSaveBtnClick = () => {
     ElMessage.error('数据库路径不正确')
     return
   }
+  if (stringCustom.value === '') {
+    // 如果将全部清空 则默认为空数组
+    stringCustom.value = '[]'
+  }
+  if (!/^\[.*\]$/.test(stringCustom.value)) {
+    ElMessage.error('自定义功能格式不正确')
+    return
+  }
   try {
     custom.value = JSON.parse(stringCustom.value)
   } catch (error) {
     custom.value = operation.custom
-    ElMessage.error('格式错误')
+    stringCustom.value = JSON.stringify(custom.value)
+    ElMessage.error('自定义功能格式不正确')
+    return
   }
+  // 执行保存到utools本地数据库
   utools.dbStorage.setItem(
     'setting',
     JSON.parse(
