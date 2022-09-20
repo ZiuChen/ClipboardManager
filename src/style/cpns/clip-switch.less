@@ -14,6 +14,9 @@
     color: @primary-color;
     background-color: @bg-color;
     transition: all 0.15s ease-in-out;
+    svg {
+      fill: @primary-color;
+    }
   }
   .clip-switch-items {
     display: flex;
@@ -22,6 +25,10 @@
     flex-direction: row;
     margin-left: 5px;
     .clip-switch-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 58px;
       padding: 10px 15px 10px 15px;
       margin: 10px 5px 10px 5px;
       cursor: pointer;
@@ -31,6 +38,11 @@
       &:hover {
         background-color: @nav-hover-bg-color;
         transition: all 0.15s ease-in-out;
+      }
+      svg {
+        margin-right: 5px;
+        max-width: 30%;
+        fill: @text-color-lighter;
       }
     }
   }
