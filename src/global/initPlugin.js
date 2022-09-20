@@ -194,10 +194,7 @@ export default function initPlugin() {
 
   const registerClipEvent = (listener) => {
     const errorHandler = () => {
-      const info = '如监听失效 请手动安装 clipboard-event-handler-linux 到 ~/.local/bin'
-      utools.showNotification(
-        '剪贴板监听异常退出 请重启插件以开启监听' + (utools.isLinux() ? info : '')
-      )
+      utools.showNotification('剪贴板监听异常退出 请重启插件以开启监听')
       utools.outPlugin()
     }
     listener
@@ -217,7 +214,10 @@ export default function initPlugin() {
       .on('close', errorHandler)
       .on('exit', errorHandler)
       .on('error', (error) => {
-        utools.showNotification('剪贴板监听出错' + error)
+        const info = '请手动安装 clipboard-event-handler-linux 到 ~/.local/bin'
+        const site = 'https://ziuchen.gitee.io/project/ClipboardManager/guide/'
+        utools.showNotification('启动剪贴板监听出错: ' + error + info)
+        utools.shellOpenExternal(site)
         utools.outPlugin()
       })
   }
@@ -242,6 +242,7 @@ export default function initPlugin() {
 
   utools.onPluginOut((processExit) => {
     if (processExit) {
+      utools.showNotification('剪贴板监听异常退出 请重启插件以开启监听')
       listener.stopListening()
     }
   })
