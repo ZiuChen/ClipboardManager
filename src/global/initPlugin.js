@@ -221,8 +221,8 @@ export default function initPlugin() {
     utools.outPlugin()
   }
   listener
-    .on('close', callBack())
-    .on('exit', callBack())
+    .on('close', callBack)
+    .on('exit', callBack)
     .on('error', (error) => {
       utools.showNotification('剪贴板监听出错' + error)
       utools.outPlugin()
