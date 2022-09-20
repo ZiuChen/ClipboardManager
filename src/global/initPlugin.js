@@ -212,18 +212,19 @@ export default function initPlugin() {
     db.addItem(item)
   })
 
-  const info = '请手动安装 clipboard-event-handler-linux 到 /usr/bin'
-  const site =
-    'https://ziuchen.gitee.io/project/ClipboardManager/guide/#如何手动安装clipboard-event-handler-linux'
+  const callBack = () => {
+    const info = '请手动安装 clipboard-event-handler-linux 到 /usr/bin'
+    const site =
+      'https://ziuchen.gitee.io/project/ClipboardManager/guide/#如何手动安装clipboard-event-handler-linux'
+    utools.showNotification('剪贴板监听退出' + (utools.isLinux() ? info : ''))
+    utools.isLinux() ? utools.shellOpenExternal(site) : ''
+    utools.outPlugin()
+  }
   listener
-    .on('close', () => {
-      utools.showNotification('剪贴板监听异常关闭' + (utools.isLinux() ? info : ''))
-      utools.isLinux() ? utools.shellOpenExternal(site) : ''
-      utools.outPlugin()
-    })
-    .on('exit', () => {
-      utools.showNotification('剪贴板监听异常退出' + (utools.isLinux() ? info : ''))
-      utools.isLinux() ? utools.shellOpenExternal(site) : ''
+    .on('close', callBack())
+    .on('exit', callBack())
+    .on('error', (error) => {
+      utools.showNotification('剪贴板监听出错' + error)
       utools.outPlugin()
     })
 
