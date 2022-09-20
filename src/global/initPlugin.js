@@ -192,7 +192,11 @@ export default function initPlugin() {
   const toTop = () => (document.scrollingElement.scrollTop = 0)
   const resetNav = () => document.querySelectorAll('.clip-switch-item')[0]?.click()
 
-  listener.startListening()
+  try {
+    listener.startListening()
+  } catch (error) {
+    utools.showNotification(error)
+  }
 
   listener.on('change', () => {
     const item = pbpaste()
@@ -207,6 +211,21 @@ export default function initPlugin() {
     item.updateTime = new Date().getTime()
     db.addItem(item)
   })
+
+  const info = '请手动安装 clipboard-event-handler-linux 到 /usr/bin'
+  const site =
+    'https://ziuchen.gitee.io/project/ClipboardManager/guide/#如何手动安装clipboard-event-handler-linux'
+  listener
+    .on('close', () => {
+      utools.showNotification('剪贴板监听异常关闭' + (utools.isLinux() ? info : ''))
+      utools.isLinux() ? utools.shellOpenExternal(site) : ''
+      utools.outPlugin()
+    })
+    .on('exit', () => {
+      utools.showNotification('剪贴板监听异常退出' + (utools.isLinux() ? info : ''))
+      utools.isLinux() ? utools.shellOpenExternal(site) : ''
+      utools.outPlugin()
+    })
 
   utools.onPluginEnter(() => {
     toTop()
