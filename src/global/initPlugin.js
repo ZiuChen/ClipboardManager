@@ -192,45 +192,58 @@ export default function initPlugin() {
   const toTop = () => (document.scrollingElement.scrollTop = 0)
   const resetNav = () => document.querySelectorAll('.clip-switch-item')[0]?.click()
 
+  const registerClipEvent = (listener) => {
+    const errorHandler = () => {
+      const info = '如监听失效 请手动安装 clipboard-event-handler-linux 到 ~/.local/bin'
+      utools.showNotification(
+        '剪贴板监听异常退出 请重启插件以开启监听' + (utools.isLinux() ? info : '')
+      )
+      utools.outPlugin()
+    }
+    listener
+      .on('change', () => {
+        const item = pbpaste()
+        if (!item) return
+        item.id = crypto.createHash('md5').update(item.data).digest('hex')
+        if (db.updateItemViaId(item.id)) {
+          // 在库中 由 updateItemViaId 更新 updateTime
+          return
+        }
+        // 不在库中 由 addItem 添加
+        item.createTime = new Date().getTime()
+        item.updateTime = new Date().getTime()
+        db.addItem(item)
+      })
+      .on('close', errorHandler)
+      .on('exit', errorHandler)
+      .on('error', (error) => {
+        utools.showNotification('剪贴板监听出错' + error)
+        utools.outPlugin()
+      })
+  }
+
   try {
+    // 首次启动插件 即开启监听
     listener.startListening()
+    registerClipEvent(listener)
   } catch (error) {
     utools.showNotification(error)
   }
 
-  listener.on('change', () => {
-    const item = pbpaste()
-    if (!item) return
-    item.id = crypto.createHash('md5').update(item.data).digest('hex')
-    if (db.updateItemViaId(item.id)) {
-      // 在库中 由 updateItemViaId 更新 updateTime
-      return
-    }
-    // 不在库中 由 addItem 添加
-    item.createTime = new Date().getTime()
-    item.updateTime = new Date().getTime()
-    db.addItem(item)
-  })
-
-  const callBack = () => {
-    const info = '请手动安装 clipboard-event-handler-linux 到 /usr/bin'
-    const site =
-      'https://ziuchen.gitee.io/project/ClipboardManager/guide/#如何手动安装clipboard-event-handler-linux'
-    utools.showNotification('剪贴板监听退出' + (utools.isLinux() ? info : ''))
-    utools.isLinux() ? utools.shellOpenExternal(site) : ''
-    utools.outPlugin()
-  }
-  listener
-    .on('close', callBack)
-    .on('exit', callBack)
-    .on('error', (error) => {
-      utools.showNotification('剪贴板监听出错' + error)
-      utools.outPlugin()
-    })
-
   utools.onPluginEnter(() => {
+    if (!listener.listening) {
+      // 进入插件后 如果监听已关闭 则重新开启监听
+      listener.startListening()
+      registerClipEvent(listener)
+    }
     toTop()
     resetNav()
+  })
+
+  utools.onPluginOut((processExit) => {
+    if (processExit) {
+      listener.stopListening()
+    }
   })
 
   window.db = db
