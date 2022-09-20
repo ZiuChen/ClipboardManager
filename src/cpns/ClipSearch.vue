@@ -45,6 +45,14 @@ const clear = () => {
   emit('update:modelValue', '')
   nextTick(() => window.focus())
 }
+
+utools.onPluginEnter(() => {
+  // 如果输入框有内容 则清空 并且移除焦点
+  if (filterText.value) {
+    clear()
+    nextTick(() => document.activeElement.blur())
+  }
+})
 </script>
 
 <style lang="less" scoped>
