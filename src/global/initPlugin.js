@@ -193,8 +193,15 @@ export default function initPlugin() {
   const resetNav = () => document.querySelectorAll('.clip-switch-item')[0]?.click()
 
   const registerClipEvent = (listener) => {
-    const errorHandler = () => {
+    const exitHandler = () => {
       utools.showNotification('剪贴板监听异常退出 请重启插件以开启监听')
+      utools.outPlugin()
+    }
+    const errorHandler = (error) => {
+      const info = '请手动安装 clipboard-event-handler-linux 到 ~/.local/bin'
+      const site = 'https://ziuchen.gitee.io/project/ClipboardManager/guide/'
+      utools.showNotification('启动剪贴板监听出错: ' + error + info)
+      utools.shellOpenExternal(site)
       utools.outPlugin()
     }
     listener
@@ -211,21 +218,15 @@ export default function initPlugin() {
         item.updateTime = new Date().getTime()
         db.addItem(item)
       })
-      .on('close', errorHandler)
-      .on('exit', errorHandler)
-      .on('error', (error) => {
-        const info = '请手动安装 clipboard-event-handler-linux 到 ~/.local/bin'
-        const site = 'https://ziuchen.gitee.io/project/ClipboardManager/guide/'
-        utools.showNotification('启动剪贴板监听出错: ' + error + info)
-        utools.shellOpenExternal(site)
-        utools.outPlugin()
-      })
+      .on('close', exitHandler)
+      .on('exit', exitHandler)
+      .on('error', (error) => errorHandler(error))
   }
 
   try {
     // 首次启动插件 即开启监听
-    listener.startListening()
     registerClipEvent(listener)
+    listener.startListening()
   } catch (error) {
     utools.showNotification(error)
   }
@@ -233,8 +234,8 @@ export default function initPlugin() {
   utools.onPluginEnter(() => {
     if (!listener.listening) {
       // 进入插件后 如果监听已关闭 则重新开启监听
-      listener.startListening()
       registerClipEvent(listener)
+      listener.startListening()
     }
     toTop()
     resetNav()
