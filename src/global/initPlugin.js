@@ -223,13 +223,9 @@ export default function initPlugin() {
       .on('error', (error) => errorHandler(error))
   }
 
-  try {
-    // 首次启动插件 即开启监听
-    registerClipEvent(listener)
-    listener.startListening()
-  } catch (error) {
-    utools.showNotification(error)
-  }
+  // 首次启动插件 即开启监听
+  registerClipEvent(listener)
+  listener.startListening()
 
   utools.onPluginEnter(() => {
     if (!listener.listening) {
