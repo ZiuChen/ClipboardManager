@@ -1,9 +1,9 @@
 .clip-full-wrapper {
-  z-index: 9999999999;
+  z-index: 102;
   position: fixed;
   top: 0;
   height: -webkit-fill-available;
-  width: 70%;
+  width: 80%;
   color: @text-color;
   background: @bg-color;
   margin: 0px 0px;
@@ -13,8 +13,8 @@
   white-space: pre-wrap;
   .clip-full-operate-list {
     position: fixed;
-    right: 50%;
-    z-index: 99;
+    right: 20%;
+    z-index: 102;
     box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.2);
     display: flex;
     align-items: center;
@@ -26,9 +26,13 @@
     border-radius: 5px;
   }
   .clip-full-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
     position: relative;
     top: 50px;
     padding: 20px;
+    margin-bottom: 55px;
     border-radius: 5px;
     background-color: @text-bg-color;
     img {
@@ -56,7 +60,7 @@
   }
 }
 .clip-overlay {
-  z-index: 9999999;
+  z-index: 101;
   position: fixed;
   top: 0;
   height: 100%;

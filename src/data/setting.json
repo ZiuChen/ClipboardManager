@@ -1,0 +1,76 @@
+{
+  "database.path": "",
+  "database.maxsize": 800,
+  "database.maxage": 14,
+  "operation.shown": ["copy", "view", "collect", "un-collect", "remove"],
+  "operation.custom": [
+    {
+      "id": "custom.1663583455000",
+      "title": "收藏到备忘快贴",
+      "icon": "📌",
+      "match": ["text", "image"],
+      "command": "redirect:添加到「备忘快贴」"
+    },
+    {
+      "id": "custom.1663490858",
+      "title": "讯飞OCR识别",
+      "icon": "⚡",
+      "match": ["image", { "type": "file", "regex": ".(?:jpg|jpeg|png)$" }],
+      "command": "redirect:讯飞ocr"
+    },
+    {
+      "id": "custom.1663490864",
+      "title": "上传到图床",
+      "icon": "🚀",
+      "match": ["image", { "type": "file", "regex": ".(?:jpg|jpeg|png)$" }],
+      "command": "redirect:上传到图床"
+    },
+    {
+      "id": "custom.1663490859",
+      "title": "百度搜索",
+      "icon": "🔍",
+      "match": ["text"],
+      "command": "redirect:百度一下"
+    },
+    {
+      "id": "custom.1663490860",
+      "title": "统计文本字数",
+      "icon": "🧮",
+      "match": ["text"],
+      "command": "redirect:统计文本次数"
+    },
+    {
+      "id": "custom.1663490861",
+      "title": "颜色管理",
+      "icon": "🎨",
+      "match": [
+        {
+          "type": "text",
+          "regex": "^(?:#?[a-f0-9]{6}|(?:(?:25[0-5]|2[0-4]\\d|1?\\d{1,2}), ?){2}(?:25[0-5]|2[0-4]\\d|1?\\d{1,2})|rgba?\\((?:(?:25[0-5]|2[0-4]\\d|1?\\d{1,2}), ?){2}(?:25[0-5]|2[0-4]\\d|1?\\d{1,2})(?:, ?(?:1|0|0\\.\\d{1,2}))?\\)|hs[liv]a?\\((?:360|(?:(?:3[0-5]\\d|[1-2]\\d{2}|\\d{1,2})(?:\\.\\d{1,15})?))(?:deg)?(?:, |,| )(?:100|\\d{1,2}(?:\\.\\d{1,15})?)%?(?:, |,| )(?:100|\\d{1,2}(?:\\.\\d{1,15})?)%?(?:, ?(?:1|0|0\\.\\d{1,2}))?\\))$"
+        }
+      ],
+      "command": "redirect:统计文本次数"
+    },
+    {
+      "id": "custom.1663490862",
+      "title": "百度识图",
+      "icon": "🌄",
+      "match": ["image"],
+      "command": "redirect:百度识图"
+    },
+    {
+      "id": "custom.1663490863",
+      "title": "识别图片中二维码",
+      "icon": "📜",
+      "match": ["image"],
+      "command": "redirect:识别图片中二维码"
+    },
+    {
+      "id": "custom.1663490865",
+      "title": "翻译",
+      "icon": "🌎",
+      "match": ["text"],
+      "command": "redirect:翻译"
+    }
+  ]
+}

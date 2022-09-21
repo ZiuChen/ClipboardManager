@@ -6,6 +6,7 @@
           :class="{ 'clip-switch-item': true, active: activeTab === tab.type }"
           @click="onNavClick(tab.type)"
         >
+          <component :is="tab.icon"></component>
           {{ tab.name }}
         </div>
       </template>
@@ -16,13 +17,15 @@
 
 <script setup>
 import { ref } from 'vue'
+import { Menu, Tickets, Picture, Document, Collection } from '@element-plus/icons-vue'
 
-const tabs = ref([
-  { name: '📚 全部', type: 'all' },
-  { name: '📋 文字', type: 'text' },
-  { name: '⛺ 图片', type: 'image' },
-  { name: '📂 文件', type: 'file' }
-])
+const tabs = [
+  { name: '全部', type: 'all', icon: Menu },
+  { name: '文字', type: 'text', icon: Tickets },
+  { name: '图片', type: 'image', icon: Picture },
+  { name: '文件', type: 'file', icon: Document },
+  { name: '收藏', type: 'collect', icon: Collection }
+]
 const activeTab = ref('all')
 const emit = defineEmits(['onNavClick'])
 const toggleNav = (type) => (activeTab.value = type)

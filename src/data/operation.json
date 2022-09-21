@@ -1,0 +1,10 @@
+[
+  { "id": "copy", "title": "复制", "icon": "📄" },
+  { "id": "view", "title": "查看全部", "icon": "💬" },
+  { "id": "open-folder", "title": "打开文件夹", "icon": "📁" },
+  { "id": "collect", "title": "收藏", "icon": "⭐" },
+  { "id": "un-collect", "title": "移出收藏", "icon": "📤" },
+  { "id": "remove", "title": "删除", "icon": "❌" },
+  { "id": "word-break", "title": "分词", "icon": "💣" },
+  { "id": "save-file", "title": "保存", "icon": "💾" }
+]
