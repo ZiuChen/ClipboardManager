@@ -226,25 +226,17 @@ onMounted(() => {
   updateShowList(activeTab.value)
 
   // 定期检查更新
-  if (!utools.isMacOs) {
-    window.listener.on('change', () => {
+  let prev = {}
+  setInterval(() => {
+    const now = window.db.dataBase.data[0]
+    if (prev?.id === now?.id) {
+    } else {
+      // 有更新
       list.value = window.db.dataBase.data
       updateShowList(activeTab.value)
-    })
-  } else {
-    // macos
-    let prev = {}
-    setInterval(() => {
-      const now = window.db.dataBase.data[0]
-      if (prev?.id === now?.id) {
-      } else {
-        // 有更新
-        list.value = window.db.dataBase.data
-        updateShowList(activeTab.value)
-        prev = now
-      }
-    }, 800)
-  }
+      prev = now
+    }
+  }, 800)
 
   // 监听搜索框
   watch(filterText, (val) => updateShowList(activeTab.value))

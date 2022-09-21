@@ -1,14 +1,5 @@
-const {
-  utools,
-  existsSync,
-  readFileSync,
-  writeFileSync,
-  mkdirSync,
-  crypto,
-  listener,
-  clipboard,
-  time
-} = window.exports
+const { utools, existsSync, readFileSync, writeFileSync, mkdirSync, crypto, clipboard, time } =
+  window.exports
 import setting from './readSetting'
 
 export default function initPlugin() {
@@ -214,63 +205,25 @@ export default function initPlugin() {
     db.addItem(item)
   }
 
-  const registerClipEvent = (listener) => {
-    const exitHandler = () => {
-      utools.showNotification('剪贴板监听异常退出 请重启插件以开启监听')
-      utools.outPlugin()
+  let prev = db.dataBase.data[0] || {}
+  function loop() {
+    time.sleep(300).then(loop)
+    const item = pbpaste()
+    if (!item) return
+    item.id = crypto.createHash('md5').update(item.data).digest('hex')
+    if (item && prev.id != item.id) {
+      // 剪切板元素 与最近一次复制内容不同
+      prev = item
+      handleClipboardChange(item)
+    } else {
+      // 剪切板元素 与上次复制内容相同
     }
-    const errorHandler = (error) => {
-      const info = '请手动安装 clipboard-event-handler-linux 到 ~/.local/bin'
-      const site = 'https://ziuchen.gitee.io/project/ClipboardManager/guide/'
-      utools.showNotification('启动剪贴板监听出错: ' + error + info)
-      utools.shellOpenExternal(site)
-      utools.outPlugin()
-    }
-    listener
-      .on('change', handleClipboardChange)
-      .on('close', exitHandler)
-      .on('exit', exitHandler)
-      .on('error', (error) => errorHandler(error))
   }
-
-  if (!utools.isMacOs()) {
-    // 首次启动插件 即开启监听
-    registerClipEvent(listener)
-    listener.startListening()
-  } else {
-    // macos 由于无法执行 clipboard-event-handler-mac 所以使用旧方法
-    let prev = db.dataBase.data[0] || {}
-    function loop() {
-      time.sleep(300).then(loop)
-      const item = pbpaste()
-      if (!item) return
-      item.id = crypto.createHash('md5').update(item.data).digest('hex')
-      if (item && prev.id != item.id) {
-        // 剪切板元素 与最近一次复制内容不同
-        prev = item
-        handleClipboardChange(item)
-      } else {
-        // 剪切板元素 与上次复制内容相同
-      }
-    }
-    loop()
-  }
+  loop()
 
   utools.onPluginEnter(() => {
-    if (!listener.listening && !utools.isMacOs()) {
-      // 进入插件后 如果监听已关闭 则重新开启监听
-      registerClipEvent(listener)
-      listener.startListening()
-    }
     toTop()
     resetNav()
-  })
-
-  utools.onPluginOut((processExit) => {
-    if (processExit && !utools.isMacOs()) {
-      utools.showNotification('剪贴板监听异常退出 请重启插件以开启监听')
-      listener.stopListening()
-    }
   })
 
   window.db = db
@@ -280,5 +233,4 @@ export default function initPlugin() {
   window.createFile = createFile
   window.focus = focus
   window.toTop = toTop
-  window.listener = listener
 }
