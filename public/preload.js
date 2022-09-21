@@ -2,6 +2,7 @@ const { existsSync, readFileSync, writeFileSync, mkdirSync } = require('fs')
 const crypto = require('crypto')
 const listener = require('clipboard-event')
 const { clipboard } = require('electron')
+const time = require('./time')
 
 window.exports = {
   utools,
@@ -11,5 +12,6 @@ window.exports = {
   mkdirSync,
   crypto,
   listener,
-  clipboard
+  clipboard,
+  time
 }
