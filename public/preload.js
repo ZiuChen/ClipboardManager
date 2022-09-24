@@ -13,5 +13,6 @@ window.exports = {
   crypto,
   listener,
   clipboard,
-  time
+  time,
+  Buffer
 }

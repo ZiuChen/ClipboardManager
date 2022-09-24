@@ -7,7 +7,8 @@ const {
   crypto,
   listener,
   clipboard,
-  time
+  time,
+  Buffer
 } = window.exports
 import setting from './readSetting'
 

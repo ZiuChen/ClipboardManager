@@ -231,7 +231,6 @@ onMounted(() => {
     // macOS且监听器启动失败时
     let prev = {}
     setInterval(() => {
-      console.log('interval')
       const now = window.db.dataBase.data[0]
       if (prev?.id === now?.id) {
       } else {
