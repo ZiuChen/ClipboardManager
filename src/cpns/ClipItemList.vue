@@ -80,9 +80,18 @@ const props = defineProps({
   currentActiveTab: {
     type: String,
     required: true
+  },
+  isSearchPanelExpand: {
+    type: Boolean,
+    required: true
   }
 })
-const emit = defineEmits(['onDataChange', 'onDataRemove', 'onSelectItemAdd', 'onMultiCopyExecute'])
+const emit = defineEmits([
+  'onDataChange',
+  'onDataRemove',
+  'onMultiCopyExecute',
+  'toggleMultiSelect'
+])
 const isOverSizedContent = (item) => {
   const { type, data } = item
   if (type === 'text') {
@@ -159,8 +168,6 @@ const handleItemClick = (ev, item) => {
         selectItemList.value.push(item) // 添加到已选列表中
       }
     }
-
-    emit('onSelectItemAdd')
   } else {
     const { button } = ev
     if (button === 0) {
@@ -194,25 +201,23 @@ onMounted(() => {
     const isCopy = (ctrlKey || metaKey) && (key === 'C' || key === 'c')
     const isNumber = parseInt(key) <= 9 && parseInt(key) >= 0
     const isShift = key === 'Shift'
+    const isSpace = key === ' '
+    const activeNode = !props.isMultiple
+      ? document.querySelector('.clip-item.active' + (isArrowDown ? '+.clip-item' : ''))
+      : document.querySelector('.clip-item.multi-active' + (isArrowDown ? '+.clip-item' : ''))
     if (isArrowUp) {
+      if (activeIndex.value === 1) window.toTop()
       if (activeIndex.value > 0) {
         activeIndex.value--
-        const activeNode = document.querySelector('.clip-item.active')
-        if (activeIndex.value === 1) {
-          window.toTop()
-        } else {
-          activeNode?.previousElementSibling?.previousElementSibling?.scrollIntoView({
-            block: 'nearest',
-            inline: 'nearest'
-          })
-        }
+        activeNode.previousElementSibling.previousElementSibling.scrollIntoView({
+          block: 'nearest',
+          inline: 'nearest'
+        })
       }
     } else if (isArrowDown) {
       if (activeIndex.value < props.showList.length - 1) {
         activeIndex.value++
-        document
-          .querySelector('.clip-item.active+.clip-item')
-          ?.scrollIntoView({ block: 'nearest', inline: 'nearest' })
+        activeNode.scrollIntoView({ block: 'nearest', inline: 'nearest' })
       }
     } else if (isCopy) {
       if (!props.fullData.data) {
@@ -245,6 +250,25 @@ onMounted(() => {
     } else if (isShift) {
       if (props.isMultiple) {
         isShiftDown.value = true
+      }
+    } else if (isSpace) {
+      if (props.isSearchPanelExpand) {
+        // 搜索栏展开状态 不进入多选
+        return
+      }
+      if (!props.isMultiple) {
+        emit('toggleMultiSelect') // 如果不是多选状态 则切换到多选状态
+      }
+      e.preventDefault()
+      const i = selectItemList.value.findIndex((item) => item === props.showList[activeIndex.value])
+      if (i !== -1) {
+        selectItemList.value.splice(i, 1) // 如果已选中 则取消选中
+      } else {
+        selectItemList.value.push(props.showList[activeIndex.value]) // 如果未选中 则选中
+        activeIndex.value++
+        document
+          .querySelector('.clip-item.multi-active+.clip-item')
+          .scrollIntoView({ block: 'nearest', inline: 'nearest' })
       }
     }
   })

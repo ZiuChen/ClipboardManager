@@ -47,7 +47,9 @@
       :fullData="fullData"
       :isMultiple="isMultiple"
       :currentActiveTab="activeTab"
+      :isSearchPanelExpand="isSearchPanelExpand"
       @onMultiCopyExecute="handleMultiCopyBtnClick"
+      @toggleMultiSelect="() => (isMultiple = true)"
       @onDataChange="toggleFullData"
       @onDataRemove="handleDataRemove"
     >
@@ -291,6 +293,7 @@ onMounted(() => {
     const isEnter = key === 'Enter'
     const isShift = key === 'Shift'
     const isAlt = key === 'Alt'
+    const isSpace = key === ' '
     if (isTab) {
       const tabTypes = tabs.map((item) => item.type)
       const index = tabTypes.indexOf(activeTab.value)
@@ -312,6 +315,7 @@ onMounted(() => {
       } else if (isMultiple.value) {
         // 退出多选状态
         isMultiple.value = !isMultiple.value
+        e.stopPropagation()
       } else {
         // 无上述情况 执行默认: 隐藏uTools主窗口
       }
@@ -327,6 +331,8 @@ onMounted(() => {
     } else if (ctrlKey || metaKey || isAlt) {
       // Ctrl: utools模拟执行粘贴时触发
       // Alt:
+    } else if (isSpace) {
+      // 空格向下多选
     } else {
       window.focus() // 其他键盘事件 直接聚焦搜索框
     }
