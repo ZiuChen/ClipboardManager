@@ -239,8 +239,8 @@ export default function initPlugin() {
       utools.outPlugin()
     }
     const errorHandler = (error) => {
-      const info = '请手动安装 clipboard-event-handler 到 剪贴板数据库目录'
-      utools.showNotification('启动剪贴板监听出错: ' + error + info)
+      const info = '请到设置页手动安装 clipboard-event-handler 剪贴板监听程序'
+      utools.showNotification('启动剪贴板监听程序启动出错: ' + error + info)
       addCommonListener()
     }
     listener

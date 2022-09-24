@@ -3,11 +3,21 @@
     <el-card class="setting-card">
       <template #header>
         <el-button type="primary" @click="handleLinkClick(0)">🚀 主页</el-button>
-        <el-button @click="handleLinkClick(1)">⚡ 手动安装剪贴板监听程序</el-button>
+        <el-button @click="handleLinkClick(1)">⚡ 迁移数据 | 云同步 | 自定义功能</el-button>
         <el-button @click="handleLinkClick(2)">⭐ 开源代码</el-button>
         <el-button @click="handleLinkClick(3)">🎈 论坛发布页</el-button>
       </template>
       <div class="setting-card-content">
+        <div class="setting-card-content-item">
+          <span>剪贴板监听程序状态</span>
+          <el-tag
+            :type="listenStatus ? 'success' : 'warning'"
+            @click="handleLinkClick(1)"
+            title="手动安装剪贴板监听程序"
+          >
+            {{ listenStatus ? '已安装' : '未安装' }}
+          </el-tag>
+        </div>
         <div class="setting-card-content-item">
           <span>数据库路径</span>
           <el-input class="path" v-model="path" :title="path" disabled></el-input>
@@ -65,7 +75,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import setting from '../global/readSetting'
 import restoreSetting from '../global/restoreSetting'
@@ -81,6 +91,8 @@ const maxage = ref(database.maxage)
 const shown = ref(operation.shown)
 const custom = ref(operation.custom)
 const stringCustom = ref(JSON.stringify(operation.custom))
+
+const listenStatus = ref(false)
 
 const handleLinkClick = (index) => {
   const links = [
@@ -168,6 +180,10 @@ const handleRestoreBtnClick = () => {
     })
     .catch(() => {})
 }
+
+onMounted(() => {
+  listenStatus.value = window.listener.listening
+})
 </script>
 
 <style lang="less" scoped>
