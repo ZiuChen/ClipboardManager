@@ -3,8 +3,7 @@
     <el-card class="setting-card">
       <template #header>
         <el-button type="primary" @click="handleLinkClick(0)">🚀 主页</el-button>
-        <el-button @click="handleLinkClick(1)">⚡ 云同步教程</el-button>
-        <el-button @click="handleLinkClick(1)">💡 创造自己的功能按钮</el-button>
+        <el-button @click="handleLinkClick(1)">⚡ 手动安装剪贴板监听程序</el-button>
         <el-button @click="handleLinkClick(2)">⭐ 开源代码</el-button>
         <el-button @click="handleLinkClick(3)">🎈 论坛发布页</el-button>
       </template>

@@ -240,9 +240,7 @@ export default function initPlugin() {
     }
     const errorHandler = (error) => {
       const info = '请手动安装 clipboard-event-handler 到 剪贴板数据库目录'
-      const site = 'https://ziuchen.gitee.io/project/ClipboardManager/guide/'
       utools.showNotification('启动剪贴板监听出错: ' + error + info)
-      utools.shellOpenExternal(site)
       addCommonListener()
     }
     listener
