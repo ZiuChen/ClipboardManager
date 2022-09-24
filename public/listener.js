@@ -1,8 +1,7 @@
-const { chmodSync, existsSync, mkdirSync, copyFileSync } = require('fs')
+const { chmodSync, existsSync } = require('fs')
 const { EventEmitter } = require('events')
 const path = require('path')
 const { execFile } = require('child_process')
-const homeDir = require('os').homedir()
 
 class ClipboardEventListener extends EventEmitter {
   constructor() {
@@ -10,29 +9,24 @@ class ClipboardEventListener extends EventEmitter {
     this.child = null
     this.listening = false
   }
-  startListening() {
+  startListening(dbPath) {
+    const targetMap = {
+      win32: 'clipboard-event-handler-win32.exe',
+      linux: 'clipboard-event-handler-linux'
+    }
     const { platform } = process
+    const target = path.resolve(
+      dbPath.split('_utools_clipboard_manager_storage')[0],
+      targetMap[platform]
+    )
+    if (!existsSync(target)) {
+      this.emit('error', '剪贴板监听程序不存在')
+      return
+    }
     if (platform === 'win32') {
-      this.child = execFile(path.join(__dirname, 'platform/clipboard-event-handler-win32.exe'))
+      this.child = execFile(target)
     } else if (platform === 'linux') {
-      // linux: cant execFile without chmod, and cant chmod in app.asar
-      // so we need to copy the file to /usr/bin
-      const targetPath = path.resolve(homeDir, '.local', 'bin')
-      const target = path.resolve(targetPath, 'clipboard-event-handler-linux')
-      const p = path.join(__dirname, 'platform/clipboard-event-handler-linux')
-      try {
-        if (!existsSync(targetPath)) {
-          // bin dir doesnt exist, create it
-          mkdirSync(targetPath)
-        }
-        if (!existsSync(target)) {
-          // copy the file
-          copyFileSync(p, target)
-          chmodSync(target, 0o755)
-        }
-      } catch (error) {
-        this.emit('error', error)
-      }
+      chmodSync(target, 0o755)
       this.child = execFile(target)
     } else {
       throw 'Not yet supported'

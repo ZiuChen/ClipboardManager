@@ -214,31 +214,7 @@ export default function initPlugin() {
     db.addItem(item)
   }
 
-  const registerClipEvent = (listener) => {
-    const exitHandler = () => {
-      utools.showNotification('剪贴板监听异常退出 请重启插件以开启监听')
-      utools.outPlugin()
-    }
-    const errorHandler = (error) => {
-      const info = '请手动安装 clipboard-event-handler-linux 到 ~/.local/bin'
-      const site = 'https://ziuchen.gitee.io/project/ClipboardManager/guide/'
-      utools.showNotification('启动剪贴板监听出错: ' + error + info)
-      utools.shellOpenExternal(site)
-      utools.outPlugin()
-    }
-    listener
-      .on('change', handleClipboardChange)
-      .on('close', exitHandler)
-      .on('exit', exitHandler)
-      .on('error', (error) => errorHandler(error))
-  }
-
-  if (!utools.isMacOs()) {
-    // 首次启动插件 即开启监听
-    registerClipEvent(listener)
-    listener.startListening()
-  } else {
-    // macos 由于无法执行 clipboard-event-handler-mac 所以使用旧方法
+  const addCommonListener = () => {
     let prev = db.dataBase.data[0] || {}
     function loop() {
       time.sleep(300).then(loop)
@@ -256,11 +232,39 @@ export default function initPlugin() {
     loop()
   }
 
+  const registerClipEvent = (listener) => {
+    const exitHandler = () => {
+      utools.showNotification('剪贴板监听异常退出 请重启插件以开启监听')
+      utools.outPlugin()
+    }
+    const errorHandler = (error) => {
+      const info = '请手动安装 clipboard-event-handler 到 剪贴板数据库目录'
+      const site = 'https://ziuchen.gitee.io/project/ClipboardManager/guide/'
+      utools.showNotification('启动剪贴板监听出错: ' + error + info)
+      utools.shellOpenExternal(site)
+      addCommonListener()
+    }
+    listener
+      .on('change', handleClipboardChange)
+      .on('close', exitHandler)
+      .on('exit', exitHandler)
+      .on('error', (error) => errorHandler(error))
+  }
+
+  if (!utools.isMacOs()) {
+    // 首次启动插件 即开启监听
+    registerClipEvent(listener)
+    listener.startListening(setting.database.path)
+  } else {
+    // macos 由于无法执行 clipboard-event-handler-mac 所以使用旧方法
+    addCommonListener()
+  }
+
   utools.onPluginEnter(() => {
     if (!listener.listening && !utools.isMacOs()) {
       // 进入插件后 如果监听已关闭 则重新开启监听
       registerClipEvent(listener)
-      listener.startListening()
+      listener.startListening(setting.database.path)
     }
     toTop()
     resetNav()

@@ -1,6 +1,6 @@
 const { existsSync, readFileSync, writeFileSync, mkdirSync } = require('fs')
 const crypto = require('crypto')
-const listener = require('clipboard-event')
+const listener = require('./listener')
 const { clipboard } = require('electron')
 const time = require('./time')
 
