@@ -4,7 +4,7 @@
       <template v-for="tab of tabs">
         <div
           :class="{ 'clip-switch-item': true, active: activeTab === tab.type }"
-          @click="onNavClick(tab.type)"
+          @click="toggleNav(tab.type)"
         >
           <component :is="tab.icon"></component>
           {{ tab.name }}
@@ -27,12 +27,7 @@ const tabs = [
   { name: '收藏', type: 'collect', icon: Collection }
 ]
 const activeTab = ref('all')
-const emit = defineEmits(['onNavClick'])
 const toggleNav = (type) => (activeTab.value = type)
-const onNavClick = (type) => {
-  toggleNav(type)
-  emit('onNavClick', type)
-}
 defineExpose({
   tabs,
   activeTab,

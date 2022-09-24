@@ -7,7 +7,7 @@
       @onDataRemove="handleDataRemove"
       @onOverlayClick="toggleFullData({ type: 'text', data: '' })"
     ></ClipFullData>
-    <ClipSwitch ref="ClipSwitchRef" @onNavClick="handleNavClick">
+    <ClipSwitch ref="ClipSwitchRef">
       <template #SidePanel>
         <div class="clip-switch-btn-list" v-show="!isSearchPanelExpand">
           <span class="clip-switch-btn clip-select-count" v-show="isMultiple">
@@ -153,7 +153,7 @@ const textFilterCallBack = (item) => {
   }
 }
 
-const updateShowList = (type) => {
+const updateShowList = (type, toTop = true) => {
   // 更新显示列表
   showList.value = list.value
     .filter((item) =>
@@ -162,7 +162,7 @@ const updateShowList = (type) => {
     .filter((item) => (filterText.value ? item.type !== 'image' : item)) // 有过滤词 排除掉图片 DataURL
     .filter((item) => textFilterCallBack(item))
     .slice(0, GAP) // 重新切分懒加载列表
-  window.toTop()
+  toTop && window.toTop()
 }
 
 const restoreDataBase = () => {
@@ -179,11 +179,6 @@ const restoreDataBase = () => {
     .catch(() => {})
 }
 
-const handleNavClick = (type) => {
-  updateShowList(type)
-  offset.value = 0 // 重置懒加载偏移量
-}
-
 const fullData = ref({ type: 'text', data: '' })
 const fullDataShow = ref(false)
 const toggleFullData = (item) => {
@@ -197,7 +192,7 @@ const ClipSwitchRef = ref()
 const handleDataRemove = () => {
   // 此函数须在挂载后执行
   list.value = window.db.dataBase.data
-  updateShowList(ClipSwitchRef.value.activeTab)
+  updateShowList(ClipSwitchRef.value.activeTab, false)
 }
 
 const emit = defineEmits(['showSetting'])
