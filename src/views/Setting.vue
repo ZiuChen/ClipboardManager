@@ -2,7 +2,8 @@
   <div class="setting">
     <el-card class="setting-card">
       <template #header>
-        <el-button type="primary" @click="handleLinkClick(0)">🚀 主页</el-button>
+        <el-button type="primary" @click="handleLinkClick(4)">💖 赞赏我</el-button>
+        <el-button @click="handleLinkClick(0)">🚀 主页</el-button>
         <el-button @click="handleLinkClick(1)">⚡ 迁移数据 | 云同步 | 自定义功能</el-button>
         <el-button @click="handleLinkClick(2)">⭐ 开源代码</el-button>
         <el-button @click="handleLinkClick(3)">🎈 论坛发布页</el-button>
@@ -99,7 +100,8 @@ const handleLinkClick = (index) => {
     'https://ziuchen.gitee.io/project/ClipboardManager/',
     'https://ziuchen.gitee.io/project/ClipboardManager/guide/',
     'https://github.com/ZiuChen/ClipboardManager',
-    'https://yuanliao.info/d/5722'
+    'https://yuanliao.info/d/5722',
+    'https://ziuchen.gitee.io/project/ClipboardManager/#%F0%9F%92%9D-%E6%84%9F%E8%B0%A2%E8%B5%9E%E8%B5%8F'
   ]
   utools.shellOpenExternal(links[index])
 }
