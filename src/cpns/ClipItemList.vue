@@ -120,6 +120,7 @@ const handleItemClick = (ev, item) => {
   if (props.isMultiple === true) {
     const i = selectItemList.value.indexOf(item) // 在已选中列表中的位置
     const index = props.showList.indexOf(item) // 在全部列表中的位置
+    activeIndex.value = index
     if (selectItemList.value.length !== 0 && isShiftDown.value) {
       // 列表不为空 且 Shift按下 多选
       // 找到selectList的最高位与最低位
@@ -185,7 +186,11 @@ const handleItemClick = (ev, item) => {
   }
 }
 const activeIndex = ref(0)
-const handleMouseOver = (index) => (activeIndex.value = index)
+const handleMouseOver = (index) => {
+  if (!props.isMultiple) {
+    activeIndex.value = index
+  }
+}
 // 父组件中改变了引用类型的地址 故要用 getter返回
 watch(
   () => props.showList,
