@@ -1,8 +1,8 @@
 <template>
   <div class="app">
-    <Main @show-setting="settingShown = true" v-show="!settingShown"></Main>
+    <Main @show-setting="settingShown = true" v-if="!settingShown"></Main>
     <transition name="el-fade-in-linear">
-      <Setting v-show="settingShown" @back="settingShown = false"></Setting>
+      <Setting v-if="settingShown" @back="settingShown = false"></Setting>
     </transition>
   </div>
 </template>
