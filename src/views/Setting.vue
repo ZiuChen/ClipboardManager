@@ -48,7 +48,6 @@
             multiple
             :multiple-limit="5"
             placeholder="请选择"
-            :teleported="false"
           >
             <el-option
               v-for="{ id, title, icon } in [
