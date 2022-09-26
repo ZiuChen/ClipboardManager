@@ -1,5 +1,15 @@
-const { utools, existsSync, readFileSync, writeFileSync, mkdirSync, crypto, clipboard, time } =
-  window.exports
+const {
+  utools,
+  existsSync,
+  readFileSync,
+  writeFileSync,
+  mkdirSync,
+  crypto,
+  listener,
+  clipboard,
+  time,
+  Buffer
+} = window.exports
 import setting from './readSetting'
 
 export default function initPlugin() {
@@ -205,23 +215,56 @@ export default function initPlugin() {
     db.addItem(item)
   }
 
-  let prev = db.dataBase.data[0] || {}
-  function loop() {
-    time.sleep(300).then(loop)
-    const item = pbpaste()
-    if (!item) return
-    item.id = crypto.createHash('md5').update(item.data).digest('hex')
-    if (item && prev.id != item.id) {
-      // 剪切板元素 与最近一次复制内容不同
-      prev = item
-      handleClipboardChange(item)
-    } else {
-      // 剪切板元素 与上次复制内容相同
+  const addCommonListener = () => {
+    let prev = db.dataBase.data[0] || {}
+    function loop() {
+      time.sleep(300).then(loop)
+      const item = pbpaste()
+      if (!item) return
+      item.id = crypto.createHash('md5').update(item.data).digest('hex')
+      if (item && prev.id != item.id) {
+        // 剪切板元素 与最近一次复制内容不同
+        prev = item
+        handleClipboardChange(item)
+      } else {
+        // 剪切板元素 与上次复制内容相同
+      }
     }
+    loop()
   }
-  loop()
+
+  const registerClipEvent = (listener) => {
+    const exitHandler = () => {
+      utools.showNotification('剪贴板监听异常退出 请重启插件以开启监听')
+      utools.outPlugin()
+    }
+    const errorHandler = (error) => {
+      const info = '请到设置页手动安装 clipboard-event-handler 剪贴板监听程序'
+      utools.showNotification('启动剪贴板监听程序启动出错: ' + error + info)
+      addCommonListener()
+    }
+    listener
+      .on('change', handleClipboardChange)
+      .on('close', exitHandler)
+      .on('exit', exitHandler)
+      .on('error', (error) => errorHandler(error))
+  }
+
+  if (!utools.isMacOs()) {
+    // 首次启动插件 即开启监听
+    registerClipEvent(listener)
+    listener.startListening(setting.database.path)
+  } else {
+    // macos 由于无法执行 clipboard-event-handler-mac 所以使用旧方法
+    addCommonListener()
+  }
 
   utools.onPluginEnter(() => {
+    if (!listener.listening && !utools.isMacOs()) {
+      // 进入插件后 如果监听已关闭 则重新开启监听
+      registerClipEvent(listener)
+      listener.startListening(setting.database.path)
+    }
     toTop()
     resetNav()
   })

@@ -7,7 +7,7 @@
       @onDataRemove="handleDataRemove"
       @onOverlayClick="toggleFullData({ type: 'text', data: '' })"
     ></ClipFullData>
-    <ClipSwitch ref="ClipSwitchRef" @onNavClick="handleNavClick">
+    <ClipSwitch ref="ClipSwitchRef">
       <template #SidePanel>
         <div class="clip-switch-btn-list" v-show="!isSearchPanelExpand">
           <span class="clip-switch-btn clip-select-count" v-show="isMultiple">
@@ -47,7 +47,9 @@
       :fullData="fullData"
       :isMultiple="isMultiple"
       :currentActiveTab="activeTab"
+      :isSearchPanelExpand="isSearchPanelExpand"
       @onMultiCopyExecute="handleMultiCopyBtnClick"
+      @toggleMultiSelect="() => (isMultiple = true)"
       @onDataChange="toggleFullData"
       @onDataRemove="handleDataRemove"
     >
@@ -153,7 +155,7 @@ const textFilterCallBack = (item) => {
   }
 }
 
-const updateShowList = (type) => {
+const updateShowList = (type, toTop = true) => {
   // 更新显示列表
   showList.value = list.value
     .filter((item) =>
@@ -162,7 +164,7 @@ const updateShowList = (type) => {
     .filter((item) => (filterText.value ? item.type !== 'image' : item)) // 有过滤词 排除掉图片 DataURL
     .filter((item) => textFilterCallBack(item))
     .slice(0, GAP) // 重新切分懒加载列表
-  window.toTop()
+  toTop && window.toTop()
 }
 
 const restoreDataBase = () => {
@@ -179,11 +181,6 @@ const restoreDataBase = () => {
     .catch(() => {})
 }
 
-const handleNavClick = (type) => {
-  updateShowList(type)
-  offset.value = 0 // 重置懒加载偏移量
-}
-
 const fullData = ref({ type: 'text', data: '' })
 const fullDataShow = ref(false)
 const toggleFullData = (item) => {
@@ -197,7 +194,7 @@ const ClipSwitchRef = ref()
 const handleDataRemove = () => {
   // 此函数须在挂载后执行
   list.value = window.db.dataBase.data
-  updateShowList(ClipSwitchRef.value.activeTab)
+  updateShowList(ClipSwitchRef.value.activeTab, false)
 }
 
 const emit = defineEmits(['showSetting'])
@@ -226,17 +223,26 @@ onMounted(() => {
   updateShowList(activeTab.value)
 
   // 定期检查更新
-  let prev = {}
-  setInterval(() => {
-    const now = window.db.dataBase.data[0]
-    if (prev?.id === now?.id) {
-    } else {
-      // 有更新
+  if (!utools.isMacOs() && window.listener.listening) {
+    // 非macOS系统且监听器开启时
+    window.listener.on('change', () => {
       list.value = window.db.dataBase.data
       updateShowList(activeTab.value)
-      prev = now
-    }
-  }, 800)
+    })
+  } else {
+    // macOS且监听器启动失败时
+    let prev = {}
+    setInterval(() => {
+      const now = window.db.dataBase.data[0]
+      if (prev?.id === now?.id) {
+      } else {
+        // 有更新
+        list.value = window.db.dataBase.data
+        updateShowList(activeTab.value)
+        prev = now
+      }
+    }, 800)
+  }
 
   // 监听搜索框
   watch(filterText, (val) => updateShowList(activeTab.value))
@@ -287,6 +293,7 @@ onMounted(() => {
     const isEnter = key === 'Enter'
     const isShift = key === 'Shift'
     const isAlt = key === 'Alt'
+    const isSpace = key === ' '
     if (isTab) {
       const tabTypes = tabs.map((item) => item.type)
       const index = tabTypes.indexOf(activeTab.value)
@@ -308,6 +315,7 @@ onMounted(() => {
       } else if (isMultiple.value) {
         // 退出多选状态
         isMultiple.value = !isMultiple.value
+        e.stopPropagation()
       } else {
         // 无上述情况 执行默认: 隐藏uTools主窗口
       }
@@ -323,6 +331,8 @@ onMounted(() => {
     } else if (ctrlKey || metaKey || isAlt) {
       // Ctrl: utools模拟执行粘贴时触发
       // Alt:
+    } else if (isSpace) {
+      // 空格向下多选
     } else {
       window.focus() // 其他键盘事件 直接聚焦搜索框
     }

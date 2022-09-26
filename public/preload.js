@@ -1,5 +1,6 @@
 const { existsSync, readFileSync, writeFileSync, mkdirSync } = require('fs')
 const crypto = require('crypto')
+const listener = require('./listener')
 const { clipboard } = require('electron')
 const time = require('./time')
 
@@ -11,5 +12,6 @@ window.exports = {
   mkdirSync,
   crypto,
   clipboard,
-  time
+  time,
+  Buffer
 }
