@@ -59,7 +59,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, onUnmounted, watch } from 'vue'
 import { ElMessage } from 'element-plus'
 import FileList from './FileList.vue'
 import ClipOperate from './ClipOperate.vue'
@@ -196,96 +196,106 @@ watch(
   () => props.showList,
   () => (activeIndex.value = 0)
 )
-onMounted(() => {
-  // 监听键盘事件
-  document.addEventListener('keydown', (e) => {
-    const { key, ctrlKey, metaKey, altKey } = e
-    const isArrowUp = key === 'ArrowUp'
-    const isArrowDown = key === 'ArrowDown'
-    const isEnter = key === 'Enter'
-    const isCopy = (ctrlKey || metaKey) && (key === 'C' || key === 'c')
-    const isNumber = parseInt(key) <= 9 && parseInt(key) >= 0
-    const isShift = key === 'Shift'
-    const isSpace = key === ' '
-    const activeNode = !props.isMultiple
-      ? document.querySelector('.clip-item.active' + (isArrowDown ? '+.clip-item' : ''))
-      : document.querySelector('.clip-item.multi-active' + (isArrowDown ? '+.clip-item' : ''))
-    if (isArrowUp) {
-      if (activeIndex.value === 1) window.toTop()
-      if (activeIndex.value > 0) {
-        activeIndex.value--
-        activeNode.previousElementSibling.previousElementSibling.scrollIntoView({
-          block: 'nearest',
-          inline: 'nearest'
-        })
-      }
-    } else if (isArrowDown) {
-      if (activeIndex.value < props.showList.length - 1) {
-        activeIndex.value++
-        activeNode.scrollIntoView({ block: 'nearest', inline: 'nearest' })
-      }
-    } else if (isCopy) {
-      if (!props.fullData.data) {
-        // 如果侧栏中有数据 证明侧栏是打开的 不执行复制
-        if (!props.isMultiple) {
-          window.copy(props.showList[activeIndex.value])
-          ElMessage({
-            message: '复制成功',
-            type: 'success'
-          })
-        } else {
-          emit('onMultiCopyExecute', false)
-        }
-      }
-    } else if (isEnter) {
+
+const keyDownCallBack = (e) => {
+  const { key, ctrlKey, metaKey, altKey } = e
+  const isArrowUp = key === 'ArrowUp'
+  const isArrowDown = key === 'ArrowDown'
+  const isEnter = key === 'Enter'
+  const isCopy = (ctrlKey || metaKey) && (key === 'C' || key === 'c')
+  const isNumber = parseInt(key) <= 9 && parseInt(key) >= 0
+  const isShift = key === 'Shift'
+  const isSpace = key === ' '
+  const activeNode = !props.isMultiple
+    ? document.querySelector('.clip-item.active' + (isArrowDown ? '+.clip-item' : ''))
+    : document.querySelector('.clip-item.multi-active' + (isArrowDown ? '+.clip-item' : ''))
+  if (isArrowUp) {
+    if (activeIndex.value === 1) window.toTop()
+    if (activeIndex.value > 0) {
+      activeIndex.value--
+      activeNode.previousElementSibling.previousElementSibling.scrollIntoView({
+        block: 'nearest',
+        inline: 'nearest'
+      })
+    }
+  } else if (isArrowDown) {
+    if (activeIndex.value < props.showList.length - 1) {
+      activeIndex.value++
+      activeNode.scrollIntoView({ block: 'nearest', inline: 'nearest' })
+    }
+  } else if (isCopy) {
+    if (!props.fullData.data) {
+      // 如果侧栏中有数据 证明侧栏是打开的 不执行复制
       if (!props.isMultiple) {
         window.copy(props.showList[activeIndex.value])
-        window.paste()
         ElMessage({
           message: '复制成功',
           type: 'success'
         })
       } else {
-        emit('onMultiCopyExecute', true)
+        emit('onMultiCopyExecute', false)
       }
-    } else if ((ctrlKey || metaKey || altKey) && isNumber) {
-      window.copy(props.showList[parseInt(key) - 1])
+    }
+  } else if (isEnter) {
+    if (!props.isMultiple) {
+      console.log('isEnter')
+      window.copy(props.showList[activeIndex.value])
       window.paste()
-      selectItemList.value = []
-    } else if (isShift) {
-      if (props.isMultiple) {
-        isShiftDown.value = true
-      }
-    } else if (isSpace) {
-      if (props.isSearchPanelExpand) {
-        // 搜索栏展开状态 不进入多选
-        return
-      }
-      if (!props.isMultiple) {
-        emit('toggleMultiSelect') // 如果不是多选状态 则切换到多选状态
-      }
-      e.preventDefault()
-      const i = selectItemList.value.findIndex((item) => item === props.showList[activeIndex.value])
-      if (i !== -1) {
-        selectItemList.value.splice(i, 1) // 如果已选中 则取消选中
-      } else {
-        selectItemList.value.push(props.showList[activeIndex.value]) // 如果未选中 则选中
-        activeIndex.value++
-        document
-          .querySelector('.clip-item.multi-active+.clip-item')
-          .scrollIntoView({ block: 'nearest', inline: 'nearest' })
-      }
+      ElMessage({
+        message: '复制成功',
+        type: 'success'
+      })
+    } else {
+      emit('onMultiCopyExecute', true)
     }
-  })
-  document.addEventListener('keyup', (e) => {
-    const { key } = e
-    const isShift = key === 'Shift'
-    if (isShift) {
-      if (props.isMultiple) {
-        isShiftDown.value = false
-      }
+  } else if ((ctrlKey || metaKey || altKey) && isNumber) {
+    window.copy(props.showList[parseInt(key) - 1])
+    window.paste()
+    selectItemList.value = []
+  } else if (isShift) {
+    if (props.isMultiple) {
+      isShiftDown.value = true
     }
-  })
+  } else if (isSpace) {
+    if (props.isSearchPanelExpand) {
+      // 搜索栏展开状态 不进入多选
+      return
+    }
+    if (!props.isMultiple) {
+      emit('toggleMultiSelect') // 如果不是多选状态 则切换到多选状态
+    }
+    e.preventDefault()
+    const i = selectItemList.value.findIndex((item) => item === props.showList[activeIndex.value])
+    if (i !== -1) {
+      selectItemList.value.splice(i, 1) // 如果已选中 则取消选中
+    } else {
+      selectItemList.value.push(props.showList[activeIndex.value]) // 如果未选中 则选中
+      activeIndex.value++
+      document
+        .querySelector('.clip-item.multi-active+.clip-item')
+        .scrollIntoView({ block: 'nearest', inline: 'nearest' })
+    }
+  }
+}
+const keyUpCallBack = (e) => {
+  const { key } = e
+  const isShift = key === 'Shift'
+  if (isShift) {
+    if (props.isMultiple) {
+      isShiftDown.value = false
+    }
+  }
+}
+
+onMounted(() => {
+  // 监听键盘事件
+  document.addEventListener('keydown', keyDownCallBack)
+  document.addEventListener('keyup', keyUpCallBack)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('keydown', keyDownCallBack)
+  document.removeEventListener('keyup', keyUpCallBack)
 })
 </script>
 
