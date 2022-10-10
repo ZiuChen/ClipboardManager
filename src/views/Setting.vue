@@ -183,7 +183,7 @@ const handleRestoreBtnClick = () => {
 }
 
 onMounted(() => {
-  listenStatus.value = window.listener?.listening
+  listenStatus.value = window.listener.listening
 })
 </script>
 

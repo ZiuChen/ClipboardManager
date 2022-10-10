@@ -223,7 +223,7 @@ onMounted(() => {
   updateShowList(activeTab.value)
 
   // 定期检查更新
-  if (!utools.isMacOs() && window.listener?.listening) {
+  if (!utools.isMacOs() && window.listener.listening) {
     // 非macOS系统且监听器开启时
     window.listener.on('change', () => {
       list.value = window.db.dataBase.data
