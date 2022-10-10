@@ -1,17 +1,4 @@
-const {
-  utools,
-  existsSync,
-  readFileSync,
-  writeFileSync,
-  mkdirSync,
-  watch,
-  sep,
-  crypto,
-  listener,
-  clipboard,
-  time,
-  Buffer
-} = window.exports
+const { utools, existsSync, writeFileSync, mkdirSync, sep, Buffer } = window.exports
 
 const dateFormat = (timeStamp) => {
   const startTime = new Date(timeStamp) // 开始时间
