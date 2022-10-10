@@ -4,6 +4,7 @@ const {
   readFileSync,
   writeFileSync,
   mkdirSync,
+  watch,
   crypto,
   listener,
   clipboard,
@@ -52,6 +53,23 @@ export default function initPlugin() {
       }
       this.dataBase = defaultDB
       this.updateDataBaseLocal(defaultDB)
+    }
+    watchDataBaseUpdate() {
+      watch(this.path, (eventType, filename) => {
+        if (eventType === 'change') {
+          // 更新内存中的数据
+          const data = readFileSync(this.path, {
+            encoding: 'utf8'
+          })
+          try {
+            const dataBase = JSON.parse(data)
+            this.dataBase = dataBase
+          } catch (err) {
+            utools.showNotification('读取剪切板出错: ' + err)
+            return
+          }
+        }
+      })
     }
     updateDataBase() {
       // 更新内存数据

@@ -1,4 +1,4 @@
-const { existsSync, readFileSync, writeFileSync, mkdirSync } = require('fs')
+const { existsSync, readFileSync, writeFileSync, mkdirSync, watch } = require('fs')
 const crypto = require('crypto')
 const listener = require('./listener')
 const { clipboard } = require('electron')
@@ -10,6 +10,7 @@ window.exports = {
   readFileSync,
   writeFileSync,
   mkdirSync,
+  watch,
   crypto,
   listener,
   clipboard,
