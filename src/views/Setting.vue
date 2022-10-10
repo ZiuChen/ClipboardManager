@@ -16,7 +16,7 @@
             @click="handleLinkClick(1)"
             title="手动安装剪贴板监听程序"
           >
-            {{ listenStatus ? '已安装' : '未安装' }}
+            {{ listenStatus ? '已安装' : '未安装 点此查看安装方法' }}
           </el-tag>
         </div>
         <div class="setting-card-content-item">
@@ -36,7 +36,7 @@
         <div class="setting-card-content-item">
           <span>最长保存时间</span>
           <el-select class="number-select" v-model="maxage" fit-input-width>
-            <el-option v-for="n in [8, 9, 10, 11, 12, 13, 14]" :key="n" :value="n" />
+            <el-option v-for="n in [1, 3, 5, 7, 14, 31]" :key="n" :value="n" />
           </el-select>
           天
         </div>
