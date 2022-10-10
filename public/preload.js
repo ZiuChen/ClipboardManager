@@ -11,6 +11,7 @@ window.exports = {
   writeFileSync,
   mkdirSync,
   crypto,
+  listener,
   clipboard,
   time,
   Buffer
