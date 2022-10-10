@@ -58,7 +58,7 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted, computed, nextTick } from 'vue'
+import { ref, watch, onMounted, onUnmounted, computed, nextTick } from 'vue'
 import { ElMessageBox, ElMessage } from 'element-plus'
 import ClipItemList from '../cpns/ClipItemList.vue'
 import ClipFullData from '../cpns/ClipFullData.vue'
@@ -263,7 +263,7 @@ onMounted(() => {
   }
 
   // 列表懒加载
-  document.addEventListener('scroll', (e) => {
+  const scrollCallBack = (e) => {
     const { scrollTop, clientHeight, scrollHeight } = e.target.scrollingElement
     if (scrollTop + clientHeight + 5 >= scrollHeight) {
       offset.value += GAP
@@ -280,10 +280,10 @@ onMounted(() => {
         showList.value.push(...addition)
       }
     }
-  })
+  }
 
   // 监听键盘事件
-  document.addEventListener('keydown', (e) => {
+  const keyDownCallBack = (e) => {
     const { key, ctrlKey, metaKey } = e
     const isTab = key === 'Tab'
     const isSearch =
@@ -336,6 +336,14 @@ onMounted(() => {
     } else {
       window.focus() // 其他键盘事件 直接聚焦搜索框
     }
+  }
+
+  document.addEventListener('scroll', scrollCallBack)
+  document.addEventListener('keydown', keyDownCallBack)
+
+  onUnmounted(() => {
+    document.removeEventListener('scroll', scrollCallBack)
+    document.removeEventListener('keydown', keyDownCallBack)
   })
 })
 </script>

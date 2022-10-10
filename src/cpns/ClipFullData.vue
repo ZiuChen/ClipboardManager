@@ -30,7 +30,7 @@
 <script setup>
 import FileList from './FileList.vue'
 import ClipOperate from './ClipOperate.vue'
-import { onMounted } from 'vue'
+import { onMounted, onUnmounted } from 'vue'
 
 const props = defineProps({
   isShow: {
@@ -49,15 +49,21 @@ const onOverlayClick = () => {
   emit('onOverlayClick')
 }
 
+const keyDownCallBack = (e) => {
+  const { key } = e
+  if (key === 'Escape' && props.fullData.data) {
+    // 有值时执行退出 Overlay
+    emit('onOverlayClick')
+    e.stopPropagation()
+  }
+}
+
 onMounted(() => {
-  document.addEventListener('keydown', (e) => {
-    const { key } = e
-    if (key === 'Escape' && props.fullData.data) {
-      // 有值时执行退出 Overlay
-      emit('onOverlayClick')
-      e.stopPropagation()
-    }
-  })
+  document.addEventListener('keydown', keyDownCallBack)
+})
+
+onUnmounted(() => {
+  document.removeEventListener('keydown', keyDownCallBack)
 })
 </script>
 
