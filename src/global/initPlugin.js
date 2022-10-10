@@ -64,6 +64,7 @@ export default function initPlugin() {
             const dataBase = JSON.parse(data)
             this.dataBase = dataBase
             window.db.dataBase = dataBase // 更新内存中数据
+            listener.emit('view-change') // 触发视图更新
           } catch (err) {
             utools.showNotification('读取剪切板出错: ' + err)
             return
@@ -104,7 +105,7 @@ export default function initPlugin() {
       this.dataBase.data = []
       window.db.dataBase.data = []
       this.updateDataBaseLocal(this.defaultDB)
-      listener.emit('change')
+      listener.emit('view-change')
     }
     filterDataBaseViaId(id) {
       return this.dataBase.data.filter((item) => item.id === id)

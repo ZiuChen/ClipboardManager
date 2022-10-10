@@ -231,13 +231,6 @@ onMounted(() => {
     })
   } else {
     // macOS或监听器启动失败时
-    // 进程虽然没有启动 但是可以接收emit
-    window.listener.on('change', () => {
-      // 检查到change事件 更新展示数据
-      list.value = window.db.dataBase.data
-      updateShowList(activeTab.value)
-    })
-
     let prev = {}
     setInterval(() => {
       const now = window.db.dataBase.data[0]
@@ -250,6 +243,14 @@ onMounted(() => {
       }
     }, 800)
   }
+
+  // 接收来自外部的触发视图更新事件
+  // 进程虽然没有启动 但是可以接收emit
+  window.listener.on('view-change', () => {
+    // 检查到change事件 更新展示数据
+    list.value = window.db.dataBase.data
+    updateShowList(activeTab.value)
+  })
 
   // 监听搜索框
   watch(filterText, (val) => updateShowList(activeTab.value))
