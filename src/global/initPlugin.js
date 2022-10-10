@@ -3,18 +3,16 @@ const {
   existsSync,
   readFileSync,
   writeFileSync,
-  mkdirSync,
   watch,
   crypto,
   listener,
   clipboard,
-  time,
-  Buffer
+  time
 } = window.exports
+import { copy, paste, createFile } from '../utils'
 import setting from './readSetting'
 
 export default function initPlugin() {
-  const SEP = utools.isWindows() ? '\\' : '/'
   class DB {
     constructor(path) {
       const d = new Date()
@@ -45,6 +43,7 @@ export default function initPlugin() {
             (item) => item.updateTime > deleteTime || item.collect
           )
           this.updateDataBaseLocal()
+          this.watchDataBaseUpdate()
         } catch (err) {
           utools.showNotification('读取剪切板出错: ' + err)
           return
@@ -64,6 +63,7 @@ export default function initPlugin() {
           try {
             const dataBase = JSON.parse(data)
             this.dataBase = dataBase
+            window.db.dataBase = dataBase // 更新内存中数据
           } catch (err) {
             utools.showNotification('读取剪切板出错: ' + err)
             return
@@ -155,51 +155,6 @@ export default function initPlugin() {
         type: 'image',
         data: data
       }
-    }
-  }
-
-  const copy = (item, isHideMainWindow = true) => {
-    switch (item.type) {
-      case 'text':
-        utools.copyText(item.data)
-        break
-      case 'image':
-        utools.copyImage(item.data)
-        break
-      case 'file':
-        const paths = JSON.parse(item.data).map((file) => file.path)
-        utools.copyFile(paths)
-        break
-    }
-    isHideMainWindow && utools.hideMainWindow()
-  }
-
-  const paste = () => {
-    if (utools.isMacOs()) utools.simulateKeyboardTap('v', 'command')
-    else utools.simulateKeyboardTap('v', 'ctrl')
-  }
-
-  const createFile = (item) => {
-    const tempPath = utools.getPath('temp')
-    const folderPath = tempPath + SEP + 'utools-clipboard-manager'
-    if (!existsSync(folderPath)) {
-      try {
-        mkdirSync(folderPath)
-      } catch (err) {
-        utools.showNotification('创建临时文件夹出错: ' + err)
-      }
-    }
-    const { type } = item
-    if (type === 'image') {
-      const base64Data = item.data.replace(/^data:image\/\w+;base64,/, '') // remove the prefix
-      const buffer = Buffer.from(base64Data, 'base64') // to Buffer
-      const filePath = folderPath + SEP + new Date().valueOf() + '.png'
-      writeFileSync(filePath, buffer)
-      return filePath
-    } else if (type === 'text') {
-      const filePath = folderPath + SEP + new Date().valueOf() + '.txt'
-      writeFileSync(filePath, item.data)
-      return filePath
     }
   }
 

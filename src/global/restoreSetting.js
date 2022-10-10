@@ -1,10 +1,9 @@
 import defaultSetting from '../data/setting.json'
 import { pointToObj } from '../utils'
 
-const SEP = utools.isWindows() ? '\\' : '/'
-const defaultPath = `${
-  utools.isMacOs() ? utools.getPath('userData') : utools.getPath('home')
-}${SEP}_utools_clipboard_manager_storage`
+const defaultPath = `${utools.isMacOs() ? utools.getPath('userData') : utools.getPath('home')}${
+  window.exports.sep
+}_utools_clipboard_manager_storage`
 
 export default function restoreSetting() {
   // 将defaultSetting的key点语法转换为对象
