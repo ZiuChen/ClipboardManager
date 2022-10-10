@@ -101,8 +101,10 @@ export default function initPlugin() {
       this.updateDataBaseLocal()
     }
     emptyDataBase() {
+      this.dataBase.data = []
       window.db.dataBase.data = []
       this.updateDataBaseLocal(this.defaultDB)
+      listener.emit('change')
     }
     filterDataBaseViaId(id) {
       return this.dataBase.data.filter((item) => item.id === id)
