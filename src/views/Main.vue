@@ -169,7 +169,7 @@ const updateShowList = (type, toTop = true) => {
 
 const restoreDataBase = () => {
   // 清空数据库
-  ElMessageBox.confirm('确定要清空剪贴板记录吗', '提示', {
+  ElMessageBox.confirm('即将清空剪贴板记录(包括收藏内容)', '提示', {
     confirmButtonText: '确定',
     cancelButtonText: '取消',
     type: 'warning'

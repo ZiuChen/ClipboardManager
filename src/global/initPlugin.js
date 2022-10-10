@@ -22,6 +22,11 @@ export default function initPlugin() {
       this.dataBase = {}
       this.createTime = d.getTime()
       this.updateTime = d.getTime()
+      this.defaultDB = {
+        data: [],
+        createTime: this.createTime,
+        updateTime: this.updateTime
+      }
     }
     init() {
       const isExist = existsSync(this.path)
@@ -46,13 +51,8 @@ export default function initPlugin() {
         }
         return
       }
-      const defaultDB = {
-        data: [],
-        createTime: this.createTime,
-        updateTime: this.updateTime
-      }
-      this.dataBase = defaultDB
-      this.updateDataBaseLocal(defaultDB)
+      this.dataBase = this.defaultDB
+      this.updateDataBaseLocal(this.defaultDB)
     }
     watchDataBaseUpdate() {
       watch(this.path, (eventType, filename) => {
@@ -101,9 +101,8 @@ export default function initPlugin() {
       this.updateDataBaseLocal()
     }
     emptyDataBase() {
-      this.dataBase.data = []
-      this.updateDataBase()
-      this.updateDataBaseLocal()
+      window.db.dataBase.data = []
+      this.updateDataBaseLocal(this.defaultDB)
     }
     filterDataBaseViaId(id) {
       return this.dataBase.data.filter((item) => item.id === id)
