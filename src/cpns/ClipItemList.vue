@@ -178,11 +178,11 @@ const handleItemClick = (ev, item) => {
     } else if (button === 2) {
       // 右键 仅复制
       window.copy(item)
+      ElMessage({
+        message: '复制成功',
+        type: 'success'
+      })
     }
-    ElMessage({
-      message: '复制成功',
-      type: 'success'
-    })
   }
 }
 const activeIndex = ref(0)
@@ -241,10 +241,6 @@ const keyDownCallBack = (e) => {
       console.log('isEnter')
       window.copy(props.showList[activeIndex.value])
       window.paste()
-      ElMessage({
-        message: '复制成功',
-        type: 'success'
-      })
     } else {
       emit('onMultiCopyExecute', true)
     }
