@@ -9,7 +9,7 @@ const {
   clipboard,
   time
 } = window.exports
-import { copy, paste, createFile } from '../utils'
+import { copy, paste, createFile, getNativeId } from '../utils'
 import setting from './readSetting'
 
 export default function initPlugin() {
@@ -161,7 +161,10 @@ export default function initPlugin() {
     }
   }
 
-  const db = new DB(setting.database.path)
+  // 根据当前设备id读取不同路径 若为旧版本则迁移数据
+  const nativeId = getNativeId()
+  console.log(setting.database.path[nativeId])
+  const db = new DB(setting.database.path[nativeId] || setting.database.path)
   db.init()
 
   const remove = (item) => db.removeItemViaId(item.id)
@@ -228,7 +231,7 @@ export default function initPlugin() {
   if (!utools.isMacOs()) {
     // 首次启动插件 即开启监听
     registerClipEvent(listener)
-    listener.startListening(setting.database.path)
+    listener.startListening(setting.database.path[nativeId])
   } else {
     // macos 由于无法执行 clipboard-event-handler-mac 所以使用旧方法
     addCommonListener()
@@ -238,7 +241,7 @@ export default function initPlugin() {
     if (!listener.listening && !utools.isMacOs()) {
       // 进入插件后 如果监听已关闭 则重新开启监听
       registerClipEvent(listener)
-      listener.startListening(setting.database.path)
+      listener.startListening(setting.database.path[nativeId])
     }
     toTop()
     resetNav()

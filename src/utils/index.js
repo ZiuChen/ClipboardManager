@@ -83,4 +83,8 @@ const createFile = (item) => {
   }
 }
 
-export { dateFormat, pointToObj, copy, paste, createFile }
+const getNativeId = () => {
+  return utools.getNativeId()
+}
+
+export { dateFormat, pointToObj, copy, paste, createFile, getNativeId }

@@ -80,11 +80,13 @@ import { ElMessage, ElMessageBox } from 'element-plus'
 import setting from '../global/readSetting'
 import restoreSetting from '../global/restoreSetting'
 import defaultOperation from '../data/operation.json'
+import { getNativeId } from '../utils'
 
 const emit = defineEmits(['back'])
 const { database, operation } = setting
+const nativeId = getNativeId()
 
-const path = ref(database.path)
+const path = ref(database.path[nativeId])
 const maxsize = ref(database.maxsize)
 const maxage = ref(database.maxage)
 
@@ -136,7 +138,10 @@ const handleSaveBtnClick = () => {
     JSON.parse(
       JSON.stringify({
         database: {
-          path: path.value,
+          path: {
+            ...database.path,
+            [nativeId]: path.value
+          },
           maxsize: maxsize.value,
           maxage: maxage.value
         },
