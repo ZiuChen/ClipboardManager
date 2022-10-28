@@ -110,10 +110,13 @@ const handleMultiCopyBtnClick = (isPaste) => {
     })
     window.copy({
       type: 'file',
-      data: JSON.stringify(filePathArray)
+      data: JSON.stringify(filePathArray.reverse())
     })
   } else {
-    const result = itemList.map((item) => item.data).join('\n')
+    const result = itemList
+      .map((item) => item.data)
+      .reverse()
+      .join('\n')
     window.copy({
       type: 'text',
       data: result
