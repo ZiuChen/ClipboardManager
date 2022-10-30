@@ -15,3 +15,5 @@ export default function restoreSetting() {
   utools.dbStorage.setItem('setting', setting)
   return setting
 }
+
+export { defaultPath }
