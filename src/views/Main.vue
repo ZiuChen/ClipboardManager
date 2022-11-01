@@ -22,7 +22,7 @@
           <span class="clip-switch-btn" @click="isMultiple = !isMultiple">{{
             isMultiple ? '❌ 退出多选' : '👆'
           }}</span>
-          <span class="clip-switch-btn" v-show="!isMultiple" @click="emit('showSetting')">🎨</span>
+          <span class="clip-switch-btn" v-show="!isMultiple" @click="emit('showSetting')">💡</span>
           <span
             class="clip-switch-btn clip-search-btn"
             v-show="!isMultiple"
