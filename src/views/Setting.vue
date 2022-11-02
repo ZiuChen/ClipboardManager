@@ -76,7 +76,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import setting from '../global/readSetting'
 import restoreSetting from '../global/restoreSetting'
@@ -189,8 +189,22 @@ const handleRestoreBtnClick = () => {
     .catch(() => {})
 }
 
+// 键盘监听事件 监听ESC按下 退出设置页
+const keyDownHandler = (e) => {
+  if (e.key === 'Escape') {
+    emit('back')
+    e.stopPropagation()
+  }
+}
+
 onMounted(() => {
   listenStatus.value = window.listener.listening
+  document.addEventListener('keydown', keyDownHandler)
+})
+
+onUnmounted(() => {
+  // 移除监听事件
+  document.removeEventListener('keydown', keyDownHandler)
 })
 </script>
 
