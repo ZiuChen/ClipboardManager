@@ -226,14 +226,14 @@ onMounted(() => {
   updateShowList(activeTab.value)
 
   // 定期检查更新
-  if (!utools.isMacOs() && window.listener.listening) {
-    // 非macOS系统且监听器开启时
+  if (window.listener.listening) {
+    // 监听器开启时
     window.listener.on('change', () => {
       list.value = window.db.dataBase.data
       updateShowList(activeTab.value)
     })
   } else {
-    // macOS或监听器启动失败时
+    // 监听器启动失败时
     let prev = {}
     setInterval(() => {
       const now = window.db.dataBase.data[0]

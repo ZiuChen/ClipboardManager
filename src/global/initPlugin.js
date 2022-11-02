@@ -217,8 +217,8 @@ export default function initPlugin() {
       utools.outPlugin()
     }
     const errorHandler = (error) => {
-      const info = '请到设置页检查剪贴板监听程序状态'
-      utools.showNotification('启动剪贴板监听程序启动出错: ' + error + info)
+      // const info = '请到设置页检查剪贴板监听程序状态'
+      // utools.showNotification('启动剪贴板监听程序启动出错: ' + error + info)
       addCommonListener()
     }
     listener
@@ -228,17 +228,13 @@ export default function initPlugin() {
       .on('error', (error) => errorHandler(error))
   }
 
-  if (!utools.isMacOs()) {
-    // 首次启动插件 即开启监听
-    registerClipEvent(listener)
-    listener.startListening(setting.database.path[nativeId])
-  } else {
-    // macos 由于无法执行 clipboard-event-handler-mac 所以使用旧方法
-    addCommonListener()
-  }
+  // 首次启动插件 即开启监听
+  // 如果监听程序异常退出 则会在errorHandler中开启常规监听
+  registerClipEvent(listener)
+  listener.startListening(setting.database.path[nativeId])
 
   utools.onPluginEnter(() => {
-    if (!listener.listening && !utools.isMacOs()) {
+    if (!listener.listening) {
       // 进入插件后 如果监听已关闭 则重新开启监听
       registerClipEvent(listener)
       listener.startListening(setting.database.path[nativeId])

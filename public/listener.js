@@ -12,7 +12,8 @@ class ClipboardEventListener extends EventEmitter {
   startListening(dbPath) {
     const targetMap = {
       win32: 'clipboard-event-handler-win32.exe',
-      linux: 'clipboard-event-handler-linux'
+      linux: 'clipboard-event-handler-linux',
+      darwin: 'clipboard-event-handler-mac'
     }
     const { platform } = process
     const target = path.resolve(
@@ -25,7 +26,7 @@ class ClipboardEventListener extends EventEmitter {
     }
     if (platform === 'win32') {
       this.child = execFile(target)
-    } else if (platform === 'linux') {
+    } else if (platform === 'linux' || platform === 'darwin') {
       chmodSync(target, 0o755)
       this.child = execFile(target)
     } else {
