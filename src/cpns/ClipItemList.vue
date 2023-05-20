@@ -199,8 +199,8 @@ watch(
 
 const keyDownCallBack = (e) => {
   const { key, ctrlKey, metaKey, altKey } = e
-  const isArrowUp = key === 'ArrowUp'
-  const isArrowDown = key === 'ArrowDown'
+  const isArrowUp = key === 'ArrowUp' || (ctrlKey && (key === 'K' || key === 'k'))
+  const isArrowDown = key === 'ArrowDown' || (ctrlKey && (key === 'J' || key === 'j'))
   const isEnter = key === 'Enter'
   const isCopy = (ctrlKey || metaKey) && (key === 'C' || key === 'c')
   const isNumber = parseInt(key) <= 9 && parseInt(key) >= 0
